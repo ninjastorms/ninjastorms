@@ -1,8 +1,8 @@
 
-#include <u-boot.h>
 #include <stdio.h>
 
 #include "startup.h"
+#include "u-boot.h"
 
 int 
 ev3ninja_main (int argc, char *argv[])

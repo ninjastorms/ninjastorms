@@ -1,6 +1,7 @@
 
-#include <u-boot.h>
 #include <stddef.h>
+
+#include "u-boot.h"
 
 /* enumerate all u-boot functions we use
  */
