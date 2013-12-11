@@ -42,6 +42,7 @@ boot.cmd:
 	echo "go $(ENTRYADDR)" >> boot.cmd
 
 deploy: $(BIN) boot.scr
+	mkdir -p $(SDMNT)
 	mount $(SDDEV) $(SDMNT)
 	rm -rf $(SDMNT)/*
 	cp $(BIN) $(SDMNT)/
