@@ -12,12 +12,12 @@ SDMNT = /mnt/sd1
 LOADADDR = 0xC1000000
 ENTRYADDR = 0xC1000004
 
-CFLAGS = -g -Os -fno-common -ffixed-r8 -msoft-float -fno-common -ffixed-r8 -msoft-float -D__KERNEL__ -DTEXT_BASE=0xC1080000 -I./include -fno-builtin -ffreestanding -nostdinc -isystem /usr/local/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/include -pipe -DCONFIG_ARM -D__ARM__ -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wall -Wextra -Werror
+CFLAGS = -g -O2 -pipe -fno-common -msoft-float -DTEXT_BASE=0xC1080000 -I./include -fno-builtin -ffreestanding -nostdinc -isystem /usr/local/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/include -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -march=armv5te -fno-stack-protector -Wall -Wextra -Wstrict-prototypes -Werror
 
 LDFLAGS = -g -Ttext $(LOADADDR) -L/usr/local/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3 -lgcc 
 
 OBJ = src/ev3ninja.o src/startup.o libc/libc.a
-OBJ_LIBC = libc/stdio/putchar.o libc/stdio/puts.o
+OBJ_LIBC = libc/stdio/putchar.o libc/stdio/puts.o libc/stdio/printf.o
 
 ELF  = ev3ninja
 BIN  = $(ELF).bin

@@ -11,13 +11,13 @@ ev3ninja_main (__unused int argc, __unused char *argv[])
 
   puts("hello world");
 
-  /*printf("argc = %i\n", argc);
+  printf("argc = %i\n", argc);
 
   int i;
   for (i = 0; i <= argc; ++i)
     printf("argv[%i] = \"%s\"\n", i, (argv[i] ? argv[i] : "(null)"));
 
-  printf("All done. exiting :)\n");*/
+  printf("All done. exiting :)\n");
   
   puts("All done. ev3ninja out!");
 

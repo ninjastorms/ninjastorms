@@ -8,13 +8,13 @@ puts (const char *s)
   while (*c)
     {
       int res = putchar(*c);
-      if (res == EOF)
+      if (__builtin_expect(res == EOF, 0))
         return EOF;
       ++c;
     }
   
   int res = putchar('\n');
-  if (res == EOF)
+  if (__builtin_expect(res == EOF, 0))
     return EOF;
 
   return 0;
