@@ -1,6 +1,4 @@
 
-
-
 PREFIX = arm-none-linux-gnueabi-
 CC = $(PREFIX)gcc
 AR = $(PREFIX)ar
@@ -17,17 +15,19 @@ CFLAGS = -g -Os -fno-common -ffixed-r8 -msoft-float -fno-common -ffixed-r8 -msof
 
 LDFLAGS = -g -Ttext $(LOADADDR) -L/usr/local/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3 -lgcc 
 
-OBJ = src/ev3ninja.o src/u-boot-stubs.o src/startup.o
+OBJ = src/ev3ninja.o src/u-boot-stubs.o src/startup.o libc/libc.a
+OBJ_LIBC = libc/stdio/putchar.o
 
 ELF  = ev3ninja
 BIN  = $(ELF).bin
 SREC = $(ELF).srec
+LIBC = libc/libc.a
 
 .PHONY : all boot.scr boot.cmd deploy clean
 
 all: $(ELF) $(SREC) $(BIN)
 
-$(ELF): $(OBJ)
+$(ELF): $(OBJ) $(LIBC)
 	@echo "  LD  $@"
 	@$(LD) $(LDFLAGS) -o $(ELF) -e $(ELF)_main $(OBJ) 
 
@@ -38,6 +38,10 @@ $(BIN): $(ELF)
 $(SREC): $(ELF)
 	@echo "  OBJCOPY  $(SREC)"
 	@$(OBJCOPY) -O srec $(ELF) $(SREC)
+
+$(LIBC): $(OBJ_LIBC)
+	@echo "  AR  libc/libc.a"
+	@$(AR) crv libc/libc.a $(OBJ_LIBC) > /dev/null
 
 boot.scr: boot.cmd
 	@echo "  MKIMAGE  boot.scr"
@@ -56,12 +60,10 @@ deploy: $(BIN) boot.scr
 	@umount $(SDDEV)
 
 clean:
-	@rm -f src/*.o src/*.a $(ELF) $(BIN) $(SREC) boot.scr boot.cmd
+	@rm -f $(OBJ) $(OBJ_LIBC) $(LIBC) $(ELF) $(BIN) $(SREC) boot.scr boot.cmd
 
 %.o: %.c
 	@echo "  CC  $<"
 	@$(CC) $(CFLAGS) -o $@ $< -c
 
 lib%.a: %.o
-	@echo "  AR  $@"
-	@$(AR) crv $@ $<
