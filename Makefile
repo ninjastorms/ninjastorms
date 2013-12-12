@@ -17,6 +17,7 @@ CFLAGS = -g -O2 -pipe -fno-common -msoft-float -DTEXT_BASE=0xC1080000 -I./includ
 LIBGCCDIR = $(shell dirname $(shell $(CC) -print-libgcc-file-name))
 LDFLAGS = -g -Ttext $(LOADADDR) -L$(LIBGCCDIR) -lgcc 
 
+# add relevant object files here:
 OBJ = src/ev3ninja.o src/startup.o libc/libc.a
 OBJ_LIBC = libc/stdio/putchar.o libc/stdio/puts.o libc/stdio/printf.o
 
@@ -26,51 +27,59 @@ SREC = $(ELF).srec
 ASM  = $(ELF).asm
 LIBC = libc/libc.a
 
+# use 'make V=1' to see full commands
+Q = @
+ifeq ("$(origin V)", "command line")
+  ifeq ($(V),1)
+    Q = 
+  endif
+endif
+
 .PHONY : all boot.scr boot.cmd deploy clean disas
 
 all: $(ELF) $(SREC) $(BIN)
 
 $(ELF): $(OBJ) $(LIBC)
 	@echo "  LD  $@"
-	@$(LD) $(LDFLAGS) -o $(ELF) -e $(ELF)_main $(OBJ) 
+	$(Q)$(LD) $(LDFLAGS) -o $(ELF) -e $(ELF)_main $(OBJ) 
 
 $(BIN): $(ELF)
 	@echo "  OBJCOPY  $(BIN)"
-	@$(OBJCOPY) -O binary $(ELF) $(BIN)
+	$(Q)$(OBJCOPY) -O binary $(ELF) $(BIN)
 
 $(SREC): $(ELF)
 	@echo "  OBJCOPY  $(SREC)"
-	@$(OBJCOPY) -O srec $(ELF) $(SREC)
+	$(Q)$(OBJCOPY) -O srec $(ELF) $(SREC)
 
 $(LIBC): $(OBJ_LIBC)
 	@echo "  AR  libc/libc.a"
-	@$(AR) crv libc/libc.a $(OBJ_LIBC) > /dev/null
+	$(Q)$(AR) crv libc/libc.a $(OBJ_LIBC) > /dev/null
 
 boot.scr: boot.cmd
 	@echo "  MKIMAGE  boot.scr"
-	@mkimage -C none -A arm -T script -d boot.cmd boot.scr &> /dev/null
+	$(Q)mkimage -C none -A arm -T script -d boot.cmd boot.scr &> /dev/null
 
 boot.cmd:
-	@echo "fatload mmc 0 $(LOADADDR) $(BIN)" > boot.cmd
-	@echo "go $(ENTRYADDR)" >> boot.cmd
+	$(Q)echo "fatload mmc 0 $(LOADADDR) $(BIN)" > boot.cmd
+	$(Q)echo "go $(ENTRYADDR)" >> boot.cmd
 
 deploy: $(BIN) boot.scr
 	@echo "  INSTALL  $(BIN) -> $(SDDEV)"
-	@mkdir -p $(SDMNT)
-	@mount $(SDDEV) $(SDMNT)
-	@cp $(BIN) $(SDMNT)/
-	@cp boot.scr $(SDMNT)/
-	@umount $(SDDEV)
+	$(Q)mkdir -p $(SDMNT)
+	$(Q)mount $(SDDEV) $(SDMNT)
+	$(Q)cp $(BIN) $(SDMNT)/
+	$(Q)cp boot.scr $(SDMNT)/
+	$(Q)umount $(SDDEV)
 
 clean:
-	@rm -f $(OBJ) $(OBJ_LIBC) $(LIBC) $(ELF) $(ASM) $(BIN) $(SREC) boot.scr boot.cmd
+	$(Q)rm -f $(OBJ) $(OBJ_LIBC) $(LIBC) $(ELF) $(ASM) $(BIN) $(SREC) boot.scr boot.cmd
 
 disas: $(ELF)
 	@echo "  DISAS  $(ELF)"
-	@$(OBJDUMP) -d $(ELF) > $(ASM)
+	$(Q)$(OBJDUMP) -d $(ELF) > $(ASM)
 
 %.o: %.c
 	@echo "  CC  $<"
-	@$(CC) $(CFLAGS) -o $@ $< -c
+	$(Q)$(CC) $(CFLAGS) -o $@ $< -c
 
 lib%.a: %.o
