@@ -19,7 +19,7 @@ LDFLAGS = -g -Ttext $(LOADADDR) -L$(LIBGCCDIR) -lgcc
 
 # add relevant object files here:
 OBJ = src/ev3ninja.o src/startup.o libc/libc.a
-OBJ_LIBC = libc/stdio/putchar.o libc/stdio/puts.o libc/stdio/printf.o libc/stdio/vprintf.o
+OBJ_LIBC = libc/stdio/putchar.o libc/stdio/puts.o libc/stdio/printf.o libc/stdio/vprintf.o libc/errno/errno.o
 
 ELF  = ev3ninja
 BIN  = $(ELF).bin
