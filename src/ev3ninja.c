@@ -15,7 +15,7 @@ ev3ninja_main (__unused int argc, __unused char *argv[])
 
   int i;
   for (i = 0; i <= argc; ++i)
-    printf("argv[%i] = \"%s\"\n", i, (argv[i] ? argv[i] : "(null)"));
+    printf("argv[%i] = \"%s\"\n", i, argv[i]);
 
   printf("All done. exiting :)\n");
   

@@ -14,8 +14,8 @@
 
 int putchar(int c);
 
-int puts(const char *s);
+int puts(const char * __restrict s);
 
-int printf(const char *format, ...);
+int printf(const char * __restrict format, ...);
 
-int vprintf(const char *format, va_list ap);
+int vprintf(const char * __restrict format, va_list ap);
