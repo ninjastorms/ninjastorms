@@ -4,6 +4,7 @@ CC = $(PREFIX)gcc
 AR = $(PREFIX)ar
 LD = $(PREFIX)ld
 OBJCOPY = $(PREFIX)objcopy
+OBJDUMP = $(PREFIX)objdump
 
 SDDEV = /dev/sdd1
 SDMNT = /mnt/sd1
@@ -16,14 +17,15 @@ CFLAGS = -g -Os -fno-common -ffixed-r8 -msoft-float -fno-common -ffixed-r8 -msof
 LDFLAGS = -g -Ttext $(LOADADDR) -L/usr/local/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3 -lgcc 
 
 OBJ = src/ev3ninja.o src/u-boot-stubs.o src/startup.o libc/libc.a
-OBJ_LIBC = libc/stdio/putchar.o
+OBJ_LIBC = libc/stdio/putchar.o libc/stdio/puts.o
 
 ELF  = ev3ninja
 BIN  = $(ELF).bin
 SREC = $(ELF).srec
+ASM  = $(ELF).asm
 LIBC = libc/libc.a
 
-.PHONY : all boot.scr boot.cmd deploy clean
+.PHONY : all boot.scr boot.cmd deploy clean disas
 
 all: $(ELF) $(SREC) $(BIN)
 
@@ -60,7 +62,11 @@ deploy: $(BIN) boot.scr
 	@umount $(SDDEV)
 
 clean:
-	@rm -f $(OBJ) $(OBJ_LIBC) $(LIBC) $(ELF) $(BIN) $(SREC) boot.scr boot.cmd
+	@rm -f $(OBJ) $(OBJ_LIBC) $(LIBC) $(ELF) $(ASM) $(BIN) $(SREC) boot.scr boot.cmd
+
+disas: $(ELF)
+	@echo "  DISAS  $(ELF)"
+	@$(OBJDUMP) -d $(ELF) > $(ASM)
 
 %.o: %.c
 	@echo "  CC  $<"

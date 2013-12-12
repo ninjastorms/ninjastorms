@@ -3,23 +3,24 @@
 
 #include "startup.h"
 #include "u-boot.h"
+#include "util.h"
 
 int 
-ev3ninja_main (int argc, char *argv[])
+ev3ninja_main (__unused int argc, __unused char *argv[])
 {
   startup();
 
-  printf("Example expects ABI version %i\n", XF_VERSION);
-  printf("Actual U-Boot ABI version %li\n", get_version());
+  puts("hello world");
 
-  printf("Hello World\n");
-
-  printf("argc = %i\n", argc);
+  /*printf("argc = %i\n", argc);
 
   int i;
   for (i = 0; i <= argc; ++i)
     printf("argv[%i] = \"%s\"\n", i, (argv[i] ? argv[i] : "(null)"));
 
-  printf("All done. exiting :)\n");
+  printf("All done. exiting :)\n");*/
+  
+  puts("All done. ev3ninja out!");
+
   return 0;
 }
