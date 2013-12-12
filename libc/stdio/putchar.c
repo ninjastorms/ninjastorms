@@ -7,6 +7,9 @@
 int
 putchar (int c)
 {
+  if (c == '\n')
+    putchar('\r');
+
   while (!(*UART_LSR & (1 << 5)));
 
   *UART_THR = c;

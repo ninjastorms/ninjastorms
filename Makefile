@@ -16,7 +16,7 @@ CFLAGS = -g -Os -fno-common -ffixed-r8 -msoft-float -fno-common -ffixed-r8 -msof
 
 LDFLAGS = -g -Ttext $(LOADADDR) -L/usr/local/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3 -lgcc 
 
-OBJ = src/ev3ninja.o src/u-boot-stubs.o src/startup.o libc/libc.a
+OBJ = src/ev3ninja.o src/startup.o libc/libc.a
 OBJ_LIBC = libc/stdio/putchar.o libc/stdio/puts.o
 
 ELF  = ev3ninja

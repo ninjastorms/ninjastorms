@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 #include "startup.h"
-#include "u-boot.h"
 #include "util.h"
 
 int 
