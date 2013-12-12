@@ -1,8 +1,16 @@
 
 #include <stdio.h>
+#include <stdarg.h>
 
 int
-printf (__attribute__((unused)) const char* format, ...)
+printf (const char* format, ...)
 {
-  return 0;
-}
+  va_list arg;
+  int res;
+
+  va_start (arg, format);
+  res = vprintf(format, arg);
+  va_end (arg);
+
+  return res;
+}  
