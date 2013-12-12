@@ -5,3 +5,5 @@
 *.srec
 
 ev3ninja
+boot.scr
+boot.cmd

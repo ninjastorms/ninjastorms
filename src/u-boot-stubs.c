@@ -8,7 +8,33 @@
 enum 
   {
     XF_get_version,
+    XF_getc,
+    XF_tstc,
+    XF_putc,
+    XF_puts,
     XF_printf,
+    XF_install_hdlr,
+    XF_free_hdlr,
+    XF_malloc,
+    XF_free,
+    XF_udelay,
+    XF_get_timer,
+    XF_vprintf,
+    XF_do_reset,
+    XF_getenv,
+    XF_setenv,
+    XF_forceenv,
+    XF_simple_strtoul,
+    XF_simple_strtol,
+    XF_strcmp,
+    XF_i2c_write,
+    XF_i2c_read,
+    XF_spi_init,
+    XF_spi_setup_slave,
+    XF_spi_free_slave,
+    XF_spi_claim_bus,
+    XF_spi_release_bus,
+    XF_spi_xfer,
 	  XF_MAX
   };
 
