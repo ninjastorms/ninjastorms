@@ -12,10 +12,11 @@ SDMNT = /mnt/sd1
 LOADADDR = 0xC1000000
 ENTRYADDR = 0xC1000004
 
-CFLAGS = -g -O2 -pipe -fno-common -msoft-float -DTEXT_BASE=0xC1080000 -I./include -fno-builtin -ffreestanding -nostdinc -isystem /usr/local/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/include -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -march=armv5te -fno-stack-protector -Wall -Wextra -Wstrict-prototypes -Werror
-
 LIBGCCDIR = $(shell dirname $(shell $(CC) -print-libgcc-file-name))
 LDFLAGS = -g -Ttext $(LOADADDR) -L$(LIBGCCDIR) -lgcc 
+
+INCGCCDIR = $(LIBGCCDIR)/include
+CFLAGS = -g -O2 -pipe -fno-common -msoft-float -DTEXT_BASE=0xC1080000 -I./include -fno-builtin -ffreestanding -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -march=armv5te -fno-stack-protector -Wall -Wextra -Wstrict-prototypes -Werror
 
 # add relevant object files here:
 OBJ = src/ev3ninja.o src/startup.o libc/libc.a
