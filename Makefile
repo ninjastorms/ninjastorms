@@ -21,7 +21,7 @@ CFLAGS = -g -std=c99 -O2 -pipe -fno-common -msoft-float -DTEXT_BASE=0xC1080000 -
 # add relevant object files here:
 OBJ = src/ev3ninja.o src/led.o src/startup.o libc/libc.a
 OBJ_LIBC = libc/stdio/putchar.o libc/stdio/puts.o libc/stdio/printf.o libc/stdio/vprintf.o libc/errno/errno.o \
-  libc/string/memset.o
+  libc/string/memset.o libc/string/memcpy.o libc/string/memcmp.o
 
 ELF  = ev3ninja
 BIN  = $(ELF).bin
