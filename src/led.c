@@ -29,6 +29,11 @@
  *
  */
 
+#define DA8XX_GPIO_BASE      0x01e26000
+
+
+
+
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
@@ -403,10 +408,6 @@ void      SetGpio(int Pin)
       *(unsigned int*)Reg &=  MuxRegMap[Tmp].Mask;
       *(unsigned int*)Reg |=  MuxRegMap[Tmp].Mode;
 
-  #ifdef DEBUG
-      printf("    GP%i_%i  %i and %i or %i\n",(Pin >> 4),(Pin & 0x0F),(unsigned int)Reg, MuxRegMap[Tmp].Mask, MuxRegMap[Tmp].Mode);
-  #endif
-
     }
     else
     {
@@ -419,13 +420,8 @@ void      SetGpio(int Pin)
 void      InitGpio(void)
 {
   int     Pin;
-
-
-#ifdef DEBUG
-  printf("  Ui leds\n");
-#endif
-  memcpy(UiLedPin,pUiLedPin[Hw],sizeof(EP2_UiLedPin));
-  if (memcmp((const void*)UiLedPin,(const void*)pUiLedPin[Hw],sizeof(EP2_UiLedPin)) != 0)
+  memcpy(UiLedPin, pUiLedPin[Hw], sizeof(EP2_UiLedPin));
+  if (memcmp((const void*)UiLedPin, (const void*)pUiLedPin[Hw], sizeof(EP2_UiLedPin)) != 0)
   {
     printf("UiLedPin tabel broken!\n");
   }
@@ -441,25 +437,22 @@ void      InitGpio(void)
     }
   }
 
-#ifdef DEBUG
-  printf("  Ui buttons\n");
-#endif
-  memcpy(UiButPin,pUiButPin[Hw],sizeof(EP2_UiButPin));
-  if (memcmp((const void*)UiButPin,(const void*)pUiButPin[Hw],sizeof(EP2_UiButPin)) != 0)
-  {
-    printf("UiButPin tabel broken!\n");
-  }
+  // memcpy(UiButPin,pUiButPin[Hw],sizeof(EP2_UiButPin));
+  // if (memcmp((const void*)UiButPin,(const void*)pUiButPin[Hw],sizeof(EP2_UiButPin)) != 0)
+  // {
+  //   printf("UiButPin tabel broken!\n");
+  // }
 
-  for (Pin = 0;Pin < NO_OF_BUTTONS;Pin++)
-  {
-    if (UiButPin[Pin].Pin >= 0)
-    {
-      UiButPin[Pin].pGpio  =  (struct gpio_controller *)(GpioBase + ((UiButPin[Pin].Pin >> 5) * 0x28) + 0x10);
-      UiButPin[Pin].Mask   =  (1 << (UiButPin[Pin].Pin & 0x1F));
+  // for (Pin = 0;Pin < NO_OF_BUTTONS;Pin++)
+  // {
+  //   if (UiButPin[Pin].Pin >= 0)
+  //   {
+  //     UiButPin[Pin].pGpio  =  (struct gpio_controller *)(GpioBase + ((UiButPin[Pin].Pin >> 5) * 0x28) + 0x10);
+  //     UiButPin[Pin].Mask   =  (1 << (UiButPin[Pin].Pin & 0x1F));
 
-      SetGpio(UiButPin[Pin].Pin);
-    }
-  }
+  //     SetGpio(UiButPin[Pin].Pin);
+  //   }
+  // }
 }
 
 
@@ -772,42 +765,18 @@ void Device1Exit(void)
 //module_param (HwId, charp, 0);
 #endif
 
-/*static int ModuleInit(void)
+int LEDInit(void)
 {
-  Hw  =  HWID;
+  GpioBase  =  (void*)DA8XX_GPIO_BASE;
+  InitGpio();
 
-  if (Hw < PLATFORM_START)
-  {
-    Hw  =  PLATFORM_START;
-  }
-  if (Hw > PLATFORM_END)
-  {
-    Hw  =  PLATFORM_END;
-  }
-
-#ifdef DEBUG
-  printk("%s init started\n",MODULE_NAME);
-#endif
-
-  if (request_mem_region(DA8XX_GPIO_BASE,0xD8,MODULE_NAME) >= 0)
-  {
-    GpioBase  =  (void*)ioremap(DA8XX_GPIO_BASE,0xD8);
-    if (GpioBase != NULL)
-    {
-#ifdef DEBUG
-      printk("%s gpio address mapped\n",MODULE_NAME);
-#endif
-
-      InitGpio();
-
-      Device1Init();
-    }
-  }
+  Device1Init();
 
   return (0);
 }
 
 
+/*
 static void ModuleExit(void)
 {
 #ifdef DEBUG

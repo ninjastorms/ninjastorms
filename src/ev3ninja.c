@@ -18,6 +18,8 @@ ev3ninja_main (__unused int argc, __unused char *argv[])
   for (i = 0; i <= argc; ++i)
     printf("argv[%i] = \"%s\"\n", i, argv[i]);
 
+
+  LEDInit();
   blink();
 
   puts("All done. ev3ninja out!");
