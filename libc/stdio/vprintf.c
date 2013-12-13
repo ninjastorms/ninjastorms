@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <stddef.h>
 
 #include <errno.h>
 
@@ -27,6 +28,29 @@ vprintf (const char *format, __attribute__((unused)) va_list ap)
                 int x = va_arg(ap, int);
                 if (__builtin_expect(putchar(x) == EOF, 0))
                   return EOF;
+              }
+              break;
+            case 's':
+              {
+                char *x = va_arg(ap, char*);
+                if (__builtin_expect(x == NULL, 0))
+                  {
+                    int res = printf("(null)");
+                    if (__builtin_expect(res == EOF, 0))
+                      return EOF;
+                    chars_written += res - 1;
+                  }
+                else
+                  {
+                    while (*x)
+                      {
+                        if (__builtin_expect(putchar(*x) == EOF, 0))
+                          return EOF;
+                        ++x;
+                        ++chars_written;
+                      }
+                  }
+                --chars_written;
               }
               break;
             default:

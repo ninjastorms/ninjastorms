@@ -7,4 +7,6 @@
 
 #include <sys/types.h>
 
-#define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+#define offsetof(TYPE, MEMBER) __builtin_offsetof(TYPE, MEMBER)
+
+#define NULL ((void*)0)
