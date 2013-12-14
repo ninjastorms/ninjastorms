@@ -16,18 +16,20 @@ LIBGCCDIR = $(shell dirname $(shell $(CC) -print-libgcc-file-name))
 LDFLAGS = -g -Ttext $(LOADADDR) -L$(LIBGCCDIR) -lgcc 
 
 INCGCCDIR = $(LIBGCCDIR)/include
-CFLAGS = -g -std=c99 -O2 -pipe -fno-common -msoft-float -DTEXT_BASE=0xC1080000 -I./include -fno-builtin -ffreestanding -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -march=armv5te -fno-stack-protector -Wall -Wextra -Wstrict-prototypes -Werror
+CFLAGS = -g -std=c99 -O0 -pipe -fno-common -msoft-float -DTEXT_BASE=0xC1080000 -I./include -I. -fno-builtin -ffreestanding -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -fno-stack-protector -Wall -Wextra -Wstrict-prototypes -Werror
 
 # add relevant object files here:
-OBJ = src/ev3ninja.o src/led.o src/startup.o libc/libc.a
+OBJ = src/ev3ninja.o src/startup.o libc/libc.a libp/libp.a
 OBJ_LIBC = libc/stdio/putchar.o libc/stdio/puts.o libc/stdio/printf.o libc/stdio/vprintf.o libc/errno/errno.o \
   libc/string/memset.o libc/string/memcpy.o libc/string/memcmp.o
+OBJ_LIBP = libp/gpio.o
 
 ELF  = ev3ninja
 BIN  = $(ELF).bin
 SREC = $(ELF).srec
 ASM  = $(ELF).asm
 LIBC = libc/libc.a
+LIBP = libp/libp.a
 
 # use 'make V=1' to see full commands
 Q = @
@@ -41,7 +43,7 @@ endif
 
 all: $(ELF) $(SREC) $(BIN)
 
-$(ELF): $(OBJ) $(LIBC)
+$(ELF): $(OBJ) $(LIBC) $(LIBP)
 	@echo "  LD  $@"
 	$(Q)$(LD) $(LDFLAGS) -o $(ELF) -e $(ELF)_main $(OBJ) 
 
@@ -56,6 +58,10 @@ $(SREC): $(ELF)
 $(LIBC): $(OBJ_LIBC)
 	@echo "  AR  libc/libc.a"
 	$(Q)$(AR) crv libc/libc.a $(OBJ_LIBC) > /dev/null
+
+$(LIBP): $(OBJ_LIBP)
+	@echo "  AR  libc/libp.a"
+	$(Q)$(AR) crv libp/libp.a $(OBJ_LIBP) > /dev/null
 
 boot.scr: boot.cmd
 	@echo "  MKIMAGE  boot.scr"
