@@ -10,8 +10,5 @@ startup (void)
   unsigned char * cp = (unsigned char *) &__bss_start;
   while (cp < (unsigned char *)&_end)
     *cp++ = 0;
-
-  /* initialize libp */
-  gpio_init();
 }
 
