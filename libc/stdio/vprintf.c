@@ -74,6 +74,67 @@ vprintf (const char *format, __attribute__((unused)) va_list ap)
                   }
               }
               break;
+            case 'x':
+              {
+                unsigned int x = va_arg(ap, int);
+                char tmp[10] = { 0 };
+                int i = 0;
+                while (x)
+                  {
+                    tmp[i] = x % 0x10;
+                    x /= 0x10;
+                    ++i;
+                  }
+                for ( ; i >= 0; --i)
+                  {
+                    if (tmp[i] != 0 || i == 0)
+                      {
+                        if (tmp[i] > 9)
+                          {
+                            if (__builtin_expect(putchar(tmp[i] + 'a' - 10) == EOF, 0))
+                              return chars_written;
+                          }
+                        else
+                          {
+                            if (__builtin_expect(putchar(tmp[i] + '0') == EOF, 0))
+                              return chars_written;
+                          }
+                      }
+                    ++chars_written;
+                  }
+              }
+              break;
+            case 'X':
+              {
+                int x = va_arg(ap, int);
+                char tmp[10] = { 0 };
+                int i = 0;
+                while (x)
+                  {
+                    tmp[i] = x % 0x10;
+                    x /= 0x10;
+                    ++i;
+                  }
+                for ( ; i >= 0; --i)
+                  {
+                    if (tmp[i] != 0 || i == 0)
+                      {
+                        if (tmp[i] > 9)
+                          {
+                            if (__builtin_expect(putchar(tmp[i] + 'A' - 10) == EOF, 0))
+                              return chars_written;
+                          }
+                        else
+                          {
+                            if (__builtin_expect(putchar(tmp[i] + '0') == EOF, 0))
+                              return chars_written;
+                          }
+                      }
+                    ++chars_written;
+                  }
+              }
+              break;
+
             default:
               printf("\nprintf: unimplemented conversion character '%c'\n", *c);
               return chars_written;
