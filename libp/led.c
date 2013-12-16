@@ -30,5 +30,5 @@ void
 led_set (led_id led, led_color color)
 {
   gpio_set(leds[led].pin1, color & 1);
-  gpio_set(leds[led].pin2, color & 2);
+  gpio_set(leds[led].pin2, (color & 2) >> 1);
 }

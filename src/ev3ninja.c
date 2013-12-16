@@ -19,8 +19,17 @@ ev3ninja_main (__unused int argc, __unused char *argv[])
   for (i = 0; i <= argc; ++i)
     printf("argv[%i] = \"%s\"\n", i, argv[i]);
 
-  led_set(LED_LEFT, LED_GREEN);
-  led_set(LED_RIGHT, LED_ORANGE);
+  unsigned int state = 0;
+  while (1)
+    {
+      printf(".");
+      led_set(LED_LEFT, state + 2);
+      led_set(LED_RIGHT, state);
+
+      volatile unsigned int timer = 0;
+       while (timer < 1024 * 512) ++timer;
+      state = (state + 1) % 4;
+    }
 
   puts("All done. ev3ninja out!");
 
