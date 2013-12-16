@@ -22,7 +22,6 @@ ev3ninja_main (__unused int argc, __unused char *argv[])
   unsigned int state = 0;
   while (1)
     {
-      printf(".");
       led_set(LED_LEFT, state + 2);
       led_set(LED_RIGHT, state);
 
