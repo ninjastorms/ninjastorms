@@ -22,7 +22,7 @@ CFLAGS = -g -O0 -pipe -fno-common -msoft-float -DTEXT_BASE=0xC1080000 -I./includ
 OBJ = src/ev3ninja.o src/startup.o libc/libc.a libp/libp.a
 OBJ_LIBC = libc/stdio/putchar.o libc/stdio/puts.o libc/stdio/printf.o libc/stdio/vprintf.o libc/errno/errno.o \
   libc/string/memset.o libc/string/memcpy.o libc/string/memcmp.o
-OBJ_LIBP = libp/gpio.o libp/led.o
+OBJ_LIBP = libp/gpio.o libp/led.o libp/button.o
 
 ELF  = ev3ninja
 BIN  = $(ELF).bin

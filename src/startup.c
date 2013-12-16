@@ -1,5 +1,6 @@
 
 #include <libp/led.h>
+#include <libp/button.h>
 
 extern unsigned long __bss_start, _end;
 
@@ -13,5 +14,8 @@ startup (void)
 
   /* initialize LED gpio pins */
   led_init();
+
+  /* initialize Button gpio pins */
+  button_init();
 }
 

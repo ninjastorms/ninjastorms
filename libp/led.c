@@ -20,10 +20,10 @@ led_info leds[] =
 void
 led_init (void)
 {
-  gpio_init_pin(leds[0].pin1);
-  gpio_init_pin(leds[0].pin2);
-  gpio_init_pin(leds[1].pin1);
-  gpio_init_pin(leds[1].pin2);
+  gpio_init_outpin(leds[0].pin1);
+  gpio_init_outpin(leds[0].pin2);
+  gpio_init_outpin(leds[1].pin1);
+  gpio_init_outpin(leds[1].pin2);
 }
 
 void 
