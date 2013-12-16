@@ -1,66 +1,51 @@
 
 #include <stdio.h>
-#include <stddef.h>
 
-#define GPIO_BASE ((void*volatile)0x01E26000)
-#define SYSCFG_BASE ((void*volatile)0x01C14000)
-#define NO_OF_LEDS 4
+#include "gpio.h"
+#include "gpio_pins.h"
 
-// pin numbers
-#define GP2_1   0x21
-#define GP5_7   0x57
-#define GP6_7   0x67
-#define GP6_13  0x6D
+#define SYSCFG_BASE       ((void*volatile)0x01C14000)
+#define SYSCFG_KICK(N)    (*((unsigned int*volatile)(SYSCFG_BASE + 0x38 + (N) * 0x4)))
+#define SYSCFG_PINMUX(N)  (*((unsigned int*volatile)(SYSCFG_BASE + 0x120 + (N) * 0x4)))
 
-struct led_info
+#define KICK0_UNLOCK      0x83E70B13
+#define KICK1_UNLOCK      0x95A4F1E0
+#define KICK0_LOCK        0x0
+#define KICK1_LOCK        0x0
+
+#define SYSCFG_UNLOCK     { SYSCFG_KICK(0) = KICK0_UNLOCK; SYSCFG_KICK(1) = KICK1_UNLOCK; }
+#define SYSCFG_LOCK       { SYSCFG_KICK(0) = KICK0_LOCK; SYSCFG_KICK(1) = KICK1_LOCK; }
+
+#define GPIO_BASE         ((void*volatile)0x01E26000)
+#define GPIO_BANK(N)      (GPIO_BASE + 0x10 + (N >> 5) * 0x28)
+#define GPIO_MASK(N)      (1 << (N & 0x1F))
+#define GPIO_DIR(N)       *((unsigned int*)(GPIO_BANK(N) + 0x00))
+#define GPIO_SET(N)       *((unsigned int*)(GPIO_BANK(N) + 0x08))
+#define GPIO_CLR(N)       *((unsigned int*)(GPIO_BANK(N) + 0x0C))
+
+void
+gpio_init_pin (unsigned int pin)
 {
-  int               pin;            // GPIO pin number
-  void*             gpio;           // GPIO bank base address
-  unsigned int      gpio_mask;      // GPIO pin mask
-  unsigned short    muxreg;         // SYSCFG pinmux register
-  unsigned int      muxreg_mask;    // SYSCFG pinmux mask
-  unsigned int      muxreg_mode;    // SYSCFG pinmux mode
-};
+  SYSCFG_UNLOCK;
 
-typedef struct led_info led_info;
+  // setup pin multiplexing
+  pin_info pi = pins[pin];
+  
+  if (__builtin_expect(pi.muxreg_mask == 0, 0))
+    printf("gpio: can not initialize pin %x - need init information in pin_info\n", pin);
 
-led_info leds[] =
-{ // id      register base     1 << (id & 0x1F)   MuxReg    MuxRegMask    MuxRegMode
+  SYSCFG_PINMUX(pi.muxreg) &= pi.muxreg_mask;
+  SYSCFG_PINMUX(pi.muxreg) |= pi.muxreg_mode;
 
-  { GP6_7 ,  GPIO_BASE + 0x88, 0x00000080,        14,       0xFFFFFFF0,   0x00000008 },
-  { GP6_13,  GPIO_BASE + 0x88, 0x00002000,        13,       0xFFFFF0FF,   0x00000800 },
-  { GP2_1 ,  GPIO_BASE + 0x38, 0x00000002,         6,       0xF0FFFFFF,   0x08000000 },
-  { GP5_7 ,  GPIO_BASE + 0x60, 0x00800000,        12,       0xFFFFFFF0,   0x00000008 },
-};
+  // clear pin data and set direction
+  GPIO_CLR(pin)  =  GPIO_MASK(pin);
+  GPIO_DIR(pin) &= ~GPIO_MASK(pin);
 
-static void
-gpio_init (int diode)
-{
-  volatile void *Reg = SYSCFG_BASE + 0x120 + (leds[diode].muxreg * 4); // pinmux register
-
-  *(unsigned int*)Reg &=  leds[diode].muxreg_mask;
-  *(unsigned int*)Reg |=  leds[diode].muxreg_mode;
-
-  *((unsigned int*volatile)(leds[diode].gpio + 0xC))  =  leds[diode].gpio_mask;
-  *((unsigned int*volatile)(leds[diode].gpio      )) &= ~leds[diode].gpio_mask;
-}
-
-static void
-diode_set (int diode, int state)
-{
-  *((unsigned int*)(leds[diode].gpio + 0x08 + (!state) * 0x04)) = leds[diode].gpio_mask;
+  SYSCFG_LOCK;
 }
 
 void
-led_test (void)
+gpio_set (unsigned int pin, unsigned int value)
 {
-  gpio_init(0);
-  gpio_init(1);
-  gpio_init(2);
-  gpio_init(3);
-
-  diode_set(0, 1); // left green
-  diode_set(1, 0);
-  diode_set(2, 1); // right green (?)
-  diode_set(3, 0);
+  *((unsigned int*)(GPIO_BANK(pin) + 8 + (!value) * 4)) = GPIO_MASK(pin);
 }

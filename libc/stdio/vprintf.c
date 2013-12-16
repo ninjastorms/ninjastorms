@@ -65,9 +65,10 @@ vprintf (const char *format, __attribute__((unused)) va_list ap)
                     x /= 10;
                     ++i;
                   }
+                if (i != 0)
+                  --i;
                 for ( ; i >= 0; --i)
                   {
-                    if (tmp[i] != 0 || i == 0)
                       if (__builtin_expect(putchar(tmp[i] + '0') == EOF, 0))
                         return chars_written;
                     ++chars_written;
@@ -85,10 +86,10 @@ vprintf (const char *format, __attribute__((unused)) va_list ap)
                     x /= 0x10;
                     ++i;
                   }
+                if (i != 0)
+                  --i;
                 for ( ; i >= 0; --i)
                   {
-                    if (tmp[i] != 0 || i == 0)
-                      {
                         if (tmp[i] > 9)
                           {
                             if (__builtin_expect(putchar(tmp[i] + 'a' - 10) == EOF, 0))
@@ -99,7 +100,6 @@ vprintf (const char *format, __attribute__((unused)) va_list ap)
                             if (__builtin_expect(putchar(tmp[i] + '0') == EOF, 0))
                               return chars_written;
                           }
-                      }
                     ++chars_written;
                   }
               }
@@ -115,10 +115,10 @@ vprintf (const char *format, __attribute__((unused)) va_list ap)
                     x /= 0x10;
                     ++i;
                   }
+                if (i != 0)
+                  --i;
                 for ( ; i >= 0; --i)
                   {
-                    if (tmp[i] != 0 || i == 0)
-                      {
                         if (tmp[i] > 9)
                           {
                             if (__builtin_expect(putchar(tmp[i] + 'A' - 10) == EOF, 0))
@@ -129,7 +129,6 @@ vprintf (const char *format, __attribute__((unused)) va_list ap)
                             if (__builtin_expect(putchar(tmp[i] + '0') == EOF, 0))
                               return chars_written;
                           }
-                      }
                     ++chars_written;
                   }
               }
