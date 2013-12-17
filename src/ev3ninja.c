@@ -8,19 +8,17 @@
 #include <libp/button.h>
 
 void rotate_lights(void);
+void signal_ready(void);
 
 int 
 ev3ninja_main (__unused int argc, __unused char *argv[])
 {
   startup();
 
-  puts("hello world");
+  puts("This is EV3 NinjaStorms");
+  puts("  shuriken ready");
 
-  printf("argc = %i\n", argc);
-
-  int i;
-  for (i = 0; i <= argc; ++i)
-    printf("argv[%i] = \"%s\"\n", i, argv[i]);
+  signal_ready();
 
   while (1)
     {
@@ -55,4 +53,41 @@ rotate_lights (void)
           return;
         }
     }
+}
+
+void
+signal_ready (void)
+{
+  led_set(LED_LEFT, LED_GREEN);
+  led_set(LED_RIGHT, LED_GREEN);
+  
+  volatile unsigned int timer = 0;
+  while (timer < 1024 * 512) ++timer;
+ 
+  led_set(LED_LEFT, LED_BLACK);
+  led_set(LED_RIGHT, LED_BLACK);
+  
+  timer = 0;
+  while (timer < 1024 * 512) ++timer;
+
+  led_set(LED_LEFT, LED_GREEN);
+  led_set(LED_RIGHT, LED_GREEN);
+  
+  timer = 0;
+  while (timer < 1024 * 512) ++timer;
+ 
+  led_set(LED_LEFT, LED_BLACK);
+  led_set(LED_RIGHT, LED_BLACK);
+  
+  timer = 0;
+  while (timer < 1024 * 512) ++timer;
+
+  led_set(LED_LEFT, LED_GREEN);
+  led_set(LED_RIGHT, LED_GREEN);
+  
+  timer = 0;
+  while (timer < 1024 * 512) ++timer;
+ 
+  led_set(LED_LEFT, LED_BLACK);
+  led_set(LED_RIGHT, LED_BLACK);
 }

@@ -45,7 +45,7 @@ all: $(ELF) $(SREC) $(BIN)
 
 $(ELF): $(OBJ) $(LIBC) $(LIBP)
 	@echo "  LD  $@"
-	$(Q)$(LD) $(LDFLAGS) -o $(ELF) -e $(ELF)_main $(OBJ) 
+	$(Q)$(LD) $(LDFLAGS) -o $(ELF) -e $(ELF)_main $(OBJ) $(LIBC) $(LIBP) 
 
 $(BIN): $(ELF)
 	@echo "  OBJCOPY  $(BIN)"
