@@ -1,5 +1,8 @@
 
-This is ev3ninja, or NinjaStorms, an attempt to create a simple RT Operating System for the Mindstorms EV3 Platform.
+This is ev3ninja "NinjaStorms"
+==============================
+
+NinjaStorms is an attempt to create a simple RT Operating System for the Mindstorms EV3 Platform.
 
 Getting Started:
 
@@ -8,16 +11,12 @@ Getting Started:
    - update SDMNT to the mount point of your choice (e.g. /mnt/sd1)
 
   Make sure the arm-none-linux-gnueabi- prefixed toolchain is installed and in your path - we use CodeSourcery G++ Lite 2009q1-203. You can get it here: https://sourcery.mentor.com/GNUToolchain/release858
-   - You may also want to edit the LDFLAGS in the Makefile to reflect where your installation lives on your system.
-
+  
   Compile the System by calling
    $> make
 
   And deploy on the Fat32 formatted sdcard by calling
    $> sudo make deploy
 
-  Now, just boot the sdcard in the mindstorms, and watch the output of th serial console :)
+  Now, just boot the sdcard in the mindstorms, and watch the output of the serial console :)
 
-TODO:
- 
-  Simplify include structure from u-boot. 99% of the stuff is unused anyway!
