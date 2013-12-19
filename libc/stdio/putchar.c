@@ -1,8 +1,8 @@
 
 #include <stdio.h>
 
-#define UART_THR (char*volatile)(0x01D0C000)
-#define UART_LSR (char*volatile)(0x01D0C014)
+#define UART_THR (volatile char*)(0x01D0C000)
+#define UART_LSR (volatile char*)(0x01D0C014)
 
 int
 putchar (int c)

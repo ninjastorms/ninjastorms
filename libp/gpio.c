@@ -4,8 +4,8 @@
 #include "gpio.h"
 #include "gpio_pins.h"
 
-#define SYSCFG_KICK(N)    (*((unsigned int*volatile)(SYSCFG_BASE + 0x38 + (N) * 0x4)))
-#define SYSCFG_PINMUX(N)  (*((unsigned int*volatile)(SYSCFG_BASE + 0x120 + (N) * 0x4)))
+#define SYSCFG_KICK(N)    (*((volatile unsigned int*)(SYSCFG_BASE + 0x38 + (N) * 0x4)))
+#define SYSCFG_PINMUX(N)  (*((volatile unsigned int*)(SYSCFG_BASE + 0x120 + (N) * 0x4)))
 
 #define KICK0_UNLOCK      0x83E70B13
 #define KICK1_UNLOCK      0x95A4F1E0
@@ -17,9 +17,9 @@
 
 #define GPIO_BANK(N)      (GPIO_BASE + 0x10 + (N >> 5) * 0x28)
 #define GPIO_MASK(N)      (1 << (N & 0x1F))
-#define GPIO_DIR(N)       *((unsigned int*)(GPIO_BANK(N) + 0x00))
-#define GPIO_SET(N)       *((unsigned int*)(GPIO_BANK(N) + 0x08))
-#define GPIO_CLR(N)       *((unsigned int*)(GPIO_BANK(N) + 0x0C))
+#define GPIO_DIR(N)       *((volatile unsigned int*)(GPIO_BANK(N) + 0x00))
+#define GPIO_SET(N)       *((volatile unsigned int*)(GPIO_BANK(N) + 0x08))
+#define GPIO_CLR(N)       *((volatile unsigned int*)(GPIO_BANK(N) + 0x0C))
 
 void
 gpio_init_outpin (unsigned int pin)
@@ -65,12 +65,11 @@ gpio_init_inpin (unsigned int pin)
 void
 gpio_set (unsigned int pin, unsigned int value)
 {
-  *((unsigned int*)(GPIO_BANK(pin) + 8 + (!value) * 4)) = GPIO_MASK(pin);
+  *((volatile unsigned int*)(GPIO_BANK(pin) + 8 + (!value) * 4)) = GPIO_MASK(pin);
 }
 
 unsigned int
 gpio_get (unsigned int pin)
 {
-  //printf("%x: %x\n", pin, *((unsigned int*volatile)(GPIO_BANK(pin) + 0x10)));
-  return ((*((unsigned int*volatile)(GPIO_BANK(pin) + 0x10)) & GPIO_MASK(pin)) != 0);
+  return ((*((volatile unsigned int*)(GPIO_BANK(pin) + 0x10)) & GPIO_MASK(pin)) != 0);
 }

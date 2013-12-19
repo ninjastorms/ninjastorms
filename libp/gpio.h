@@ -1,9 +1,9 @@
 
 #pragma once
 
-#define SYSCFG_BASE       ((void*volatile)0x01C14000)
+#define SYSCFG_BASE       ((volatile void*)0x01C14000)
 
-#define GPIO_BASE         ((void*volatile)0x01E26000)
+#define GPIO_BASE         ((volatile void*)0x01E26000)
 
 #define GPIO_PIN(B,O)     ((B) * 0x10 + (O))
 

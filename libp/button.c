@@ -26,7 +26,7 @@ button_init (void)
   gpio_init_inpin(buttons[5]);
 
   // disable pull-up for pin group 25 - required for left button
-  *((unsigned int*)(SYSCFG_BASE + 0x218010)) &= 0xFDFFFFFF;
+  *((volatile unsigned int*)(SYSCFG_BASE + 0x218010)) &= 0xFDFFFFFF;
 }
 
 button_state

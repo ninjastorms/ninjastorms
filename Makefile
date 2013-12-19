@@ -80,7 +80,7 @@ deploy: $(BIN) boot.scr
 	$(Q)umount $(SDDEV)
 
 clean:
-	$(Q)rm -f $(OBJ) $(OBJ_LIBC) $(LIBC) $(ELF) $(ASM) $(BIN) $(SREC) boot.scr boot.cmd
+	$(Q)rm -f $(OBJ) $(OBJ_LIBC) $(LIBC) $(OBJ_LIBP) $(LIBP) $(ELF) $(ASM) $(BIN) $(SREC) boot.scr boot.cmd
 
 disas: $(ELF)
 	@echo "  DISAS  $(ELF)"
