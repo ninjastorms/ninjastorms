@@ -20,8 +20,16 @@ Getting Started:
 
   Now, just boot the sdcard in the mindstorms, and watch the output of the serial console :)
 
+Getting involved:
+
+  ev3ninja is open source and pull requests and new issues are always welcome!
+  Find us on github: https://github.com/andy-graprof/ninjastorms/
+
 Developer Documentation:
 
-  
+  An excessive amount of documentation can be found in our github wiki
+   https://github.com/andy-graprof/ninjastorms/wiki
+
+
 
 
