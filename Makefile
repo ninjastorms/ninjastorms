@@ -1,5 +1,5 @@
 
-PREFIX = arm-none-linux-gnueabi-
+PREFIX = arm-none-eabi-
 CC = $(PREFIX)gcc
 AR = $(PREFIX)ar
 LD = $(PREFIX)ld
@@ -16,7 +16,7 @@ LIBGCCDIR = $(shell dirname $(shell $(CC) -print-libgcc-file-name))
 LDFLAGS = -g -Ttext $(LOADADDR) -L$(LIBGCCDIR) -lgcc 
 
 INCGCCDIR = $(LIBGCCDIR)/include
-CFLAGS = -g -O0 -pipe -fno-common -msoft-float -DTEXT_BASE=0xC1080000 -I./include -I. -fno-builtin -ffreestanding -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -fno-stack-protector -Wall -Wextra -Wstrict-prototypes -Werror
+CFLAGS = -g -Os -pipe -fno-common -msoft-float -DTEXT_BASE=0xC1080000 -I./include -I. -fno-builtin -ffreestanding -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -fno-stack-protector -Wall -Wextra -Wstrict-prototypes -Werror
 
 # add relevant object files here:
 OBJ = src/ev3ninja.o src/startup.o libc/libc.a libp/libp.a
@@ -45,7 +45,7 @@ all: $(ELF) $(SREC) $(BIN)
 
 $(ELF): $(OBJ) $(LIBC) $(LIBP)
 	@echo "  LD  $@"
-	$(Q)$(LD) $(LDFLAGS) -o $(ELF) -e $(ELF)_main $(OBJ) $(LIBC) $(LIBP) 
+	$(Q)$(LD) -o $(ELF) -e $(ELF)_main $(OBJ) $(LIBC) $(LIBP) $(LDFLAGS)
 
 $(BIN): $(ELF)
 	@echo "  OBJCOPY  $(BIN)"
