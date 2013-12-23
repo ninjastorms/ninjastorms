@@ -10,13 +10,13 @@ SDDEV = /dev/sdd1
 SDMNT = /mnt/sd1
 
 LOADADDR = 0xC1000000
-ENTRYADDR = 0xC1000004
+ENTRY = ev3ninja_main
 
 LIBGCCDIR = $(shell dirname $(shell $(CC) -print-libgcc-file-name))
 LDFLAGS = -g -Ttext $(LOADADDR) -L$(LIBGCCDIR) -lgcc 
 
 INCGCCDIR = $(LIBGCCDIR)/include
-CFLAGS = -g -Os -pipe -fno-common -msoft-float -DTEXT_BASE=0xC1080000 -I./include -I. -fno-builtin -ffreestanding -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -fno-stack-protector -Wall -Wextra -Wstrict-prototypes -Werror
+CFLAGS = -g -O2 -pipe -fno-common -msoft-float -DTEXT_BASE=0xC1080000 -I./include -I. -fno-builtin -ffreestanding -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -fno-stack-protector -Wall -Wextra -Wstrict-prototypes -Werror
 
 # add relevant object files here:
 OBJ = src/ev3ninja.o src/startup.o libc/libc.a libp/libp.a
@@ -67,9 +67,9 @@ boot.scr: boot.cmd
 	@echo "  MKIMAGE  boot.scr"
 	$(Q)mkimage -C none -A arm -T script -d boot.cmd boot.scr &> /dev/null
 
-boot.cmd:
+boot.cmd: disas
 	$(Q)echo "fatload mmc 0 $(LOADADDR) $(BIN)" > boot.cmd
-	$(Q)echo "go $(ENTRYADDR)" >> boot.cmd
+	$(Q)echo "go 0x$(shell grep '<$(ENTRY)>' ev3ninja.asm | head -n1 | cut -d' ' -f1)" >> boot.cmd
 
 deploy: $(BIN) boot.scr
 	@echo "  INSTALL  $(BIN) -> $(SDDEV)"

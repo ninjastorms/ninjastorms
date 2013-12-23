@@ -71,5 +71,6 @@ gpio_set (unsigned int pin, unsigned int value)
 unsigned int
 gpio_get (unsigned int pin)
 {
-  return ((*((volatile unsigned int*)(GPIO_BANK(pin) + 0x10)) & GPIO_MASK(pin)) != 0);
+  volatile unsigned int *Reg = (GPIO_BANK(pin) + 0x10);
+  return (((*Reg) & GPIO_MASK(pin)) != 0);
 }

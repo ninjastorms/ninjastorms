@@ -9,6 +9,7 @@
 
 void rotate_lights(void);
 void signal_ready(void);
+void wait(void);
 
 int 
 ev3ninja_main (__unused int argc, __unused char *argv[])
@@ -24,13 +25,19 @@ ev3ninja_main (__unused int argc, __unused char *argv[])
     {
       if (button_get_state(BUTTON_CENTER) == BUTTON_DOWN)
         rotate_lights();
-      volatile unsigned int timer = 0;
-      while (timer < 1024 * 512) ++timer;
+      wait();
     }
 
   puts("All done. ev3ninja out!");
 
   return 0;
+}
+
+void 
+wait (void)
+{
+  volatile unsigned int timer = 0;
+  while (timer < 1024 * 512) ++timer;
 }
 
 void 
@@ -42,8 +49,8 @@ rotate_lights (void)
       led_set(LED_LEFT, state + 2);
       led_set(LED_RIGHT, state);
 
-      volatile unsigned int timer = 0;
-      while (timer < 1024 * 512) ++timer;
+      wait();
+
       state = (state + 1) % 4;
 
       if (button_get_state(BUTTON_CENTER) == BUTTON_DOWN)
@@ -60,33 +67,28 @@ signal_ready (void)
 {
   led_set(LED_LEFT, LED_GREEN);
   led_set(LED_RIGHT, LED_GREEN);
-  
-  volatile unsigned int timer = 0;
-  while (timer < 1024 * 512) ++timer;
- 
+
+  wait();
+
   led_set(LED_LEFT, LED_BLACK);
   led_set(LED_RIGHT, LED_BLACK);
-  
-  timer = 0;
-  while (timer < 1024 * 512) ++timer;
+
+  wait();
 
   led_set(LED_LEFT, LED_GREEN);
   led_set(LED_RIGHT, LED_GREEN);
   
-  timer = 0;
-  while (timer < 1024 * 512) ++timer;
- 
+  wait();
+
   led_set(LED_LEFT, LED_BLACK);
   led_set(LED_RIGHT, LED_BLACK);
-  
-  timer = 0;
-  while (timer < 1024 * 512) ++timer;
+
+  wait();
 
   led_set(LED_LEFT, LED_GREEN);
   led_set(LED_RIGHT, LED_GREEN);
-  
-  timer = 0;
-  while (timer < 1024 * 512) ++timer;
+
+  wait();
  
   led_set(LED_LEFT, LED_BLACK);
   led_set(LED_RIGHT, LED_BLACK);
