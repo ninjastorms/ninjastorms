@@ -36,6 +36,12 @@ fi
 if [ ! -f gcc-core-4.3.3.tar.gz ]; then
   wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.3/gcc-core-4.3.3.tar.gz
 fi
+if [ ! -f gmp-4.1.tar.gz ]; then
+  wget http://mirror.anl.gov/pub/gnu/gmp/gmp-4.0.tar.gz
+fi
+if [ ! -f mpfr-2.3.0.tar.gz ]; then
+  wget http://www.mpfr.org/mpfr-2.3.0/mpfr-2.3.0.tar.gz
+fi
 if [ ! -f gdb-6.8.tar.gz ]; then
   wget http://mirrors.usc.edu/pub/gnu/gdb/gdb-6.8.tar.gz
 fi
@@ -50,6 +56,8 @@ fi
 cd $BUILDROOT/src
 tar xzf ../orig/gcc-4.3.3.tar.gz
 tar xzf ../orig/gcc-core-4.3.3.tar.gz
+tar xzf ../orig/gmp-4.1.tar.gz
+tar xzf ../orig/mpfr-2.3.0.tar.gz
 tar xzf ../orig/gdb-6.8.tar.gz
 tar xzf ../orig/binutils-2.19.tar.gz
 tar xzf ../orig/newlib-1.17.0.tar.gz
@@ -58,17 +66,17 @@ tar xzf ../orig/newlib-1.17.0.tar.gz
 mkdir $BUILDROOT/build/binutils-2.19
 cd $BUILDROOT/build/binutils-2.19
 # -Wno-unused-but-set-variable us required by morerecent versions of gcc.
-../../src/binutils-2.19/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib CFLAGS="-g -O2 -Wno-unused-but-set-variable"
+../../src/binutils-2.19/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib CFLAGS="-g -O2 -Wno-unused-but-set-variable -Wno-unused-but-set-parameter -Wno-format-security"
 make $MFLAGS all 
 make install
 
-export PATH="$PATH:$MYTOOLS/bin"
+export PATH="$PATH:$PREFIX/bin"
 
 # build gcc compiler
 mkdir $BUILDROOT/build/gcc-4.3.3
 cd $BUILDROOT/build/gcc-4.3.3
 # only enable C here
-../../src/gcc-4.3.3/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib --enable-languages="c" --with-newlib --with-headers=../../src/newlib-1.17.0/newlib/libc/include
+../../src/gcc-4.3.3/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib --enable-languages="c" --with-newlib --with-headers=../../src/newlib-1.17.0/newlib/libc/include --with-gmp=../../src/gmp-4.1 --with-mpfr=../../src/mpfr-2.3.0
 make $MFLAGS all-gcc 
 make install-gcc
 
