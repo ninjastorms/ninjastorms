@@ -62,6 +62,9 @@ tar xzf ../orig/gdb-6.8.tar.gz
 tar xzf ../orig/binutils-2.19.tar.gz
 tar xzf ../orig/newlib-1.17.0.tar.gz
 
+mv gmp-4.1 gcc-4.3.3/gmp
+mv mpfr-2.3.0 gcc-4.3.3/mpfr
+
 # build binutils
 mkdir $BUILDROOT/build/binutils-2.19
 cd $BUILDROOT/build/binutils-2.19
@@ -76,7 +79,7 @@ export PATH="$PATH:$PREFIX/bin"
 mkdir $BUILDROOT/build/gcc-4.3.3
 cd $BUILDROOT/build/gcc-4.3.3
 # only enable C here
-../../src/gcc-4.3.3/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib --enable-languages="c" --with-newlib --with-headers=../../src/newlib-1.17.0/newlib/libc/include --with-gmp=../../src/gmp-4.1 --with-mpfr=../../src/mpfr-2.3.0
+../../src/gcc-4.3.3/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib --enable-languages="c" --with-newlib --with-headers=../../src/newlib-1.17.0/newlib/libc/include
 make $MFLAGS all-gcc 
 make install-gcc
 
