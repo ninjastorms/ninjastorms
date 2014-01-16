@@ -2,8 +2,15 @@
 
 # this script should be able to generate an arm-none-eabi toolchain on your 
 # system if not, try to fix it. :)
+# tested on Gentoo Linux, and Ubuntu 12.04 LTS (keep it cross-distro!)
 
 # you may need to run this as root, depending on your configuration.
+# basically, you just need full write permissions to the path specified in 
+# PREFIX.
+
+# third party dependencies (probably incomplete):
+#   - GNU make, gcc, ... (build-essential)
+#   - texinfo
 
 # this script was generated using this guide:
 #   http://www.kunen.org/uC/gnu_tool.html
