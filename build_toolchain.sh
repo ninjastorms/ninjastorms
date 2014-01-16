@@ -37,7 +37,7 @@ if [ ! -f gcc-core-4.3.3.tar.gz ]; then
   wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.3/gcc-core-4.3.3.tar.gz
 fi
 if [ ! -f gmp-4.1.tar.gz ]; then
-  wget http://mirror.anl.gov/pub/gnu/gmp/gmp-4.0.tar.gz
+  wget http://mirror.anl.gov/pub/gnu/gmp/gmp-4.1.tar.gz
 fi
 if [ ! -f mpfr-2.3.0.tar.gz ]; then
   wget http://www.mpfr.org/mpfr-2.3.0/mpfr-2.3.0.tar.gz
