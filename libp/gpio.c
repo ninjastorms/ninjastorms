@@ -4,8 +4,8 @@
 #include "gpio.h"
 #include "pininfo.h"
 
-#define SYSCFG_KICK(N)    (*((volatile unsigned int*)(SYSCFG_BASE + 0x38 + (N) * 0x4)))
-#define SYSCFG_PINMUX(N)  (*((volatile unsigned int*)(SYSCFG_BASE + 0x120 + (N) * 0x4)))
+#define SYSCFG_KICK(N)    (*((volatile unsigned int*)(SYSCFG0_BASE + 0x38 + (N) * 0x4)))
+#define SYSCFG_PINMUX(N)  (*((volatile unsigned int*)(SYSCFG0_BASE + 0x120 + (N) * 0x4)))
 
 #define KICK0_UNLOCK      0x83E70B13
 #define KICK1_UNLOCK      0x95A4F1E0

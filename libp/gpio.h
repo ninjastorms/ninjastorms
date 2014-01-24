@@ -1,17 +1,18 @@
 
 #pragma once
 
-#define SYSCFG_BASE       ((volatile void*)0x01C14000)
+#define SYSCFG0_BASE      ((volatile void*)0x01C14000)
+#define SYSCFG1_BASE      ((volatile void*)0x01E2C000) 
 
 #define GPIO_BASE         ((volatile void*)0x01E26000)
 
 #define GPIO_PIN(B,O)     ((B) * 0x10 + (O))
 
-#define SPI0_OFFSET       (GPIO_PIN(16, 16))
-#define SPI0_MOSI         (SPI0_OFFSET + 0)
-#define SPI0_MISO         (SPIO_OFFSET + 1)
-#define SPI0_SCL          (SPIO_OFFSET + 2)
-#define SPI0_CS           (SPIO_OFFSET + 3)
+#define GPIO_BANK(N)      (GPIO_BASE + 0x10 + (N >> 5) * 0x28)
+#define GPIO_MASK(N)      (1 << (N & 0x1F))
+#define GPIO_DIR(N)       *((volatile unsigned int*)(GPIO_BANK(N) + 0x00))
+#define GPIO_SET(N)       *((volatile unsigned int*)(GPIO_BANK(N) + 0x08))
+#define GPIO_CLR(N)       *((volatile unsigned int*)(GPIO_BANK(N) + 0x0C))
 
 void gpio_init_pin(unsigned int pin);
 

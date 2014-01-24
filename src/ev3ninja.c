@@ -8,6 +8,7 @@
 #include <libp/button.h>
 
 #include <libp/gpio.h>
+#include <libp/spi.h>
 
 void rotate_lights(void);
 void signal_ready(void);
@@ -22,6 +23,32 @@ ev3ninja_main (__unused int argc, __unused char *argv[])
   puts("  shuriken ready");
 
   signal_ready();
+
+  // init input port2 gpio pins
+  gpio_init_pin(GPIO_PIN(8, 12)); // Pin 1  - I_ONB           - 9V enable (high)
+  gpio_init_pin(GPIO_PIN(8, 15)); // Pin 2  - LEGDETB         - Digital input pulled up
+  gpio_init_pin(GPIO_PIN(0, 14)); // Pin 5  - DIGIB0          - Digital input/output
+  gpio_init_pin(GPIO_PIN(0, 13)); // Pin 6  - DIGIB1          - Digital input/output
+  gpio_init_pin(GPIO_PIN(8, 14)); // Buffer disable
+
+  // init adc spi pins
+  gpio_init_pin(SPI0_MOSI); // ADCMOSI
+  gpio_init_pin(SPI0_MISO); // ADCMISO
+  gpio_init_pin(SPI0_SCL);  // ADCCLK
+  gpio_init_pin(SPI0_CS);   // ADCCS
+
+  // init adc power pins
+  gpio_init_pin(GPIO_PIN(6, 14)); // 5VONIGEN
+  gpio_init_pin(GPIO_PIN(0, 6));  // ADCBATEN
+
+  // disable pull-dpwn
+  *((volatile unsigned int*)(SYSCFG1_BASE + 0x0C)) &= ~0xFFFFFFFF;
+
+  // enable battery power on adc
+  GPIO_SET(GPIO_PIN(0, 6))  =  GPIO_MASK(GPIO_PIN(0, 6));
+  GPIO_DIR(GPIO_PIN(0, 6)) &= ~GPIO_MASK(GPIO_PIN(0, 6));
+
+  spi_save();
 
   while (1)
     {
