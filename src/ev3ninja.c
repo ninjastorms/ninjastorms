@@ -12,6 +12,7 @@
 
 void rotate_lights(void);
 void signal_ready(void);
+void signal_finished(void);
 void wait(void);
 
 int 
@@ -48,16 +49,21 @@ ev3ninja_main (__unused int argc, __unused char *argv[])
   GPIO_SET(GPIO_PIN(0, 6))  =  GPIO_MASK(GPIO_PIN(0, 6));
   GPIO_DIR(GPIO_PIN(0, 6)) &= ~GPIO_MASK(GPIO_PIN(0, 6));
 
-  spi_save();
+  spi_init();
+  spi_update(0x400F);
+  spi_update(0x400F);
+  spi_update(0x400F);
+  spi_update(0x400F);
+  spi_update(0x400F);
+  spi_update(0x400F);
 
-  while (1)
-    {
-      if (button_get_state(BUTTON_CENTER) == BUTTON_DOWN)
-        rotate_lights();
-      wait();
-    }
+  while (button_get_state(BUTTON_CENTER) != BUTTON_DOWN);
 
   puts("All done. ev3ninja out!");
+  
+  signal_finished();
+
+  spi_restore();
 
   return 0;
 }
@@ -116,6 +122,38 @@ signal_ready (void)
 
   led_set(LED_LEFT, LED_GREEN);
   led_set(LED_RIGHT, LED_GREEN);
+
+  wait();
+ 
+  led_set(LED_LEFT, LED_BLACK);
+  led_set(LED_RIGHT, LED_BLACK);
+}
+
+void
+signal_finished (void)
+{
+  led_set(LED_LEFT, LED_RED);
+  led_set(LED_RIGHT, LED_RED);
+
+  wait();
+
+  led_set(LED_LEFT, LED_BLACK);
+  led_set(LED_RIGHT, LED_BLACK);
+
+  wait();
+
+  led_set(LED_LEFT, LED_RED);
+  led_set(LED_RIGHT, LED_RED);
+  
+  wait();
+
+  led_set(LED_LEFT, LED_BLACK);
+  led_set(LED_RIGHT, LED_BLACK);
+
+  wait();
+
+  led_set(LED_LEFT, LED_RED);
+  led_set(LED_RIGHT, LED_RED);
 
   wait();
  

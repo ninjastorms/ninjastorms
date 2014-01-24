@@ -2,6 +2,15 @@
 #include "spi.h"
 #include "pininfo.h"
 
+
+#define   SPI0_CLOCK 150000000UL
+#define   ADC_TIME           8UL // µS
+
+#define   ADC_CLOCK  ((1000000UL * 16UL) / ADC_TIME)
+#define   CNVSPD     ((SPI0_CLOCK / ADC_CLOCK) - 1)
+
+
+
 /* SPI Register numbers */
 #define   SPIGCR0     (*((volatile unsigned int*)(SPI_BASE + 0x00)))
 #define   SPIGCR1     (*((volatile unsigned int*)(SPI_BASE + 0x04)))
@@ -28,14 +37,16 @@
 #define   INTVEC0     (*((volatile unsigned int*)(SPI_BASE + 0x60)))
 #define   INTVEC1     (*((volatile unsigned int*)(SPI_BASE + 0x64)))
 
+#define SPITxFULL     (SPIBUF & 0x20000000)
+#define SPIRxEMPTY    (SPIBUF & 0x80000000)
 
-unsigned int save_GCR0;
-unsigned int save_GCR1;
-unsigned int save_PC0;
-unsigned int save_DAT1;
-unsigned int save_FMT0;
-unsigned int save_DELAY;
-unsigned int save_DEF;
+unsigned int save_GCR0  = 0;
+unsigned int save_GCR1  = 0;
+unsigned int save_PC0   = 0;
+unsigned int save_DAT1  = 0;
+unsigned int save_FMT0  = 0;
+unsigned int save_DELAY = 0;
+unsigned int save_DEF   = 0;
 
 void
 spi_save (void)
@@ -52,5 +63,37 @@ spi_save (void)
 void
 spi_restore (void)
 {
+  SPIGCR0  = save_GCR0;
+  SPIGCR1  = save_GCR1;
+  SPIPC0   = save_PC0;
+  SPIDAT1  = save_DAT1;
+  SPIFMT0  = save_FMT0;
+  SPIDELAY = save_DELAY;
+  SPIDEF   = save_DEF;
+}
+
+void
+spi_init (void)
+{
+  spi_save();
   
+  SPIGCR1  = 0x00000003; // Master enable
+  SPIPC0   = 0x00000E08;
+  SPIDAT1  = 0x00000000; // Format 0 is selected
+  SPIFMT0  = 0x00010010 | ((CNVSPD << 8) & 0xFF00);
+  SPIDELAY = 0x0A0A0A0A; // Delays = 10
+  SPIINT0  = 0x00000000; // Interrupts disabled
+  SPIDEF   = 0x00000008;
+  SPIGCR1  = 0x01000003; // Enable bit
+}
+
+unsigned short
+spi_update (unsigned short data)
+{
+  while (SPITxFULL);
+  SPIDAT0 = (unsigned long)data;
+  while (SPIRxEMPTY);
+
+  return ((unsigned short)(SPIBUF & 0x0000FFFF));
+
 }

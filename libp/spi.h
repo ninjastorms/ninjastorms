@@ -12,3 +12,7 @@
 void spi_save(void);
 
 void spi_restore(void);
+
+void spi_init(void);
+
+unsigned short spi_update(unsigned short data);
