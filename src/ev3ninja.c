@@ -7,6 +7,8 @@
 #include <libp/led.h>
 #include <libp/button.h>
 
+#include <libp/gpio.h>
+
 void rotate_lights(void);
 void signal_ready(void);
 void wait(void);

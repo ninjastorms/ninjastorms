@@ -9,8 +9,9 @@ struct pin_info
 typedef struct pin_info pin_info;
 
 
-pin_info pins[] = 
+pin_info pininfo[] = 
 {
+  /* GPIO pins */
   {  0, 0x00000000, 0x00000000 }, // unknown
   {  1, 0xF0FFFFFF, 0x08000000 },
   {  1, 0xFF0FFFFF, 0x00800000 },
@@ -162,5 +163,12 @@ pin_info pins[] =
   { 18, 0xFF0FFFFF, 0x00800000 },
   { 18, 0xFFF0FFFF, 0x00080000 },
   { 18, 0xFFFF0FFF, 0x00008000 },
-  { 18, 0xFFFFF0FF, 0x00000800 }
+  { 18, 0xFFFFF0FF, 0x00000800 },
+
+  /* SPI0 pins */
+  {  3, 0xFFFF0FFF, 0x00001000 },
+  {  3, 0xFFFFF0FF, 0x00000100 },
+  {  3, 0xFFFFFFF0, 0x00000001 },
+  {  3, 0xF0FFFFFF, 0x01000000 },
 };
+

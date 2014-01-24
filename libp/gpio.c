@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include "gpio.h"
-#include "gpio_pins.h"
+#include "pininfo.h"
 
 #define SYSCFG_KICK(N)    (*((volatile unsigned int*)(SYSCFG_BASE + 0x38 + (N) * 0x4)))
 #define SYSCFG_PINMUX(N)  (*((volatile unsigned int*)(SYSCFG_BASE + 0x120 + (N) * 0x4)))
@@ -22,18 +22,28 @@
 #define GPIO_CLR(N)       *((volatile unsigned int*)(GPIO_BANK(N) + 0x0C))
 
 void
-gpio_init_outpin (unsigned int pin)
+gpio_init_pin (unsigned int pin)
 {
   SYSCFG_UNLOCK;
 
   // setup pin multiplexing
-  pin_info pi = pins[pin];
+  pin_info pi = pininfo[pin];
   
   if (__builtin_expect(pi.muxreg_mask == 0, 0))
     printf("gpio: can not initialize pin %x - need init information in pin_info\n", pin);
 
   SYSCFG_PINMUX(pi.muxreg) &= pi.muxreg_mask;
   SYSCFG_PINMUX(pi.muxreg) |= pi.muxreg_mode;
+
+  SYSCFG_LOCK;
+}
+
+void
+gpio_init_outpin (unsigned int pin)
+{
+  SYSCFG_UNLOCK;
+
+  gpio_init_pin(pin);
 
   // clear pin data and set direction
   GPIO_CLR(pin)  =  GPIO_MASK(pin);
@@ -47,14 +57,7 @@ gpio_init_inpin (unsigned int pin)
 {
   SYSCFG_UNLOCK;
 
-  // setup pin multiplexing
-  pin_info pi = pins[pin];
-  
-  if (__builtin_expect(pi.muxreg_mask == 0, 0))
-    printf("gpio: can not initialize pin %x - need init information in pin_info\n", pin);
-
-  SYSCFG_PINMUX(pi.muxreg) &= pi.muxreg_mask;
-  SYSCFG_PINMUX(pi.muxreg) |= pi.muxreg_mode;
+  gpio_init_pin(pin);
 
   // set direction
   GPIO_DIR(pin) |=  GPIO_MASK(pin);
@@ -71,6 +74,7 @@ gpio_set (unsigned int pin, unsigned int value)
 unsigned int
 gpio_get (unsigned int pin)
 {
+  gpio_init_inpin(pin);
   volatile unsigned int *Reg = (GPIO_BANK(pin) + 0x10);
   return (((*Reg) & GPIO_MASK(pin)) != 0);
 }
