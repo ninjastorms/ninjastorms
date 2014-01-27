@@ -1,8 +1,7 @@
 
 #include <stdio.h>
 
-#include "startup.h"
-#include "util.h"
+#include "feedback.h"
 
 #include <libp/led.h>
 #include <libp/button.h>
@@ -10,20 +9,29 @@
 #include <libp/gpio.h>
 #include <libp/spi.h>
 
-void rotate_lights(void);
-void signal_ready(void);
-void signal_finished(void);
-void wait(void);
+
+/* TODO:: get __attribute__((constructor)), __attribute__((destructor)) working and remove manual init/fini code */
+extern void bss_init(void);
+extern void led_init(void);
+extern void button_init(void);
+
+static void
+ev3ninja_init (void)
+{
+  bss_init();
+  led_init();
+  button_init();
+}
 
 int 
-ev3ninja_main (__unused int argc, __unused char *argv[])
+ev3ninja_main (void)
 {
-  startup();
+  ev3ninja_init();
 
   puts("This is EV3 NinjaStorms");
   puts("  shuriken ready");
 
-  signal_ready();
+  feedback_flash_green();
 
   // init input port2 gpio pins
   gpio_init_pin(GPIO_PIN(8, 12)); // Pin 1  - I_ONB           - 9V enable (high)
@@ -50,6 +58,9 @@ ev3ninja_main (__unused int argc, __unused char *argv[])
   GPIO_DIR(GPIO_PIN(0, 6)) &= ~GPIO_MASK(GPIO_PIN(0, 6));
 
   spi_init();
+
+  puts("  device initialized (pt1)");
+
   spi_update(0x400F);
   spi_update(0x400F);
   spi_update(0x400F);
@@ -57,106 +68,83 @@ ev3ninja_main (__unused int argc, __unused char *argv[])
   spi_update(0x400F);
   spi_update(0x400F);
 
-  while (button_get_state(BUTTON_CENTER) != BUTTON_DOWN);
+  puts("  device initialized (pt2)");
+  
+  unsigned char Input[16] = { 6,8,10,12,5,7,9,11,1,0,13,14,2,15,3,4 };
+
+  unsigned int hit = 0;
+  unsigned int total = 0;
+
+  unsigned int output_type = 0;
+
+  unsigned int i = 5;
+  while (1)
+    {
+      if (button_get_state(BUTTON_CENTER) == BUTTON_DOWN)
+        {
+          hit = 0;
+          total = 0;
+        }
+
+      if (button_get_state(BUTTON_LEFT) == BUTTON_DOWN)
+        {
+          i = (i + 15) % 16;
+          while (button_get_state(BUTTON_LEFT) == BUTTON_DOWN);
+        }
+
+      if (button_get_state(BUTTON_RIGHT) == BUTTON_DOWN)
+        {
+          i = (i + 1) % 16;
+          while (button_get_state(BUTTON_RIGHT) == BUTTON_DOWN);
+        }
+
+      if (button_get_state(BUTTON_TOP) == BUTTON_DOWN)
+        {
+          output_type = (output_type + 1) % 2;
+          while (button_get_state(BUTTON_TOP) == BUTTON_DOWN);
+        }
+
+      if (button_get_state(BUTTON_BOTTOM) == BUTTON_DOWN)
+        {
+          output_type = (output_type + 1) % 2;
+          while (button_get_state(BUTTON_BOTTOM) == BUTTON_DOWN);
+        }
+
+      unsigned short Data = (spi_update((0x1840 | ((Input[i] & 0x000F) << 7)))) & 0x0FFF;
+
+      switch (output_type)
+      {
+      case 0:
+        printf("%i(%i) - %i                   \r", i, Input[i], Data);
+        break;
+      case 1:
+        if (Data > 2000)
+          ++hit;
+        ++total;
+        printf("%i(%i) - %i / %i              \r", i, Input[i], hit, total);
+        break;
+      }
+    }
+
+  printf("\n");
 
   puts("All done. ev3ninja out!");
   
-  signal_finished();
-
-  spi_restore();
+  feedback_flash_red();
 
   return 0;
 }
 
-void 
-wait (void)
-{
-  volatile unsigned int timer = 0;
-  while (timer < 1024 * 512) ++timer;
-}
-
-void 
-rotate_lights (void)
-{
-  unsigned int state = 0;
-  while (1)
-    {
-      led_set(LED_LEFT, state + 2);
-      led_set(LED_RIGHT, state);
-
-      wait();
-
-      state = (state + 1) % 4;
-
-      if (button_get_state(BUTTON_CENTER) == BUTTON_DOWN)
-        {
-          led_set(LED_LEFT, LED_BLACK);
-          led_set(LED_RIGHT, LED_BLACK);
-          return;
-        }
-    }
-}
+/* bss init */
+extern unsigned long __bss_start, _end;
 
 void
-signal_ready (void)
+__attribute__((constructor)) // <- does not work yet
+bss_init (void)
 {
-  led_set(LED_LEFT, LED_GREEN);
-  led_set(LED_RIGHT, LED_GREEN);
-
-  wait();
-
-  led_set(LED_LEFT, LED_BLACK);
-  led_set(LED_RIGHT, LED_BLACK);
-
-  wait();
-
-  led_set(LED_LEFT, LED_GREEN);
-  led_set(LED_RIGHT, LED_GREEN);
-  
-  wait();
-
-  led_set(LED_LEFT, LED_BLACK);
-  led_set(LED_RIGHT, LED_BLACK);
-
-  wait();
-
-  led_set(LED_LEFT, LED_GREEN);
-  led_set(LED_RIGHT, LED_GREEN);
-
-  wait();
- 
-  led_set(LED_LEFT, LED_BLACK);
-  led_set(LED_RIGHT, LED_BLACK);
+  /* Zero out BSS */
+  unsigned char * cp = (unsigned char *) &__bss_start;
+  while (cp < (unsigned char *)&_end)
+    *cp++ = 0;
 }
 
-void
-signal_finished (void)
-{
-  led_set(LED_LEFT, LED_RED);
-  led_set(LED_RIGHT, LED_RED);
-
-  wait();
-
-  led_set(LED_LEFT, LED_BLACK);
-  led_set(LED_RIGHT, LED_BLACK);
-
-  wait();
-
-  led_set(LED_LEFT, LED_RED);
-  led_set(LED_RIGHT, LED_RED);
-  
-  wait();
-
-  led_set(LED_LEFT, LED_BLACK);
-  led_set(LED_RIGHT, LED_BLACK);
-
-  wait();
-
-  led_set(LED_LEFT, LED_RED);
-  led_set(LED_RIGHT, LED_RED);
-
-  wait();
- 
-  led_set(LED_LEFT, LED_BLACK);
-  led_set(LED_RIGHT, LED_BLACK);
-}

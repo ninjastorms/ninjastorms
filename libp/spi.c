@@ -72,11 +72,13 @@ spi_restore (void)
   SPIDEF   = save_DEF;
 }
 
+
+#include <stdio.h>
+
 void
 spi_init (void)
 {
-  spi_save();
-  
+  SPIGCR0  = 0x00000001; // enable
   SPIGCR1  = 0x00000003; // Master enable
   SPIPC0   = 0x00000E08;
   SPIDAT1  = 0x00000000; // Format 0 is selected
@@ -91,9 +93,10 @@ unsigned short
 spi_update (unsigned short data)
 {
   while (SPITxFULL);
+
   SPIDAT0 = (unsigned long)data;
+
   while (SPIRxEMPTY);
 
   return ((unsigned short)(SPIBUF & 0x0000FFFF));
-
 }

@@ -29,7 +29,7 @@ gpio_init_pin (unsigned int pin)
   // setup pin multiplexing
   pin_info pi = pininfo[pin];
   
-  if (__builtin_expect(pi.muxreg_mask == 0, 0))
+  if (__builtin_expect(pin >= pininfo_size || pi.muxreg_mask == 0, 0))
     printf("gpio: can not initialize pin %x - need init information in pin_info\n", pin);
 
   SYSCFG_PINMUX(pi.muxreg) &= pi.muxreg_mask;

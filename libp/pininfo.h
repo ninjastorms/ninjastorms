@@ -11,3 +11,4 @@ struct pin_info
 typedef struct pin_info pin_info;
 
 extern pin_info pininfo[]; 
+extern unsigned int pininfo_size;

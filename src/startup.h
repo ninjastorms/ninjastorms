@@ -1,2 +1,0 @@
-
-void startup(void);
