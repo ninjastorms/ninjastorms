@@ -1,18 +1,13 @@
 
 #pragma once
 
-#define SPI0_OFFSET       (GPIO_PIN(9, 0) + 5)
-#define SPI0_MOSI         (SPI0_OFFSET + 0)
-#define SPI0_MISO         (SPI0_OFFSET + 1)
-#define SPI0_SCL          (SPI0_OFFSET + 2)
-#define SPI0_CS           (SPI0_OFFSET + 3)
-
-#define SPI_BASE          ((volatile void*)0x01C41000)
-
-void spi_save(void);
-
-void spi_restore(void);
-
-void spi_init(void);
-
+/* send data to the spi and wait for results
+ * this is a blocking call
+ *
+ * params:
+ *   data - the payload to be sent to the spi
+ *
+ * returns:
+ *   the spi response
+ */
 unsigned short spi_update(unsigned short data);

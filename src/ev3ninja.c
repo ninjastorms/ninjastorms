@@ -12,15 +12,27 @@
 
 /* TODO:: get __attribute__((constructor)), __attribute__((destructor)) working and remove manual init/fini code */
 extern void bss_init(void);
+extern void spi_init(void);
 extern void led_init(void);
 extern void button_init(void);
+extern void sensor_init(void);
 
 static void
 ev3ninja_init (void)
 {
   bss_init();
+  spi_init();
   led_init();
   button_init();
+  sensor_init();
+}
+
+extern void spi_fini(void);
+
+static void
+ev3ninja_fini (void)
+{
+  spi_fini();
 }
 
 int 
@@ -30,37 +42,16 @@ ev3ninja_main (void)
 
   puts("This is EV3 NinjaStorms");
   puts("  shuriken ready");
-
   feedback_flash_green();
-
-  // init input port2 gpio pins
-  gpio_init_pin(GPIO_PIN(8, 12)); // Pin 1  - I_ONB           - 9V enable (high)
-  gpio_init_pin(GPIO_PIN(8, 15)); // Pin 2  - LEGDETB         - Digital input pulled up
-  gpio_init_pin(GPIO_PIN(0, 14)); // Pin 5  - DIGIB0          - Digital input/output
-  gpio_init_pin(GPIO_PIN(0, 13)); // Pin 6  - DIGIB1          - Digital input/output
-  gpio_init_pin(GPIO_PIN(8, 14)); // Buffer disable
-
-  // init adc spi pins
-  gpio_init_pin(SPI0_MOSI); // ADCMOSI
-  gpio_init_pin(SPI0_MISO); // ADCMISO
-  gpio_init_pin(SPI0_SCL);  // ADCCLK
-  gpio_init_pin(SPI0_CS);   // ADCCS
 
   // init adc power pins
   gpio_init_pin(GPIO_PIN(6, 14)); // 5VONIGEN
   gpio_init_pin(GPIO_PIN(0, 6));  // ADCBATEN
 
-  // disable pull-dpwn
-  *((volatile unsigned int*)(SYSCFG1_BASE + 0x0C)) &= ~0xFFFFFFFF;
-
   // enable battery power on adc
   GPIO_SET(GPIO_PIN(0, 6))  =  GPIO_MASK(GPIO_PIN(0, 6));
   GPIO_DIR(GPIO_PIN(0, 6)) &= ~GPIO_MASK(GPIO_PIN(0, 6));
 
-  spi_init();
-
-  puts("  device initialized (pt1)");
-
   spi_update(0x400F);
   spi_update(0x400F);
   spi_update(0x400F);
@@ -68,8 +59,6 @@ ev3ninja_main (void)
   spi_update(0x400F);
   spi_update(0x400F);
 
-  puts("  device initialized (pt2)");
-  
   unsigned char Input[16] = { 6,8,10,12,5,7,9,11,1,0,13,14,2,15,3,4 };
 
   unsigned int hit = 0;
@@ -129,8 +118,9 @@ ev3ninja_main (void)
   printf("\n");
 
   puts("All done. ev3ninja out!");
-  
   feedback_flash_red();
+
+  ev3ninja_fini();
 
   return 0;
 }

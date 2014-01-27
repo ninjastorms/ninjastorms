@@ -14,8 +14,8 @@ typedef enum button_id button_id;
 
 enum button_state
 {
-  BUTTON_UP       = 0,
-  BUTTON_DOWN     = 1
+  BUTTON_UP       = 0x00,
+  BUTTON_DOWN     = 0x01
 };
 typedef enum button_state button_state;
 
