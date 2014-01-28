@@ -5,6 +5,7 @@
 
 #include <libp/led.h>
 #include <libp/button.h>
+#include <libp/sensor.h>
 
 #include <libp/gpio.h>
 #include <libp/spi.h>
@@ -59,60 +60,22 @@ ev3ninja_main (void)
   spi_update(0x400F);
   spi_update(0x400F);
 
-  unsigned char Input[16] = { 6,8,10,12,5,7,9,11,1,0,13,14,2,15,3,4 };
+  //unsigned char Input[16] = { 6,8,10,12,5,7,9,11,1,0,13,14,2,15,3,4 };
 
-  unsigned int hit = 0;
-  unsigned int total = 0;
+  //unsigned char input2_adc1 = Input[1];
+  //unsigned char input2_adc2 = Input[5];
 
-  unsigned int output_type = 0;
-
-  unsigned int i = 5;
   while (1)
     {
-      if (button_get_state(BUTTON_CENTER) == BUTTON_DOWN)
-        {
-          hit = 0;
-          total = 0;
-        }
+      if (sensor_touch_get_state(SENSOR_PORT_2) == SENSOR_TOUCH_DOWN)
+        printf(" down\r");
+      else
+        printf(" up  \r");
 
-      if (button_get_state(BUTTON_LEFT) == BUTTON_DOWN)
-        {
-          i = (i + 15) % 16;
-          while (button_get_state(BUTTON_LEFT) == BUTTON_DOWN);
-        }
-
-      if (button_get_state(BUTTON_RIGHT) == BUTTON_DOWN)
-        {
-          i = (i + 1) % 16;
-          while (button_get_state(BUTTON_RIGHT) == BUTTON_DOWN);
-        }
-
-      if (button_get_state(BUTTON_TOP) == BUTTON_DOWN)
-        {
-          output_type = (output_type + 1) % 2;
-          while (button_get_state(BUTTON_TOP) == BUTTON_DOWN);
-        }
-
-      if (button_get_state(BUTTON_BOTTOM) == BUTTON_DOWN)
-        {
-          output_type = (output_type + 1) % 2;
-          while (button_get_state(BUTTON_BOTTOM) == BUTTON_DOWN);
-        }
-
-      unsigned short Data = (spi_update((0x1840 | ((Input[i] & 0x000F) << 7)))) & 0x0FFF;
-
-      switch (output_type)
-      {
-      case 0:
-        printf("%i(%i) - %i                   \r", i, Input[i], Data);
-        break;
-      case 1:
-        if (Data > 2000)
-          ++hit;
-        ++total;
-        printf("%i(%i) - %i / %i              \r", i, Input[i], hit, total);
-        break;
-      }
+      //gpio_set(GPIO_PIN(8, 12), 1);
+      //unsigned short Data1 = (spi_update((0x1840 | ((input2_adc1 & 0x000F) << 7)))) & 0x0FFF;
+      //unsigned short Data2 = (spi_update((0x1840 | ((input2_adc2 & 0x000F) << 7)))) & 0x0FFF;
+      //printf("%i %i %i %i %i || %i %i                \r", gpio_get(GPIO_PIN(8, 12)), gpio_get(GPIO_PIN(8, 15)), gpio_get(GPIO_PIN(0, 14)), gpio_get(GPIO_PIN(0, 13)), gpio_get(GPIO_PIN(8, 14)), Data1, Data2);
     }
 
   printf("\n");
