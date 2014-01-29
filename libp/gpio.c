@@ -68,6 +68,7 @@ gpio_init_inpin (unsigned int pin)
 void
 gpio_set (unsigned int pin, unsigned int value)
 {
+  gpio_init_outpin(pin);
   *((volatile unsigned int*)(GPIO_BANK(pin) + 8 + (!value) * 4)) = GPIO_MASK(pin);
 }
 
