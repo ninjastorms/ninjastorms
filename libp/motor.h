@@ -12,9 +12,9 @@ typedef enum motor_port_id motor_port_id;
 
 enum motor_state
 {
-  MOTOR_FORWARD   = 0x00,
-  MOTOR_BACKWARD  = 0x01,
-  MOTOR_OFF       = 0x02
+  MOTOR_BACKWARD  = 0x00,
+  MOTOR_OFF       = 0x01,
+  MOTOR_FORWARD   = 0x02
 };
 typedef enum motor_state motor_state;
 

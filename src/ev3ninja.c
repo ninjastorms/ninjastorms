@@ -49,39 +49,43 @@ ev3ninja_main (void)
   puts("  shuriken ready");
   feedback_flash_green();
 
-  //unsigned char Input[16] = { 6,8,10,12,5,7,9,11,1,0,13,14,2,15,3,4 };
-
-  //unsigned char input2_adc1 = Input[1];
-  //unsigned char input2_adc2 = Input[5];
-
-  unsigned int state = 2;
+  unsigned short speed = 0x7FFF; // stop
+  int t = 0x7FFF;
 
   while (1)
     {
-      if (button_get_state(BUTTON_CENTER) == BUTTON_DOWN)
+      if (button_get_state(BUTTON_TOP) == BUTTON_DOWN)
         {
-          state = (state + 1) % 3;
-          while (button_get_state(BUTTON_CENTER) == BUTTON_DOWN);
+          speed = (speed == 0xFFFF ? 0xFFFF : speed + 1);
         }
 
-      motor_set_state(MOTOR_PORT_2, state);
-      printf(" motor is %s\r", state == 2 ? " 0 " : (state == 1 ? "<- " : " ->"));
+      if (button_get_state(BUTTON_BOTTOM) == BUTTON_DOWN)
+        {
+          speed = (speed == 0x0000 ? 0x0000 : speed - 1);
+        }
 
-      //gpio_set(GPIO_PIN(8, 12), 1);
-      //gpio_set(GPIO_PIN(8, 15), 1);
-      //gpio_set(GPIO_PIN(0, 14), 1);
-      //gpio_set(GPIO_PIN(0, 13), 1);
-      //gpio_set(GPIO_PIN(8, 14), 1);
-  
-      //printf(" %i   \r", sensor_light_get(SENSOR_PORT_2));
-      //printf(" %s\r", sensor_touch_get_state(SENSOR_PORT_2) == SENSOR_TOUCH_DOWN ? "down" : "up  ");
-      //unsigned short Data1 = (spi_update((0x1840 | ((input2_adc1 & 0x000F) << 7)))) & 0x0FFF;
-      //unsigned short Data2 = (spi_update((0x1840 | ((input2_adc2 & 0x000F) << 7)))) & 0x0FFF;
-      //printf(" %i %i    \r", Data1, Data2);
-      //printf("%i %i %i %i %i || %i %i                \r", gpio_get(GPIO_PIN(8, 12)), gpio_get(GPIO_PIN(8, 15)), gpio_get(GPIO_PIN(0, 14)), gpio_get(GPIO_PIN(0, 13)), gpio_get(GPIO_PIN(8, 14)), Data1, Data2);
+      if (button_get_state(BUTTON_CENTER) == BUTTON_DOWN)
+        {
+          speed = 0x7FFF;
+          t = 0x7FFF;
+        }
+
+      t += ((int)speed) - 0x7FFF;
+      if (t > 0xFFFF)
+        {
+          motor_set_state(MOTOR_PORT_2, 2);
+          t -= 0x7FFF;
+        }
+      else if (t < 0x0000)
+        {
+          motor_set_state(MOTOR_PORT_2, 0);
+          t += 0x7FFF;
+        }
+      else
+        {
+          motor_set_state(MOTOR_PORT_2, 1);
+        }
     }
-
-  printf("\n");
 
   puts("All done. ev3ninja out!");
   feedback_flash_red();
