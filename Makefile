@@ -10,7 +10,7 @@ SDDEV = /dev/sdd1
 SDMNT = /mnt/sd1
 
 LOADADDR = 0xC1000000
-ENTRY = ev3ninja_main
+ENTRY = ev3ninja_runtime
 
 LIBGCCDIR = $(shell dirname $(shell $(CC) -print-libgcc-file-name))
 LDFLAGS = -g -Ttext $(LOADADDR) -L$(LIBGCCDIR) -lgcc 
@@ -19,7 +19,7 @@ INCGCCDIR = $(LIBGCCDIR)/include
 CFLAGS = -g -O2 -pipe -fno-common -msoft-float -DTEXT_BASE=0xC1080000 -I./include -I. -fno-builtin -ffreestanding -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -fno-stack-protector -Wall -Wextra -Wstrict-prototypes -Werror
 
 # add relevant object files here:
-OBJ = src/ev3ninja.o src/feedback.o libc/libc.a libp/libp.a
+OBJ = src/ev3ninja.o src/runtime.o src/feedback.o libc/libc.a libp/libp.a
 OBJ_LIBC = libc/stdio/putchar.o libc/stdio/puts.o libc/stdio/printf.o libc/stdio/vprintf.o libc/errno/errno.o \
   libc/string/memset.o libc/string/memcpy.o libc/string/memcmp.o
 OBJ_LIBP = libp/gpio.o libp/spi.o libp/adc.o libp/pininfo.o libp/led.o libp/button.o libp/sensor.o libp/motor.o
@@ -45,7 +45,7 @@ all: $(ELF) $(SREC) $(BIN)
 
 $(ELF): $(OBJ) $(LIBC) $(LIBP)
 	@echo "  LD  $@"
-	$(Q)$(LD) -o $(ELF) -e $(ELF)_main $(OBJ) $(LIBC) $(LIBP) $(LDFLAGS)
+	$(Q)$(LD) -o $(ELF) -e $(ENTRY) $(OBJ) $(LIBC) $(LIBP) $(LDFLAGS)
 
 $(BIN): $(ELF)
 	@echo "  OBJCOPY  $(BIN)"

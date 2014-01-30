@@ -14,7 +14,7 @@ adc_get (unsigned short channel)
 
 /* initialize the state of the adc
  */
-void
+static void
 __attribute__((constructor)) // <- does not work yet
 adc_init (void)
 {

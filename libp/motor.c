@@ -49,7 +49,7 @@ motor_set_state (motor_port_id port, motor_state state)
 /* initialize the gpio pins necessary for sensor functions
  * this is done automatically on startup
  */
-void
+static void
 __attribute__((constructor)) // <- does not work yet
 motor_init (void)
 {

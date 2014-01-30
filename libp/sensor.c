@@ -47,7 +47,7 @@ sensor_light_get (sensor_port_id port)
 /* initialize the gpio pins necessary for sensor functions
  * this is done automatically on startup
  */
-void
+static void
 __attribute__((constructor)) // <- does not work yet
 sensor_init (void)
 {

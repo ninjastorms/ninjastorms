@@ -72,7 +72,7 @@ static unsigned int save_DEF   = 0;
 /* save initial spi registers and setup spi and required gpio pins
  * this is done automatically on startup
  */
-void
+static void
 __attribute__((constructor)) // <- does not work yet
 spi_init (void)
 {
@@ -103,7 +103,7 @@ spi_init (void)
 /* restore initial spi registers
  * this is done automatically on shutdown
  */
-void 
+static void 
 __attribute__((destructor)) // <- does not work yet
 spi_fini (void)
 {

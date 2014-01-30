@@ -41,7 +41,7 @@ led_set (led_id led, led_color color)
 /* initialize the gpio pins necessary for led functions
  * this is done automatically on startup
  */
-void
+static void
 __attribute((constructor)) // <- does not work yet
 led_init (void)
 {
