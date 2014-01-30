@@ -3,10 +3,10 @@
 
 enum motor_port_id
 {
-  MOTOR_PORT_1 = 0x00,
-  MOTOR_PORT_2 = 0x01,
-  MOTOR_PORT_3 = 0x02,
-  MOTOR_PORT_4 = 0x03
+  MOTOR_PORT_A = 0x00,
+  MOTOR_PORT_B = 0x01,
+  MOTOR_PORT_C = 0x02,
+  MOTOR_PORT_D = 0x03
 };
 typedef enum motor_port_id motor_port_id;
 

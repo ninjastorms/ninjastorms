@@ -59,6 +59,10 @@ vprintf (const char *format, __attribute__((unused)) va_list ap)
                 int x = va_arg(ap, int);
                 char tmp[10] = { 0 };
                 int i = 0;
+                int sign = x < 0;
+                chars_written += sign;
+                if (sign)
+                  x *= -1;
                 while (x)
                   {
                     tmp[i] = x % 10;
@@ -67,6 +71,9 @@ vprintf (const char *format, __attribute__((unused)) va_list ap)
                   }
                 if (i != 0)
                   --i;
+                if (sign)
+                  if (__builtin_expect(putchar('-') == EOF, 0))
+                    return chars_written;
                 for ( ; i >= 0; --i)
                   {
                       if (__builtin_expect(putchar(tmp[i] + '0') == EOF, 0))

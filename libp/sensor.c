@@ -38,7 +38,7 @@ unsigned short
 sensor_light_get (sensor_port_id port)
 {
   // turn the light on
-  gpio_set(GPIO_PIN(0, 14), 1);
+  gpio_set(ports[port].pin5, 1);
 
   return adc_get(ports[port].adc1);
 }
