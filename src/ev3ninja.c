@@ -11,9 +11,9 @@
 #include <libp/gpio.h>
 #include <libp/spi.h>
 
-#define P (1.0)
-#define I (0.01)
-#define D (-0.33)
+#define P (1.4)
+#define I (0.0002)
+#define D (-110)
 
 int 
 ev3ninja_main (void)
@@ -69,12 +69,17 @@ ev3ninja_main (void)
       i = i + p;
 
       int speed = (P * p + D * d + I * i);
-      if (speed < 0 && speed > -20) 
+      if (speed < -5) 
         speed -= 20;
-      else if (speed > 0 && speed < 20)
+      else if (speed > 5)
         speed += 20;
 
-      printf("%i, %i - %i %i %i - %i\n", l1, l2, p, i, d, speed);
+      if (speed > 100)
+        speed = 100;
+      if (speed < -100)
+        speed = -100;
+
+      //printf("%i, %i - %i %i %i - %i\n", l1, l2, p, i, d, speed);
 
       if (!active)
         {
@@ -86,13 +91,13 @@ ev3ninja_main (void)
         t += speed; 
         if (t > 100)
           {
-            t %= 100;
+            t -= 100;
             motor_set_state(MOTOR_PORT_A, MOTOR_BACKWARD);
             motor_set_state(MOTOR_PORT_D, MOTOR_FORWARD);
           }
         else if (t < -100)
           {
-            t %= 100;
+            t += 100;
             motor_set_state(MOTOR_PORT_A, MOTOR_FORWARD);
             motor_set_state(MOTOR_PORT_D, MOTOR_BACKWARD);
           }
