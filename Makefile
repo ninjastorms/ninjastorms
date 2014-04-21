@@ -69,7 +69,7 @@ boot.scr: boot.cmd
 
 boot.cmd: disas
 	$(Q)echo "fatload mmc 0 $(LOADADDR) $(BIN)" > boot.cmd
-	$(Q)echo "go 0x$(shell grep '<$(ENTRY)>' ev3ninja.asm | head -n1 | cut -d' ' -f1)" >> boot.cmd
+	$(Q)echo "go 0x$(shell grep '<$(ENTRY)>' $(ASM) | head -n1 | cut -d' ' -f1)" >> boot.cmd
 
 deploy: $(BIN) boot.scr
 	@echo "  INSTALL  $(BIN) -> $(SDDEV)"
