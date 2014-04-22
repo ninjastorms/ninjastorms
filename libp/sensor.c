@@ -48,7 +48,7 @@ sensor_light_get (sensor_port_id port)
  * this is done automatically on startup
  */
 static void
-__attribute__((constructor)) // <- does not work yet
+__attribute__((constructor))
 sensor_init (void)
 {
   unsigned int i;

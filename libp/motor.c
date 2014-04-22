@@ -50,7 +50,7 @@ motor_set_state (motor_port_id port, motor_state state)
  * this is done automatically on startup
  */
 static void
-__attribute__((constructor)) // <- does not work yet
+__attribute__((constructor))
 motor_init (void)
 {
   unsigned int i;
@@ -63,6 +63,6 @@ motor_init (void)
       gpio_init_outpin(ports[i].pin6);
     }
 
-  // disable pull-dpwn
+  // disable pull-down
   *((volatile unsigned int*)(SYSCFG1_BASE + 0x0C)) &= ~0xFFFFFFFF;
 }

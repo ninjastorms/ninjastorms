@@ -42,7 +42,7 @@ led_set (led_id led, led_color color)
  * this is done automatically on startup
  */
 static void
-__attribute((constructor)) // <- does not work yet
+__attribute((constructor))
 led_init (void)
 {
   gpio_init_outpin(leds[0].pin1);

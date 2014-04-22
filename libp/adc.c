@@ -15,7 +15,7 @@ adc_get (unsigned short channel)
 /* initialize the state of the adc
  */
 static void
-__attribute__((constructor (1002))) // <- does not work yet
+__attribute__((constructor (1002)))
 adc_init (void)
 {
   // init adc power pins

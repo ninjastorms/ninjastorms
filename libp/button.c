@@ -36,7 +36,7 @@ button_get_state (button_id button)
  * this is done automatically on startup
  */
 static void 
-__attribute((constructor)) // <- does not work yet
+__attribute((constructor))
 button_init (void)
 {
   gpio_init_inpin(buttons[0].pin);

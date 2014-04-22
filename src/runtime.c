@@ -63,7 +63,7 @@ ev3ninja_runtime (void)
 extern unsigned long __bss_start, _end;
 
 static void
-__attribute__((constructor)) // <- does not work yet
+__attribute__((constructor))
 bss_init (void)
 {
   /* Zero out BSS */

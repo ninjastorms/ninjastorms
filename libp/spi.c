@@ -73,7 +73,7 @@ static unsigned int save_DEF   = 0;
  * this is done automatically on startup
  */
 static void
-__attribute__((constructor (1001))) // <- does not work yet
+__attribute__((constructor (1001)))
 spi_init (void)
 {
   gpio_init_pin(SPI0_MOSI); // ADCMOSI
@@ -104,7 +104,7 @@ spi_init (void)
  * this is done automatically on shutdown
  */
 static void 
-__attribute__((destructor)) // <- does not work yet
+__attribute__((destructor))
 spi_fini (void)
 {
   SPIGCR0  = save_GCR0;
