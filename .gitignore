@@ -8,3 +8,5 @@ ev3ninja
 ev3ninja.asm
 boot.scr
 boot.cmd
+
+!u-boot.bin
