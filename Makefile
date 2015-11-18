@@ -8,6 +8,7 @@ OBJDUMP = $(PREFIX)objdump
 
 SDDEV = /dev/sdd1
 SDMNT = /mnt/sd1
+SERIAL_PORT = /dev/ttyUSB0
 
 LOADADDR = 0xC1000000
 ENTRY = ev3ninja_runtime
@@ -69,26 +70,14 @@ boot.scr: boot.cmd
 	$(Q)mkimage -C none -A arm -T script -d boot.cmd boot.scr &> /dev/null
 
 boot.cmd: disas
-	# $(Q)echo "fatload mmc 0 $(LOADADDR) $(BIN)" > boot.cmd
-	$(Q)echo "loady $(LOADADDR) $(BIN)" > boot.cmd
+	$(Q)echo "loady $(LOADADDR)" > boot.cmd
 	$(Q)echo "go 0x$(shell grep '<$(ENTRY)>' $(ASM) | head -n1 | cut -d' ' -f1)" >> boot.cmd
 
 deploy: $(BIN) boot.scr
 	@echo "transfer OS to EV3"
 	#get priviliges to read/write
-	$(Q) sudo chmod +rw /dev/ttyUSB0
-	$(Q) sb -vv ev3ninja.bin </dev/ttyUSB0 >/dev/ttyUSB0
-	
-	#$(Q) sudo picocom -b 115200 -p n -d 8 --send-cmd="sb -vv" --receive-cmd="rb -vvv" /dev/ttyUSB0
-	#strg-a strg-s
-	#ev3ninja.bin
-	#  sudo stty -F /dev/ttyUSB0 
-	#@echo "  INSTALL  $(BIN) -> $(SDDEV)"
-	#$(Q)mkdir -p $(SDMNT)
-	# $(Q)mount $(SDDEV) $(SDMNT)
-	# $(Q)cp $(BIN) $(SDMNT)/
-	# $(Q)cp boot.scr $(SDMNT)/
-	# $(Q)umount $(SDDEV)
+	$(Q) sudo chmod +rw $(SERIAL_PORT)
+	$(Q) sb -vv ev3ninja.bin <$(SERIAL_PORT) >$(SERIAL_PORT)
 
 clean:
 	$(Q)rm -f $(OBJ) $(OBJ_LIBC) $(LIBC) $(OBJ_LIBP) $(LIBP) $(ELF) $(ASM) $(BIN) $(SREC) boot.scr boot.cmd
