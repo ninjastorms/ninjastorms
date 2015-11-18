@@ -10,7 +10,7 @@ SDDEV = /dev/sdd1
 SDMNT = /mnt/sd1
 SERIAL_PORT = /dev/ttyUSB0
 
-LOADADDR = 0xC1000000
+LOADADDR = 0x00100000
 ENTRY = ev3ninja_runtime
 
 LIBGCCDIR = $(shell dirname $(shell $(CC) \
@@ -18,7 +18,8 @@ LIBGCCDIR = $(shell dirname $(shell $(CC) \
 LDFLAGS = -g -Ttext $(LOADADDR) -L$(LIBGCCDIR) -lgcc 
 
 INCGCCDIR = $(LIBGCCDIR)/include
-CFLAGS = -g -O2 -pipe -fno-common -msoft-float -I./include -I. -fno-builtin -ffreestanding -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -fno-stack-protector -Wall -Wextra -Wstrict-prototypes -Werror
+# use 'make all CFLAGS+="-DQEMU"' to build for qemu emulation on versatilepb
+override CFLAGS += -g -O2 -pipe -fno-common -msoft-float -I./include -I. -fno-builtin -ffreestanding -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -fno-stack-protector -Wall -Wextra -Wstrict-prototypes -Werror
 
 # add relevant object files here:
 OBJ = src/ev3ninja.o src/runtime.o src/feedback.o libc/libc.a libp/libp.a
@@ -50,6 +51,7 @@ $(ELF): $(OBJ) $(LIBC) $(LIBP)
 	$(Q)$(LD) -o $(ELF) -e $(ENTRY) $(OBJ) $(LIBC) $(LIBP) $(LDFLAGS)
 
 $(BIN): $(ELF)
+	echo "$(CFLAGS)"
 	@echo "  OBJCOPY  $(BIN)"
 	$(Q)$(OBJCOPY) -O binary $(ELF) $(BIN)
 
