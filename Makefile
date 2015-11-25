@@ -51,7 +51,6 @@ $(ELF): $(OBJ) $(LIBC) $(LIBP)
 	$(Q)$(LD) -o $(ELF) -e $(ENTRY) $(OBJ) $(LIBC) $(LIBP) $(LDFLAGS)
 
 $(BIN): $(ELF)
-	echo "$(CFLAGS)"
 	@echo "  OBJCOPY  $(BIN)"
 	$(Q)$(OBJCOPY) -O binary $(ELF) $(BIN)
 
