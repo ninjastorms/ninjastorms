@@ -9,5 +9,5 @@ ev3ninja.asm
 boot.scr
 boot.cmd
 
-!u-boot.bin
+!qemu/*.bin
 *~
