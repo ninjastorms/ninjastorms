@@ -13,10 +13,10 @@
 int
 putchar (int c)
 {
-  #ifndef QEMU
   if (c == '\n')
     putchar('\r');
 
+  #ifndef QEMU
   while (!(*UART_LSR & (1 << 5)));
   #endif
   

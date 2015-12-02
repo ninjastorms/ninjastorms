@@ -15,11 +15,31 @@
 #define I (0.0002)
 #define D (-110)
 
+// Versatile stuff
+#define TIMER1_LOAD (volatile unsigned int*)(0x101E2000)
+#define TIMER1_VALUE (volatile unsigned int*)(0x101E2004)
+#define TIMER1_CTRL (volatile char*)(0x101E2008)
+
 int 
 ev3ninja_main (void)
 {
+  // Let's try to set a timer
+  *TIMER1_CTRL &= ~(1 << 7); // unset TimerEn(abled)
+
+  *TIMER1_CTRL |= 1 << 6;    // set periodic-mode
+  *TIMER1_CTRL |= 1 << 5;    // set IntEnable
+  *TIMER1_CTRL |= 1 << 1;    // set 32-bit mode
+  *TIMER1_CTRL |= 1 << 0;    // set OneShot-Mode
+  
+  *TIMER1_LOAD = 0x5000;     // load
+  *TIMER1_CTRL |= 1 << 7;    // set TimerEn(abled)
+
+  while(*TIMER1_VALUE)
+      printf("%x\n", *TIMER1_VALUE);
+  
   puts("This is EV3 NinjaStorms");
   puts("  shuriken ready");
+  
   feedback_flash_green();
 
   unsigned int active = 0;
