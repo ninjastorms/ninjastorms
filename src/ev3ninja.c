@@ -29,6 +29,8 @@
 // Primary Interrupt Controller (PL190)
 #define PIC_BASE 0x10140000
 #define PIC_INTENABLE (volatile char*)(PIC_BASE+0x10)
+#define PIC_VICDEFVECTADDR (volatile unsigned int*)(PIC_BASE+0x34)
+#define TIMER1_INTBIT 1 << 4
 
 #define NOP_SLIDE 0x1003c0
 
@@ -122,7 +124,8 @@ void run_segway(void) {
 }
 
 void irq_handler(void) {
-   puts("IRQ happened");
+  puts("IRQ happened");
+  puts("Interrupt done");
   return;
 }
 
@@ -151,7 +154,15 @@ void init_interrupt_handling(void) {
   *(unsigned int*) 0x34 = (unsigned int) &irq_handler;
   *(unsigned int*) 0x38 = 0x0; //TODO
 
-  //TODO enable interrupts
+  // Enable IRQs
+  asm(
+    "MRS   r1,cpsr\n\t"
+    "BIC   r1,r1, #0x80\n\t"
+    "MSR   cpsr_c, r1\n\t"
+  );
+
+  // Setting up primary interrupt controller
+  *PIC_INTENABLE |= TIMER1_INTBIT;	// unmask interrupt bit for timer1
   return;
 }
 
@@ -161,8 +172,9 @@ void init_timer(void) {
   *TIMER1_CTRL |= 1 << 6;    // set periodic-mode
   *TIMER1_CTRL |= 1 << 5;    // set IntEnable
   *TIMER1_CTRL |= 1 << 1;    // set 32-bit mode
-  *TIMER1_CTRL |= 1 << 0;    // set OneShot-Mode
-  
+  //*TIMER1_CTRL |= 1 << 0;    // set OneShot-Mode
+  *TIMER1_CTRL &= ~(1 << 0);    // set Wrapping-Mode
+
   *TIMER1_LOAD = 0x5000;     // load
   *TIMER1_CTRL |= 1 << 7;    // set TimerEn(abled)
   return;
@@ -177,8 +189,10 @@ ev3ninja_main (void)
   puts("  shuriken ready");
   
   feedback_flash_green();
-  asm("SWI 12");
+  //asm("SWI 12");
+
   init_timer();
+  while(1);// printf("%x\n", *TIMER1_VALUE);
   //run_segway();
 
   puts("All done. ev3ninja out!");
