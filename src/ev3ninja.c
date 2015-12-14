@@ -32,72 +32,7 @@
 
 #define NOP_SLIDE 0x1003c0
 
-int 
-ev3ninja_main (void)
-{
-  // Overwrite Interrupt Service Routines
-  *(volatile unsigned int*)(0x10) = NOP_SLIDE;
-  *(volatile unsigned int*)(0x14) = NOP_SLIDE;
-  *(volatile unsigned int*)(0x18) = NOP_SLIDE;
-  *(volatile unsigned int*)(0x1000034) = NOP_SLIDE;
-  *(volatile unsigned int*)(PIC_BASE+0x34) = NOP_SLIDE;
-  // Unmask Timer1's Interrupts
-  *PIC_INTENABLE |= TIMER1_INTBIT;
-  
-  // Software Interrupt
-  //asm(
-  //  "SWI 1\n\t"
-  //  );
-  
-
-  // Let's set a timer
-  *TIMER1_CTRL &= ~(1 << 7); // unset TimerEn(abled)
-  
-  // Enable IRQs
-  asm(
-    "MRS   r1,cpsr\n\t"
-    "BIC   r1,r1, #0x80\n\t"
-    "MSR   cpsr_c, r1\n\t"
-  );
-
-  *TIMER1_CTRL |= 1 << 6;    // set periodic-mode
-  *TIMER1_INTCLR = (char)0x1; // clear interrupts
-  *TIMER1_CTRL |= 1 << 5;    // set IntEnable
-  *TIMER1_CTRL |= 1 << 1;    // set 32-bit mode
-  *TIMER1_CTRL |= 1 << 0;    // set OneShot-Mode
-  
-  *TIMER1_LOAD = 0x5000;     // load
-  *TIMER1_CTRL |= 1 << 7;    // set TimerEn(abled)
-
-  // Print the countdown
-  while(*TIMER1_VALUE) {
-      printf("%x\n", *TIMER1_VALUE);
-      printf("Interrupt? %x", *TIMER1_RIS);
-  }
-
-  // A little nop slide (weeeeeehhh!!!!)
-  asm(
-    "MOV    r0,r0\n\t"
-    "MOV    r0,r0\n\t"
-    "MOV    r0,r0\n\t"
-    "MOV    r0,r0\n\t"
-    "MOV    r0,r0\n\t"
-    "MOV    r0,r0\n\t"
-    "MOV    r0,r0\n\t"
-    "MOV    r0,r0\n\t"
-    "MOV    r0,r0\n\t"
-    "MOV    r0,r0\n\t"
-    "MOV    r0,r0\n\t"
-    "MOV    r0,r0\n\t"
-    );
-  
-  *TIMER1_INTCLR = (char)0x1; // clear interrupts
-
-  puts("This is EV3 NinjaStorms");
-  puts("  shuriken ready");
-  
-  feedback_flash_green();
-
+void run_segway(void) {
   unsigned int active = 0;
 
   unsigned int button_center_last_state = BUTTON_UP;
@@ -183,6 +118,68 @@ ev3ninja_main (void)
             motor_set_state(MOTOR_PORT_D, MOTOR_OFF);
           }
     }
+  return;
+}
+
+void irq_handler(void) {
+   puts("IRQ happened");
+  return;
+}
+
+void swi_handler(void) {
+  puts("SWI happened");
+  return;
+}
+
+
+void init_interrupt_handling(void) {
+  //build interrupt vector table
+  *(unsigned int*) 0x00 = 0x0;		//TODO: reset
+  *(unsigned int*) 0x04 = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x20 undefined instruction
+  *(unsigned int*) 0x08 = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x24 software interrupt
+  *(unsigned int*) 0x0c = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x28 prefetch abort
+  *(unsigned int*) 0x10 = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x2c data abort
+  *(unsigned int*) 0x14 = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x30 reserved
+  *(unsigned int*) 0x18 = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x34 IRQ
+  *(unsigned int*) 0x1c = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x38 FIQ
+
+  *(unsigned int*) 0x20 = 0x0; //TODO
+  *(unsigned int*) 0x24 = (unsigned int) &swi_handler;
+  *(unsigned int*) 0x28 = 0x0; //TODO
+  *(unsigned int*) 0x2c = 0x0; //TODO
+  *(unsigned int*) 0x30 = 0x0; //TODO
+  *(unsigned int*) 0x34 = (unsigned int) &irq_handler;
+  *(unsigned int*) 0x38 = 0x0; //TODO
+
+  //TODO enable interrupts
+  return;
+}
+
+void init_timer(void) {
+  *TIMER1_CTRL &= ~(1 << 7); // unset TimerEn(abled)
+
+  *TIMER1_CTRL |= 1 << 6;    // set periodic-mode
+  *TIMER1_CTRL |= 1 << 5;    // set IntEnable
+  *TIMER1_CTRL |= 1 << 1;    // set 32-bit mode
+  *TIMER1_CTRL |= 1 << 0;    // set OneShot-Mode
+  
+  *TIMER1_LOAD = 0x5000;     // load
+  *TIMER1_CTRL |= 1 << 7;    // set TimerEn(abled)
+  return;
+}
+
+int
+ev3ninja_main (void)
+{
+  init_interrupt_handling();
+  
+  puts("This is EV3 NinjaStorms");
+  puts("  shuriken ready");
+  
+  feedback_flash_green();
+  asm("SWI 12");
+  init_timer();
+  //run_segway();
 
   puts("All done. ev3ninja out!");
   feedback_flash_red();
