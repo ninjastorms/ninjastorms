@@ -138,36 +138,8 @@ void irq_handler(void) {
 
   asm("push {r0, r1, r2, r3, r4, r5}");
 
-  // Disable IRQs
-  asm(
-    "MRS   r1,cpsr\n\t"
-    "ORR   r1,r1, #0x80\n\t"
-    "MSR   cpsr_c, r1\n\t"
-  );
-
-  *PIC_SOFTINTCLEAR = (unsigned int) 0xffffffff;
-
-  //restart timer
-  *TIMER1_CTRL &= ~(1 << 7); // unset TimerEn(abled)
-
-  *TIMER1_CTRL |= 1 << 6;    // set periodic-mode
-  *TIMER1_INTCLR = (char)0x1; // clear interrupts
-  *TIMER1_CTRL |= 1 << 5;    // set IntEnable
-  *TIMER1_CTRL |= 1 << 1;    // set 32-bit mode
-  *TIMER1_CTRL |= 1 << 0;    // set OneShot-Mode
-
-  *TIMER1_LOAD = 0x5000;     // load
-  *TIMER1_CTRL |= 1 << 7;    // set TimerEn(abled)
-
-
   *UART_THR = '#';
-
-  // Enable IRQs
-  asm(
-    "MRS   r1,cpsr\n\t"
-    "BIC   r1,r1, #0x80\n\t"
-    "MSR   cpsr_c, r1\n\t"
-  );
+  *TIMER1_INTCLR = (char)0x1; // clear timer interrupt
 
   asm("pop {r0, r1, r2, r3, r4, r5}");
   asm("SUBS pc,lr,#4"); //return from IRQ
@@ -177,6 +149,7 @@ void swi_handler(void) {
   asm("push {r2, r3}");
   *UART_THR = 'S';
   asm("pop {r2, r3}");
+  asm("movs pc, lr");
 }
 
 void init_interrupt_handling(void) {
@@ -192,6 +165,7 @@ void init_interrupt_handling(void) {
 
   *(unsigned int*) 0x1c = 0x1000000; //TODO
   *(unsigned int*) 0x20 = 0x1000000; //TODO
+  //ATTENTION: don't use software interrupts in supervisor mode
   *(unsigned int*) 0x24 = (unsigned int) &swi_handler;
   *(unsigned int*) 0x28 = 0x1000000; //TODO
   *(unsigned int*) 0x2c = 0x1000000; //TODO
@@ -201,9 +175,9 @@ void init_interrupt_handling(void) {
 
   // Enable IRQs
   asm(
-    "MRS   r1,cpsr\n\t"
-    "BIC   r1,r1, #0x80\n\t"
-    "MSR   cpsr_c, r1\n\t"
+    "MRS r1,cpsr\n\t"
+    "BIC r1,r1, #0x80\n\t"
+    "MSR cpsr_c, r1\n\t"
   );
 
   // Setting up primary interrupt controller
@@ -217,8 +191,8 @@ void init_timer(void) {
   *TIMER1_CTRL |= 1 << 6;    // set periodic-mode
   *TIMER1_CTRL |= 1 << 5;    // set IntEnable
   *TIMER1_CTRL |= 1 << 1;    // set 32-bit mode
-  *TIMER1_CTRL |= 1 << 0;    // set OneShot-Mode
-  //*TIMER1_CTRL &= ~(1 << 0);    // set Wrapping-Mode
+  //*TIMER1_CTRL |= 1 << 0;    // set OneShot-Mode
+  *TIMER1_CTRL &= ~(1 << 0);    // set Wrapping-Mode
 
   *TIMER1_LOAD = 0x5000;     // load
   *TIMER1_CTRL |= 1 << 7;    // set TimerEn(abled)
@@ -234,10 +208,15 @@ ev3ninja_main (void)
   puts("  shuriken ready");
   
   feedback_flash_green();
-  asm("SWI 12");
 
   init_timer();
-  while(1); // printf("%x\n", *TIMER1_VALUE);
+  while(1) {
+    unsigned int i = 0xfffffff;
+    while(i != 0) {
+      i--;
+    }
+    printf("Timer: %x\n", *TIMER1_VALUE);
+  }
   //run_segway();
 
   puts("All done. ev3ninja out!");
