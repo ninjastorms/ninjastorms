@@ -15,7 +15,9 @@
 #define I (0.0002)
 #define D (-110)
 
-// Versatile stuff
+#define IRQ_STACK_ADDRESS "#0x00008000"
+
+// Timer Adresses
 #define TIMER1_BASE 0x101E2000
 #define TIMER1_INTBIT 1 << 4
 
@@ -32,7 +34,7 @@
 #define PIC_SOFTINTCLEAR (volatile unsigned int*)(PIC_BASE+0x14)
 #define PIC_SOFTINT (volatile unsigned int*)(PIC_BASE+0x18)
 #define PIC_DEFVECTADDR (volatile unsigned int*)(PIC_BASE+0x34)
-#define TIMER1_INTBIT 1 << 4
+#define TIMER1_INTBIT (1 << 4)
 
 #define NOP_SLIDE 0x1003c0
 
@@ -135,13 +137,14 @@ void run_segway(void) {
 #endif
 
 void irq_handler(void) {
-
-  asm("push {r0, r1, r2, r3, r4, r5}");
+  // Next step is build this handler in pure assembler
+  // because gcc thinks to include its own PUSH and POP.
+  asm("push {r0-r3}");
 
   *UART_THR = '#';
   *TIMER1_INTCLR = (char)0x1; // clear timer interrupt
 
-  asm("pop {r0, r1, r2, r3, r4, r5}");
+  asm("pop {r0-r3}");
   asm("SUBS pc,lr,#4"); //return from IRQ
 }
 
@@ -173,11 +176,23 @@ void init_interrupt_handling(void) {
   *(unsigned int*) 0x34 = (unsigned int) &irq_handler;
   *(unsigned int*) 0x38 = 0x1000000; //TODO
 
+  //setting up IRQ mode stack
+  asm(
+    "mrs  r0, cpsr\n"
+    "bic  r0, #0x1f\n" //Clear mode bits
+    "orr  r0, #0x12\n" //Select IRQ mode
+    "msr  cpsr, r0\n" //Enter IRQ mode
+    "mov sp, " IRQ_STACK_ADDRESS "\n" //set stack pointer
+    "bic  r0, #0x1f\n" //Clear mode bits
+    "orr  r0, #0x13\n" //Select SVC mode
+    "msr  cpsr, r0\n" //Enter SVC mode
+  );
+
   // Enable IRQs
   asm(
-    "MRS r1,cpsr\n\t"
-    "BIC r1,r1, #0x80\n\t"
-    "MSR cpsr_c, r1\n\t"
+    "MRS r1,cpsr\n"
+    "BIC r1,r1, #0x80\n"
+    "MSR cpsr_c, r1\n"
   );
 
   // Setting up primary interrupt controller
