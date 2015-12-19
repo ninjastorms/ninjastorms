@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "feedback.h"
+#include "interrupt.h"
 
 #include <libp/led.h>
 #include <libp/button.h>
@@ -127,34 +128,6 @@ void run_segway(void) {
   return;
 }
 
-#ifdef QEMU
-#define UART_THR (volatile char*)(0x101f1000)
-#endif
-
-#ifndef QEMU
-#define UART_THR (volatile char*)(0x01D0C000)
-#define UART_LSR (volatile char*)(0x01D0C014)
-#endif
-
-void irq_handler(void) {
-  // Next step is build this handler in pure assembler
-  // because gcc thinks to include its own PUSH and POP.
-  asm("push {r0-r3}");
-
-  *UART_THR = '#';
-  *TIMER1_INTCLR = (char)0x1; // clear timer interrupt
-
-  asm("pop {r0-r3}");
-  asm("SUBS pc,lr,#4"); //return from IRQ
-}
-
-void swi_handler(void) {
-  asm("push {r2, r3}");
-  *UART_THR = 'S';
-  asm("pop {r2, r3}");
-  asm("movs pc, lr");
-}
-
 void init_interrupt_handling(void) {
   //build interrupt vector table
   *(unsigned int*) 0x00 = 0xe59ff014;	//TODO: reset
@@ -169,7 +142,7 @@ void init_interrupt_handling(void) {
   *(unsigned int*) 0x1c = 0x1000000; //TODO
   *(unsigned int*) 0x20 = 0x1000000; //TODO
   //ATTENTION: don't use software interrupts in supervisor mode
-  *(unsigned int*) 0x24 = (unsigned int) &swi_handler;
+  *(unsigned int*) 0x24 = 0x1000000; //(unsigned int) &swi_handler;
   *(unsigned int*) 0x28 = 0x1000000; //TODO
   *(unsigned int*) 0x2c = 0x1000000; //TODO
   *(unsigned int*) 0x30 = 0x1000000; //TODO
