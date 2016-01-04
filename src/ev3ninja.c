@@ -171,12 +171,6 @@ void init_timer(void) {
 int
 ev3ninja_main (void)
 {
-  puts("This is a small memory test. Where are our boundaries?\n");
-  
-  *(unsigned int*)(0x4000000) = 0x42;
-  *(unsigned int*)(0x3fffffc) = 0x1337;
-  *(unsigned int*)(0x4000004) = 0xbeef;
-
   init_interrupt_handling();
   
   puts("This is EV3 NinjaStorms");
