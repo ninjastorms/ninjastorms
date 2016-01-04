@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <memory.h>
 
 #include "feedback.h"
 #include "interrupt.h"
@@ -16,28 +17,7 @@
 #define I (0.0002)
 #define D (-110)
 
-#define IRQ_STACK_ADDRESS "#0x00008000"
-
-// Timer Adresses
-#define TIMER1_BASE 0x101E2000
-#define TIMER1_INTBIT 1 << 4
-
-#define TIMER1_LOAD (volatile unsigned int*)(TIMER1_BASE+0x0)
-#define TIMER1_VALUE (volatile unsigned int*)(TIMER1_BASE+0x4)
-#define TIMER1_CTRL (volatile char*)(TIMER1_BASE+0x8)
-#define TIMER1_INTCLR (volatile char*)(TIMER1_BASE+0xC)
-#define TIMER1_RIS (volatile char*)(TIMER1_BASE+0x10)
-#define TIMER1_MIS (volatile char*)(TIMER1_BASE+0x14)
-
-// Primary Interrupt Controller (PL190)
-#define PIC_BASE 0x10140000
-#define PIC_INTENABLE (volatile char*)(PIC_BASE+0x10)
-#define PIC_SOFTINTCLEAR (volatile unsigned int*)(PIC_BASE+0x14)
-#define PIC_SOFTINT (volatile unsigned int*)(PIC_BASE+0x18)
-#define PIC_DEFVECTADDR (volatile unsigned int*)(PIC_BASE+0x34)
-#define TIMER1_INTBIT (1 << 4)
-
-#define NOP_SLIDE 0x1003c0
+void run_segway(void) {
 
 void run_segway(void) {
   unsigned int active = 0;
@@ -152,20 +132,21 @@ void init_interrupt_handling(void) {
   //setting up IRQ mode stack
   asm(
     "mrs  r0, cpsr\n"
-    "bic  r0, #0x1f\n" //Clear mode bits
-    "orr  r0, #0x12\n" //Select IRQ mode
-    "msr  cpsr, r0\n" //Enter IRQ mode
-    "mov sp, " IRQ_STACK_ADDRESS "\n" //set stack pointer
-    "bic  r0, #0x1f\n" //Clear mode bits
-    "orr  r0, #0x13\n" //Select SVC mode
-    "msr  cpsr, r0\n" //Enter SVC mode
+    "bic  r0, #0x1f\n" // Clear mode bits
+    "orr  r0, #0x12\n" // Select IRQ mode
+    "msr  cpsr, r0\n"  // Enter IRQ mode
+    "mov  sp, %0\n"    // set stack pointer
+    "bic  r0, #0x1f\n" // Clear mode bits
+    "orr  r0, #0x13\n" // Select SVC mode
+    "msr  cpsr, r0\n"  // Enter SVC mode
+    : : "r" (IRQ_STACK_ADDRESS)
   );
 
   // Enable IRQs
   asm(
-    "MRS r1,cpsr\n"
-    "BIC r1,r1, #0x80\n"
-    "MSR cpsr_c, r1\n"
+    "mrs  r1, cpsr\n"
+    "bic  r1, r1, #0x80\n"
+    "msr  cpsr_c, r1\n"
   );
 
   // Setting up primary interrupt controller
@@ -190,6 +171,12 @@ void init_timer(void) {
 int
 ev3ninja_main (void)
 {
+  puts("This is a small memory test. Where are our boundaries?\n");
+  
+  *(unsigned int*)(0x4000000) = 0x42;
+  *(unsigned int*)(0x3fffffc) = 0x1337;
+  *(unsigned int*)(0x4000004) = 0xbeef;
+
   init_interrupt_handling();
   
   puts("This is EV3 NinjaStorms");

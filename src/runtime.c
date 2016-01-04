@@ -2,6 +2,7 @@
 #include "ev3ninja.h"
 
 #include <sys/types.h>
+#include <memory.h>
 
 extern void (*__preinit_array_start []) (void);
 extern void (*__preinit_array_end []) (void);
@@ -17,6 +18,8 @@ extern void (*__fini_array_end []) (void);
 static void
 ev3ninja_runtime_init (void)
 {
+  asm volatile("mov sp, %0" : : "r" (SVC_STACK_ADDRESS));
+
   size_t count;
   size_t i;
 

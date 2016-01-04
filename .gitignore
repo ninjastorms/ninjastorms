@@ -3,11 +3,13 @@
 *.a
 *.bin
 *.srec
+*.swp
 
 ev3ninja
 ev3ninja.asm
 boot.scr
 boot.cmd
+qemu.out
 
 !qemu/*.bin
 *~
