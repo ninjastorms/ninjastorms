@@ -9,8 +9,8 @@ irq_handler:
   // for less latency save only registers that will change
   push  {r0-r12, lr}
 
-  ldr  r0, =message
-  bl  puts
+  //ldr  r0, =message
+  bl  schedule
 
   // clear interrupt
   ldr  r0, =TIMER1_INTCLR_ASM
@@ -21,6 +21,7 @@ irq_handler:
 
   //return from IRQ
   subs  pc, lr, #4	
+
 
 .section .data
 
