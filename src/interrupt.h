@@ -1,1 +1,1 @@
-void irq_handler(void);
+void init_interrupt_handling(void);
