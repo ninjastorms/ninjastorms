@@ -3,6 +3,7 @@
 
 #include "feedback.h"
 #include "scheduler.h"
+#include "interrupt_handler.h"
 
 #include <libp/led.h>
 #include <libp/button.h>
@@ -26,17 +27,21 @@ int ev3ninja_main (void)
 {
   static task_t task_a;
   static task_t task_b;
-  task_t *tasks[] = { &task_a, &task_b };
+  //task_t *tasks[] = { &task_a, &task_b };
 
   init_task(&task_a, (unsigned int)func_task_a, TASK_A_STACK_ADDRESS);
   init_task(&task_b, (unsigned int)func_task_b, TASK_B_STACK_ADDRESS);	
 
-  start_scheduler(tasks);
+  irq_handler();
+  //start_scheduler(tasks);
   
   puts("This is EV3 NinjaStorms");
   puts("  shuriken ready");
   
   feedback_flash_green();
+
+  while(1)
+    ;
 
   puts("All done. ev3ninja out!");
   feedback_flash_red();
