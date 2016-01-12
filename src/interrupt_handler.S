@@ -35,7 +35,7 @@ save_registers_loop:
   bne  save_registers_loop
   ldr  r1, [r2]         // load saved lr from stack
   sub  r1, #4           // because lr is the old pc+4
-  str  r1, [r0+8]       // we skip sp and lr in the struct and save it
+  str  r1, [r0, #8]       // we skip sp and lr in the struct and save it
   bx   lr
   //TODO: save cpsr
   //TODO: change to saved mode
