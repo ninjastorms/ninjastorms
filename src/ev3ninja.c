@@ -14,15 +14,21 @@
 #include <libp/spi.h>
 
 void func_task_a(void) {
+  volatile unsigned int i;
   puts("Heyho! I am currently executing Task A\n");
-  while(1)
+  while(1) {
     putchar('A');
+    for(i=0;i<65000;i++);
+  }
 }
 
 void func_task_b(void) {
+  volatile unsigned int i;
   puts("Heyho! I am currently executing Task B\n");
-  while(1)
+  while(1) {
     putchar('B');
+    for(i=0;i<65000;i++);
+  }
 }
 
 int ev3ninja_main (void)
