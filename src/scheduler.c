@@ -1,5 +1,6 @@
 #include "scheduler.h"
 #include "interrupt.h"
+#include "interrupt_handler.h"
 
 #include <stdio.h>
 #include <memory.h>
@@ -23,29 +24,15 @@ void init_task(task_t *task, unsigned int entrypoint, unsigned int stackbase) {
   task->reg[REG_SP] = stackbase;
   task->reg[REG_PC] = entrypoint;
 
-  task->cpsr = 0;
-  task->cpsr |= CPSR_ABORT || CPSR_MODE_SVC;
-}
-
-void save_task_state(task_t *task) {
-  // save all non-banked registers (r0-r12)
-  // save former PC (i.e. LR - 4)
-  // save SPSR
-  // see which mode we are coming from (-> SPSR)
-  // change to that mode
-  // get SP, LR
-  // ???
-  // profit
-
-  asm(
-    "stm  %[task_struct], {r0-r12}" : : [task_struct] "r" (task)
-  );
-
-  printf("First elems of struct: %x %x %x\n", task->reg[0], task->reg[1], task->reg[2]);
+  task->cpsr = CPSR_ABORT | CPSR_MODE_SVC;
 }
 
 void schedule(void) {
-  //
+  task_t *temp_task;
+
+  temp_task = current_task;
+  current_task = other_task;
+  other_task = temp_task;
 }
 
 void init_timer(void) {
@@ -58,7 +45,7 @@ void init_timer(void) {
   //*TIMER1_CTRL |= 1 << 0;    // set OneShot-Mode
   *TIMER1_CTRL &= ~(1 << 0);    // set Wrapping-Mode
 
-  *TIMER1_LOAD = 0x5000;     // load
+  *TIMER1_LOAD = 0x2000;     // load
   *TIMER1_CTRL |= 1 << 7;    // set TimerEn(abled)
   return;
 }
@@ -70,6 +57,6 @@ void start_scheduler(task_t *tasks[]) {
   init_interrupt_handling();
   init_timer();
 
-  //load_task(current_task);
+  load_current_task_state();
   //save_task_state(current_task);
 }

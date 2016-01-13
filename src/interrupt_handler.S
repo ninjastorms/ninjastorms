@@ -1,18 +1,29 @@
 #include <memory.h>
 
 .section .text
+
+// import
 .globl puts
+.globl schedule
+
+// export
 .globl irq_handler
 .type irq_handler STT_FUNC
+.globl load_current_task_state
+.type load_current_task_state STT_FUNC
+
 
 //.extern current_task
 //.extern other_task
+
+
 
 irq_handler:
   // for less latency save only registers that will change
   push  {r0-r12, lr}
 
   //ldr  r0, =message
+  bl  save_current_task_state
   bl  schedule
 
   // clear interrupt
@@ -23,12 +34,16 @@ irq_handler:
   ldr  r0, =message
   bl   puts
 
-  pop  {r0-r12, lr}
+  pop  {r0-r12, lr} //TODO: do we need this?
+
+  bl  load_current_task_state
 
   //return from IRQ
-  subs  pc, lr, #4	
+  subs  pc, lr, #4 //TODO: do we need this?	
 
-schedule:
+
+
+save_current_task_state:
   ldr  r4, =current_task // load current_task
   ldr  r0, [r4]         // dereference current_task, to get the task_struct
   mov  r2, sp           // save sp to iterate over it
@@ -54,6 +69,19 @@ save_registers_loop:
   orr  r1, #0x12        // Select IRQ mode
   msr  cpsr, r1         // Enter new mode 
   bx   lr
+
+
+
+load_current_task_state:
+  ldr  r4, =current_task // load current_task
+  ldr  r0, [r4]          // dereference current_task, to get the task_struct
+  ldr  r5, [r0, #64]     // load cpsr from task_struct to r5 (i.e. task_struct+64)
+  msr  spsr, r5          // copy r5 to spsr
+  ldm  r0, {r0-r15}^     // load r0-r15 from task_struct and restore cpsr from spsr
+  // [!] ^ forces the use of r14,r15 from SVC mode instead of the current IRQ mode
+  // and restores cpsr form spsr (see ARM manual for LDM/STM)
+
+  
 
 .section .data
 

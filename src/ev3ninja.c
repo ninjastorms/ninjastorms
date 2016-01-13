@@ -14,13 +14,15 @@
 #include <libp/spi.h>
 
 void func_task_a(void) {
-	while(1)
-		puts("Heyho! I am currently executing Task A\n");
+  puts("Heyho! I am currently executing Task A\n");
+  while(1)
+    putchar('A');
 }
 
 void func_task_b(void) {
-	while(1)
-		puts("Heyho! I am currently executing Task B\n");
+  puts("Heyho! I am currently executing Task B\n");
+  while(1)
+    putchar('B');
 }
 
 int ev3ninja_main (void)
@@ -32,16 +34,14 @@ int ev3ninja_main (void)
   init_task(&task_a, (unsigned int)func_task_a, TASK_A_STACK_ADDRESS);
   init_task(&task_b, (unsigned int)func_task_b, TASK_B_STACK_ADDRESS);	
 
-  //irq_handler();
-  start_scheduler(tasks);
-  
   puts("This is EV3 NinjaStorms");
   puts("  shuriken ready");
   
+  start_scheduler(tasks);
+  
   feedback_flash_green();
 
-  while(1)
-    ;
+  while(1);
 
   puts("All done. ev3ninja out!");
   feedback_flash_red();
