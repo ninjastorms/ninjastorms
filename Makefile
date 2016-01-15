@@ -19,7 +19,7 @@ LDFLAGS = -g -Ttext $(LOADADDR) -L$(LIBGCCDIR) -lgcc
 
 INCGCCDIR = $(LIBGCCDIR)/include
 # use 'make all CFLAGS+="-DQEMU"' to build for qemu emulation on versatilepb
-override CFLAGS += -g -O2 -pipe -fno-common -msoft-float -I./include -I. -fno-builtin -ffreestanding -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -fno-stack-protector -Wall -Wextra -Wstrict-prototypes -Werror
+override CFLAGS += -g -O2 -pipe -fno-common -msoft-float -I./include -I. -fno-builtin -ffreestanding -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -fno-stack-protector -fno-isolate-erroneous-paths-dereference -Wall -Wextra -Wstrict-prototypes -Werror
 
 # add relevant object files here:
 OBJ = src/ev3ninja.o src/scheduler.o src/interrupt.o src/interrupt_handler.o src/runtime.o src/feedback.o libc/libc.a libp/libp.a
