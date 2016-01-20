@@ -10,7 +10,7 @@ SDDEV = /dev/sdd1
 SDMNT = /mnt/sd1
 SERIAL_PORT = /dev/ttyUSB0
 
-LOADADDR = 0x00100000
+LOADADDR = 0xC1000000
 ENTRY = ev3ninja_runtime
 
 LIBGCCDIR = $(shell dirname $(shell $(CC) \
@@ -68,7 +68,7 @@ $(LIBP): $(OBJ_LIBP)
 
 boot.scr: boot.cmd
 	@echo "  MKIMAGE  boot.scr"
-	$(Q)mkimage -C none -A arm -T script -d boot.cmd boot.scr &> /dev/null
+	$(Q)mkimage -C none -A arm -T script -d boot.cmd boot.scr
 
 boot.cmd: disas
 	$(Q)echo "loady $(LOADADDR)" > boot.cmd
@@ -77,8 +77,10 @@ boot.cmd: disas
 deploy: $(BIN) boot.scr
 	@echo "transfer OS to EV3"
 	#get priviliges to read/write
-	$(Q) sudo chmod +rw $(SERIAL_PORT)
-	$(Q) sb -vv ev3ninja.bin <$(SERIAL_PORT) >$(SERIAL_PORT)
+	#$(Q) sudo chmod 666 $(SERIAL_PORT)
+	#set up tty
+	#$(Q) stty -F /dev/ttyUSB0 115200 -cstopb -parity
+	#$(Q) sb -vv ev3ninja.bin <$(SERIAL_PORT) >$(SERIAL_PORT)
 
 clean:
 	$(Q)rm -f $(OBJ) $(OBJ_LIBC) $(LIBC) $(OBJ_LIBP) $(LIBP) $(ELF) $(ASM) $(BIN) $(SREC) boot.scr boot.cmd

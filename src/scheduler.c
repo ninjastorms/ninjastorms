@@ -12,6 +12,8 @@
 #define CPSR_MODE_SVC 0x13
 #define CPSR_ABORT (1 << 8)
 
+#define TIMER_LOAD_VALUE 0x2000
+
 task_t *current_task;
 task_t *other_task;
 
@@ -36,6 +38,7 @@ void schedule(void) {
 }
 
 void init_timer(void) {
+#ifdef QEMU
   *TIMER1_CTRL &= ~(1 << 7); // unset TimerEn(abled)
 
   *TIMER1_CTRL |= 1 << 6;    // set periodic-mode
@@ -45,8 +48,21 @@ void init_timer(void) {
   //*TIMER1_CTRL |= 1 << 0;    // set OneShot-Mode
   *TIMER1_CTRL &= ~(1 << 0);    // set Wrapping-Mode
 
-  *TIMER1_LOAD = 0x2000;     // load
+  *TIMER1_LOAD = TIMER_LOAD_VALUE;     // load
   *TIMER1_CTRL |= 1 << 7;    // set TimerEn(abled)
+#endif
+
+#ifndef QEMU
+  *TIMER0_TGCR  = 0;  //clear global control register, resets timer
+  *TIMER0_TGCR |= TIMMODE_UNCHAINED; // set dual 32 bit unchained mode
+  *TIMER0_TGCR |= TIM34RS_REMOVE; // remove timer from reset
+  *TIMER0_PRD34 = TIMER_LOAD_VALUE; // set timer period
+  *TIMER0_TGCR |= PSC34; // set timer period
+
+  *TIMER0_TCR   = 0;  //clear control register, disables timer
+  *TIMER0_TCR  |= ENAMODE34_CONTIN; //set continuously-mode
+#endif
+
   return;
 }
 

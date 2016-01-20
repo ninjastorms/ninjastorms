@@ -33,17 +33,27 @@ void func_task_b(void) {
 
 int ev3ninja_main (void)
 {
-  static task_t task_a;
-  static task_t task_b;
-  task_t *tasks[] = { &task_a, &task_b };
+  //static task_t task_a;
+  //static task_t task_b;
+  //task_t *tasks[] = { &task_a, &task_b };
 
-  init_task(&task_a, (unsigned int)func_task_a, TASK_A_STACK_ADDRESS);
-  init_task(&task_b, (unsigned int)func_task_b, TASK_B_STACK_ADDRESS);	
+  //init_task(&task_a, (unsigned int)func_task_a, TASK_A_STACK_ADDRESS);
+  //init_task(&task_b, (unsigned int)func_task_b, TASK_B_STACK_ADDRESS);	
 
   puts("This is EV3 NinjaStorms");
   puts("  shuriken ready");
-  
-  start_scheduler(tasks);
+
+  //start_scheduler(tasks);
+
+  init_timer();
+  volatile unsigned int i;
+  printf("%x\n", *TIMER0_TIM34);
+  printf("%x\n", *TIMER0_TGCR);
+  printf("%x\n", *TIMER0_TCR);
+  while (1) {
+    printf("%x ", *TIMER0_TIM34);
+    for(i=0;i<65000;i++);
+  }
   
   feedback_flash_green();
 

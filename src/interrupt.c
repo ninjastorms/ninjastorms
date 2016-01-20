@@ -45,7 +45,7 @@ void init_interrupt_handling(void) {
   );
 
   // Setting up primary interrupt controller
-  *PIC_INTENABLE |= TIMER1_INTBIT;	// unmask interrupt bit for timer1
+  //*PIC_INTENABLE |= TIMER1_INTBIT;	// unmask interrupt bit for timer1
   return;
 }
 
