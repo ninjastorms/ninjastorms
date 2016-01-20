@@ -75,12 +75,12 @@ boot.cmd: disas
 	$(Q)echo "go 0x$(shell grep '<$(ENTRY)>' $(ASM) | head -n1 | cut -d' ' -f1)" >> boot.cmd
 
 deploy: $(BIN) boot.scr
-	@echo "transfer OS to EV3"
-	#get priviliges to read/write
-	#$(Q) sudo chmod 666 $(SERIAL_PORT)
-	#set up tty
-	#$(Q) stty -F /dev/ttyUSB0 115200 -cstopb -parity
-	#$(Q) sb -vv ev3ninja.bin <$(SERIAL_PORT) >$(SERIAL_PORT)
+	@echo "  INSTALL  $(BIN) -> $(SDDEV)"
+	$(Q)mkdir -p $(SDMNT)
+	$(Q)mount $(SDDEV) $(SDMNT)
+	$(Q)cp $(BIN) $(SDMNT)/
+	$(Q)cp boot.scr $(SDMNT)/
+	$(Q)umount $(SDDEV)
 
 clean:
 	$(Q)rm -f $(OBJ) $(OBJ_LIBC) $(LIBC) $(OBJ_LIBP) $(LIBP) $(ELF) $(ASM) $(BIN) $(SREC) boot.scr boot.cmd

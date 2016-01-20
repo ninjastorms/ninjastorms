@@ -39,20 +39,35 @@
 #ifndef QEMU
 
 // Timer Adresses
-//#define TIMER0_BASE 0x01C21400
 #define TIMER0_BASE 0x01c20000
+#define TIMER0_TIM12      (volatile unsigned int*)(TIMER0_BASE+0x10)
 #define TIMER0_TIM34      (volatile unsigned int*)(TIMER0_BASE+0x14)
+#define TIMER0_PRD12      (volatile unsigned int*)(TIMER0_BASE+0x18)
 #define TIMER0_PRD34      (volatile unsigned int*)(TIMER0_BASE+0x1C)
 #define TIMER0_TCR        (volatile unsigned int*)(TIMER0_BASE+0x20)
 #define TIMER0_TGCR       (volatile unsigned int*)(TIMER0_BASE+0x24)
 #define TIMER0_INTCTLSTAT (volatile unsigned int*)(TIMER0_BASE+0x44)
 
 // TCR bits
+#define ENAMODE34 (0b11 << 22)
 #define ENAMODE34_CONTIN (0b10 << 22)
+#define ENAMODE12 (0b11 << 6)
+#define ENAMODE12_CONTIN (0b10 << 6)
+#define CLKSRC12 (1 << 8)
 
 // TGRC bits
-#define PSC34 (0b0000 << 8)
+#define PSC34 (0b1111 << 8)
+#define PSC34_VALUE (0b1111 << 8)
+#define PLUSEN (1 << 4)
+#define TIMMODE (0b11 << 2)
 #define TIMMODE_UNCHAINED (0b01 << 2)
 #define TIM34RS_REMOVE (1 << 1)
+#define TIM12RS_REMOVE (1 << 0)
+
+// INTCTLSTAT bits
+#define PRDINTSTAT34 (1 << 17)
+#define PRDINTEN34 (1 << 16)
+#define PRDINTSTAT12 (1 << 1)
+#define PRDINTEN12 (1 << 0)
 
 #endif

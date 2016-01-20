@@ -12,7 +12,7 @@
 #define CPSR_MODE_SVC 0x13
 #define CPSR_ABORT (1 << 8)
 
-#define TIMER_LOAD_VALUE 0x2000
+#define TIMER_LOAD_VALUE 0xFFFFF
 
 task_t *current_task;
 task_t *other_task;
@@ -39,28 +39,28 @@ void schedule(void) {
 
 void init_timer(void) {
 #ifdef QEMU
-  *TIMER1_CTRL &= ~(1 << 7); // unset TimerEn(abled)
-
-  *TIMER1_CTRL |= 1 << 6;    // set periodic-mode
-  *TIMER1_INTCLR = (char)0x1; // clear interrupts
-  *TIMER1_CTRL |= 1 << 5;    // set IntEnable
-  *TIMER1_CTRL |= 1 << 1;    // set 32-bit mode
-  //*TIMER1_CTRL |= 1 << 0;    // set OneShot-Mode
-  *TIMER1_CTRL &= ~(1 << 0);    // set Wrapping-Mode
-
-  *TIMER1_LOAD = TIMER_LOAD_VALUE;     // load
-  *TIMER1_CTRL |= 1 << 7;    // set TimerEn(abled)
+  *TIMER1_CTRL &= ~(1 << 7);        // disable timer
+  *TIMER1_CTRL |= 1 << 6;           // set periodic-mode
+  *TIMER1_INTCLR = (char)0x1;       // clear interrupts
+  *TIMER1_CTRL |= 1 << 5;           // set IntEnable
+  *TIMER1_CTRL |= 1 << 1;           // set 32-bit mode
+  *TIMER1_CTRL &= ~(1 << 0);        // set Wrapping-Mode
+  *TIMER1_LOAD  = TIMER_LOAD_VALUE; // set timer period
+  *TIMER1_CTRL |= 1 << 7;           // start timer
 #endif
 
 #ifndef QEMU
-  *TIMER0_TGCR  = 0;  //clear global control register, resets timer
-  *TIMER0_TGCR |= TIMMODE_UNCHAINED; // set dual 32 bit unchained mode
-  *TIMER0_TGCR |= TIM34RS_REMOVE; // remove timer from reset
-  *TIMER0_PRD34 = TIMER_LOAD_VALUE; // set timer period
-  *TIMER0_TGCR |= PSC34; // set timer period
-
-  *TIMER0_TCR   = 0;  //clear control register, disables timer
-  *TIMER0_TCR  |= ENAMODE34_CONTIN; //set continuously-mode
+  *TIMER0_TCR  &= ~ENAMODE34;          // disable timer
+  *TIMER0_TGCR |= ~TIM34RS_REMOVE;     // reset timer
+  *TIMER0_TGCR &= ~TIMMODE;            // reset mode bits
+  *TIMER0_TGCR |= TIMMODE_UNCHAINED;   // set dual 32 bit unchained mode
+  *TIMER0_TGCR |= TIM34RS_REMOVE;      // remove timer from reset
+  *TIMER0_PRD34 = TIMER_LOAD_VALUE;    // set timer period
+  *TIMER0_TGCR &= ~PSC34;              // reset prescaler
+  *TIMER0_TGCR |= PSC34_VALUE;         // set prescaler
+  *TIMER0_INTCTLSTAT &= ~PRDINTSTAT34; // clear interrupts
+  *TIMER0_INTCTLSTAT |= PRDINTEN34;    // enable interrupts
+  *TIMER0_TCR  |= ENAMODE34_CONTIN;    // set continuously-mode, start timer
 #endif
 
   return;
@@ -74,5 +74,4 @@ void start_scheduler(task_t *tasks[]) {
   init_timer();
 
   load_current_task_state();
-  //save_task_state(current_task);
 }

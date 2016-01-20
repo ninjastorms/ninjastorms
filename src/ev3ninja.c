@@ -45,23 +45,36 @@ int ev3ninja_main (void)
 
   //start_scheduler(tasks);
 
+  printf("Timer value: %x\n", *TIMER0_TIM34);
+  printf("TGCR: %x\n", *TIMER0_TGCR);
+  printf("TCR: %x\n", *TIMER0_TCR);
+  printf("Interrupt: %x\n", *TIMER0_INTCTLSTAT);
+  printf("Period: %x\n", *TIMER0_PRD34);
+  printf("Init timer..\n\n");
   init_timer();
+
+  printf("Timer value: %x\n", *TIMER0_TIM34);
+  printf("TGCR: %x\n", *TIMER0_TGCR);
+  printf("TCR: %x\n", *TIMER0_TCR);
+  printf("Interrupt: %x\n", *TIMER0_INTCTLSTAT);
+  printf("Period: %x\n", *TIMER0_PRD34);
+
   volatile unsigned int i;
-  printf("%x\n", *TIMER0_TIM34);
-  printf("%x\n", *TIMER0_TGCR);
-  printf("%x\n", *TIMER0_TCR);
+  volatile unsigned int j;
   while (1) {
-    printf("%x ", *TIMER0_TIM34);
-    for(i=0;i<65000;i++);
+    puts("reset interrupt\n");
+    *TIMER0_INTCTLSTAT |= PRDINTSTAT34;
+    for(i=0;i<50;i++) {
+      for(j=0;j<65000;j++);
+      printf("%x\t", *TIMER0_TIM34);
+      printf("%x\n", *TIMER0_INTCTLSTAT);
+    }
   }
   
   feedback_flash_green();
-
-  while(1);
 
   puts("All done. ev3ninja out!");
   feedback_flash_red();
 
   return 0;
 }
-
