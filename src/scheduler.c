@@ -58,7 +58,7 @@ void init_timer(void) {
   *TIMER0_PRD34 = TIMER_LOAD_VALUE;    // set timer period
   *TIMER0_TGCR &= ~PSC34;              // reset prescaler
   *TIMER0_TGCR |= PSC34_VALUE;         // set prescaler
-  *TIMER0_INTCTLSTAT &= ~PRDINTSTAT34; // clear interrupts
+  *TIMER0_INTCTLSTAT |= PRDINTSTAT34; // clear interrupts
   *TIMER0_INTCTLSTAT |= PRDINTEN34;    // enable interrupts
   *TIMER0_TCR  |= ENAMODE34_CONTIN;    // set continuously-mode, start timer
 #endif
