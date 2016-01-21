@@ -49,25 +49,38 @@
 #define TIMER0_INTCTLSTAT (volatile unsigned int*)(TIMER0_BASE+0x44)
 
 // TCR bits
-#define ENAMODE34 (0b11 << 22)
+#define ENAMODE34        (0b11 << 22)
 #define ENAMODE34_CONTIN (0b10 << 22)
-#define ENAMODE12 (0b11 << 6)
+#define ENAMODE12        (0b11 << 6)
 #define ENAMODE12_CONTIN (0b10 << 6)
 #define CLKSRC12 (1 << 8)
 
 // TGRC bits
-#define PSC34 (0b1111 << 8)
-#define PSC34_VALUE (0b1111 << 8)
-#define PLUSEN (1 << 4)
-#define TIMMODE (0b11 << 2)
+#define PSC34             (0b1111 << 8)
+#define PSC34_VALUE       (0b1111 << 8)
+#define TIMMODE           (0b11 << 2)
 #define TIMMODE_UNCHAINED (0b01 << 2)
+#define PLUSEN         (1 << 4)
 #define TIM34RS_REMOVE (1 << 1)
 #define TIM12RS_REMOVE (1 << 0)
 
 // INTCTLSTAT bits
 #define PRDINTSTAT34 (1 << 17)
-#define PRDINTEN34 (1 << 16)
-#define PRDINTSTAT12 (1 << 1)
-#define PRDINTEN12 (1 << 0)
+#define PRDINTEN34   (1 << 16)
+#define PRDINTSTAT12 (1 <<  1)
+#define PRDINTEN12   (1 <<  0)
+
+// ARM interrupt controller (AINTC)
+#define AINTC_BASE 0xFFFEE000
+#define AINTC_GER   (volatile unsigned int*)(AINTC_BASE+0x0004)
+#define AINTC_SECR1 (volatile unsigned int*)(AINTC_BASE+0x0280)
+#define AINTC_SECR2 (volatile unsigned int*)(AINTC_BASE+0x0284)
+#define AINTC_SECR3 (volatile unsigned int*)(AINTC_BASE+0x0288)
+#define AINTC_SECR4 (volatile unsigned int*)(AINTC_BASE+0x038C)
+#define AINTC_ESR1  (volatile unsigned int*)(AINTC_BASE+0x0300)
+#define AINTC_ESR2  (volatile unsigned int*)(AINTC_BASE+0x0304)
+#define AINTC_ESR3  (volatile unsigned int*)(AINTC_BASE+0x0308)
+#define AINTC_ESR4  (volatile unsigned int*)(AINTC_BASE+0x030C)
+#define AINTC_HIER  (volatile unsigned int*)(AINTC_BASE+0x1500)
 
 #endif
