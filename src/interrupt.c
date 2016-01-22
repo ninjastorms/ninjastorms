@@ -2,27 +2,35 @@
 #include "interrupt_handler.h"
 
 #include <memory.h>
+#include <stdio.h>
+
+#ifndef QEMU
+#define IVT_OFFSET (unsigned int) 0xFFFF0000
+#endif
+
+#ifdef QEMU
+#define IVT_OFFSET (unsigned int) 0x0
+#endif
 
 void init_interrupt_handling(void) {
   //build interrupt vector table
-  *(unsigned int*) 0x00 = 0xe59ff014;	//TODO: reset
-  *(unsigned int*) 0x04 = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x20 undefined instruction
-  *(unsigned int*) 0x08 = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x24 software interrupt
-  *(unsigned int*) 0x0c = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x28 prefetch abort
-  *(unsigned int*) 0x10 = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x2c data abort
-  *(unsigned int*) 0x14 = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x30 reserved
-  *(unsigned int*) 0x18 = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x34 IRQ
-  *(unsigned int*) 0x1c = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x38 FIQ
+  *(unsigned int*) (IVT_OFFSET + 0x00) = 0xe59ff018;	//TODO: reset
+  *(unsigned int*) (IVT_OFFSET + 0x04) = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x20 undefined instruction
+  *(unsigned int*) (IVT_OFFSET + 0x08) = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x24 software interrupt
+  *(unsigned int*) (IVT_OFFSET + 0x0c) = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x28 prefetch abort
+  *(unsigned int*) (IVT_OFFSET + 0x10) = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x2c data abort
+  *(unsigned int*) (IVT_OFFSET + 0x14) = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x30 reserved
+  *(unsigned int*) (IVT_OFFSET + 0x18) = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x34 IRQ
+  *(unsigned int*) (IVT_OFFSET + 0x1c) = 0xe59ff014;	//ldr pc, [pc, #20] ; 0x38 FIQ
 
-  *(unsigned int*) 0x1c = 0x1000000; //TODO
-  *(unsigned int*) 0x20 = 0x1000000; //TODO
+  *(unsigned int*) (IVT_OFFSET + 0x20) = (unsigned int) 0;
   //ATTENTION: don't use software interrupts in supervisor mode
-  *(unsigned int*) 0x24 = 0x1000000; //(unsigned int) &swi_handler;
-  *(unsigned int*) 0x28 = 0x1000000; //TODO
-  *(unsigned int*) 0x2c = 0x1000000; //TODO
-  *(unsigned int*) 0x30 = 0x1000000; //TODO
-  *(unsigned int*) 0x34 = (unsigned int) &irq_handler;
-  *(unsigned int*) 0x38 = 0x1000000; //TODO
+  *(unsigned int*) (IVT_OFFSET + 0x24) = (unsigned int) &irq_handler;
+  *(unsigned int*) (IVT_OFFSET + 0x28) = (unsigned int) 0;
+  *(unsigned int*) (IVT_OFFSET + 0x2c) = (unsigned int) 0;
+  *(unsigned int*) (IVT_OFFSET + 0x30) = (unsigned int) 0;
+  *(unsigned int*) (IVT_OFFSET + 0x34) = (unsigned int) &irq_handler;
+  *(unsigned int*) (IVT_OFFSET + 0x38) = (unsigned int) 0;
 
   //setting up IRQ mode stack
   asm(
@@ -44,8 +52,20 @@ void init_interrupt_handling(void) {
     "msr  cpsr_c, r1\n"
   );
 
+#ifndef QEMU
+  // set V bit in c1 register in cp15 to
+  // locate interrupt vector table to 0xFFFF0000
+  asm volatile (
+    "MRC p15, 0, r0, c1, c0, 0\n"
+    "ORR r0, #0x2000\n"
+    "MCR p15, 0, r0, c1, c0, 0\n"
+  );
+#endif
+
+#ifdef QEMU
   // Setting up primary interrupt controller
-  //*PIC_INTENABLE |= TIMER1_INTBIT;	// unmask interrupt bit for timer1
+  *PIC_INTENABLE |= TIMER1_INTBIT;	// unmask interrupt bit for timer1
+#endif
   return;
 }
 

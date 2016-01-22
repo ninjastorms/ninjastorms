@@ -23,20 +23,20 @@ irq_handler:
   push  {r0-r12, lr}
 
   //ldr  r0, =message
-  bl  save_current_task_state
-  bl  schedule
+  //bl  save_current_task_state
+  //bl  schedule
 
   // clear interrupt
-  ldr  r0, =TIMER1_INTCLR_ASM
-  mov  r1, #0x1
-  str  r1, [r0]
+  //ldr  r0, =TIMER1_INTCLR_ASM
+  //mov  r1, #0x1
+  //str  r1, [r0]
   
   ldr  r0, =message
   bl   puts
 
   pop  {r0-r12, lr} //TODO: do we need this?
 
-  bl  load_current_task_state
+  //bl  load_current_task_state
 
   //return from IRQ
   subs  pc, lr, #4 //TODO: do we need this?	

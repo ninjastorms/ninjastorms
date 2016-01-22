@@ -4,6 +4,7 @@
 #include "feedback.h"
 #include "scheduler.h"
 #include "interrupt_handler.h"
+#include "interrupt.h"
 
 #include <libp/led.h>
 #include <libp/button.h>
@@ -43,6 +44,9 @@ int ev3ninja_main (void)
   puts("This is EV3 NinjaStorms");
   puts("  shuriken ready");
 
+  init_interrupt_handling();
+
+  asm("SWI 1");
   //start_scheduler(tasks);
 
   printf("Timer value: %x\n", *TIMER0_TIM34);
