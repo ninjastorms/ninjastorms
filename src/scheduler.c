@@ -9,10 +9,16 @@
 #define REG_LR 14
 #define REG_PC 15
 
-#define CPSR_MODE_SVC 0x13
-#define CPSR_ABORT (1 << 8)
+#define CPSR_MODE_SVC  0x13
+#define CPSR_MODE_USER 0x10
 
+#ifdef QEMU
+#define TIMER_LOAD_VALUE 0x2000
+#endif
+
+#ifndef QEMU
 #define TIMER_LOAD_VALUE 0xFFFFF
+#endif
 
 task_t *current_task;
 task_t *other_task;
@@ -26,7 +32,7 @@ void init_task(task_t *task, unsigned int entrypoint, unsigned int stackbase) {
   task->reg[REG_SP] = stackbase;
   task->reg[REG_PC] = entrypoint;
 
-  task->cpsr = CPSR_ABORT | CPSR_MODE_SVC;
+  task->cpsr = CPSR_MODE_USER;
 }
 
 void schedule(void) {
@@ -58,7 +64,7 @@ void init_timer(void) {
   *TIMER0_PRD34 = TIMER_LOAD_VALUE;    // set timer period
   *TIMER0_TGCR &= ~PSC34;              // reset prescaler
   *TIMER0_TGCR |= PSC34_VALUE;         // set prescaler
-  *TIMER0_INTCTLSTAT |= PRDINTSTAT34; // clear interrupts
+  *TIMER0_INTCTLSTAT |= PRDINTSTAT34;  // clear interrupts
   *TIMER0_INTCTLSTAT |= PRDINTEN34;    // enable interrupts
   *TIMER0_TCR  |= ENAMODE34_CONTIN;    // set continuously-mode, start timer
 #endif

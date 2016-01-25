@@ -18,7 +18,7 @@ LIBGCCDIR = $(shell dirname $(shell $(CC) \
 LDFLAGS = -g -Ttext $(LOADADDR) -L$(LIBGCCDIR) -lgcc 
 
 INCGCCDIR = $(LIBGCCDIR)/include
-# use 'make all CFLAGS+="-DQEMU"' to build for qemu emulation on versatilepb
+# use 'make all CFLAGS+="-DQEMU" LOADADDR=0x100000' to build for qemu emulation on versatilepb
 override CFLAGS += -g -O2 -pipe -fno-common -msoft-float -I./include -I. -fno-builtin -ffreestanding -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -fno-stack-protector -fno-isolate-erroneous-paths-dereference -Wall -Wextra -Wstrict-prototypes -Werror
 
 # add relevant object files here:

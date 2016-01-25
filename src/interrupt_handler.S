@@ -17,8 +17,8 @@ irq_handler:
   // for less latency save only registers that will change
   push  {r0-r12, lr}
 
-  //bl  save_current_task_state
-  //bl  schedule
+  bl  save_current_task_state
+  bl  schedule
 
 #ifdef QEMU
   // clear interrupt
@@ -37,16 +37,13 @@ irq_handler:
   ldr  r0, =message
   bl   puts
 
-  pop  {r0-r12, lr} //TODO: do we need this?
+  pop  {r0-r12, lr}
 
-  //bl  load_current_task_state
-
-  //return from IRQ
-  subs  pc, lr, #4 //TODO: do we need this?	
-
+  b  load_current_task_state
 
 
 save_current_task_state:
+  // save r0-r12
   ldr  r4, =current_task // load current_task
   ldr  r0, [r4]         // dereference current_task, to get the task_struct
   mov  r2, sp           // save sp to iterate over it
@@ -56,21 +53,16 @@ save_registers_loop:
   str  r1, [r0], #4     // save it to the struct
   subs r3, #1           // i--
   bne  save_registers_loop
+  // save sp, lr
+  stm  r0, {sp, lr}^   // save user mode sp and lr to the struct
+  // save pc
   ldr  r1, [r2]         // load saved lr from stack
   sub  r1, #4           // because lr is the old pc+4
-  str  r1, [r0, #8]     // we skip sp and lr in the struct and save it
-  mrs  r2, spsr         // save cpsr of the current task (i.e spsr atm)
-  str  r2, [r0, #12]    // r0 still points to sp, so skip sp, lr, pc (i.e. 12) 
+  str  r1, [r0, #8]     // save r1 to the pc field in the task_struct
+  // save cpsr
+  mrs  r1, spsr         // save cpsr of the current task (in spsr atm)
+  str  r1, [r0, #12]    // r0 still points to sp, so skip sp, lr, pc (i.e. 12)   
 
-  // change to back SVC mode to save sp and lr
-  mrs  r1, cpsr         // save cpsr to r1
-  bic  r1, #0x1f        // Clear mode bits
-  orr  r1, #0x13        // Select SVC mode
-  msr  cpsr, r1         // Enter new mode
-  stm  r0, { sp, lr }   // save sp and lr to the struct
-  bic  r1, #0x1f        // Clear mode bits
-  orr  r1, #0x12        // Select IRQ mode
-  msr  cpsr, r1         // Enter new mode 
   bx   lr
 
 
@@ -80,10 +72,9 @@ load_current_task_state:
   ldr  r0, [r4]          // dereference current_task, to get the task_struct
   ldr  r5, [r0, #64]     // load cpsr from task_struct to r5 (i.e. task_struct+64)
   msr  spsr, r5          // copy r5 to spsr
-  ldm  r0, {r0-r15}^     // load r0-r15 from task_struct and restore cpsr from spsr
-  // [!] ^ forces the use of r14,r15 from SVC mode instead of the current IRQ mode
-  // and restores cpsr form spsr (see ARM manual for LDM/STM)
-
+  add  lr, r0, #60       // load address of saved pc into lr
+  ldm  r0, {r0-r14}^     // load saved registers into user mode registers ((don't) trust the carrot!)
+  ldm  lr, {pc}^         // return to loaded task and restore cpsr from spsr
   
 
 .section .data
