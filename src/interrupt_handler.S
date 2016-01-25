@@ -13,24 +13,27 @@
 .type load_current_task_state STT_FUNC
 
 
-//.extern current_task
-//.extern other_task
-
-
-
 irq_handler:
   // for less latency save only registers that will change
   push  {r0-r12, lr}
 
-  //ldr  r0, =message
   //bl  save_current_task_state
   //bl  schedule
 
+#ifdef QEMU
   // clear interrupt
-  //ldr  r0, =TIMER1_INTCLR_ASM
-  //mov  r1, #0x1
-  //str  r1, [r0]
-  
+  ldr  r0, =TIMER1_INTCLR_ASM
+  mov  r1, #0x1
+  str  r1, [r0]
+#endif
+
+#ifndef QEMU
+  // clear interrupt
+  ldr r0, =TIMER0_INTCTLSTAT_ASM
+  mov r1, PRDINTSTAT34_ASM
+  str r1, [r0]
+#endif
+
   ldr  r0, =message
   bl   puts
 

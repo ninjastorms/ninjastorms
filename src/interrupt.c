@@ -52,6 +52,11 @@ void init_interrupt_handling(void) {
     "msr  cpsr_c, r1\n"
   );
 
+#ifdef QEMU
+  // Setting up primary interrupt controller
+  *PIC_INTENABLE |= TIMER1_INTBIT;  // unmask interrupt bit for timer1
+#endif
+
 #ifndef QEMU
   // set V bit in c1 register in cp15 to
   // locate interrupt vector table to 0xFFFF0000
@@ -60,12 +65,16 @@ void init_interrupt_handling(void) {
     "ORR r0, #0x2000\n"
     "MCR p15, 0, r0, c1, c0, 0\n"
   );
+
+  // Setting up primary interrupt controller
+  *AINTC_GER   = GER_ENABLE;   // enable global interrupts
+  *AINTC_HIER |= HIER_IRQ;     // enable IRQ interrupt line
+  *AINTC_ESR1 |= T64P0_TINT34; // enable timer interrupt
+  *AINTC_CMR5 |= 2 << (2*8);   // set channel of timer interrupt to 2
+                               // 0-1 are FIQ channels, 2-31 are IRQ channels
+                               // lower channels have higher priority
 #endif
 
-#ifdef QEMU
-  // Setting up primary interrupt controller
-  *PIC_INTENABLE |= TIMER1_INTBIT;	// unmask interrupt bit for timer1
-#endif
   return;
 }
 
