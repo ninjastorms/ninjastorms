@@ -19,7 +19,7 @@ static void
 ev3ninja_runtime_init (void)
 {
   // Change stack location to our designated stack address
-  //asm volatile("mov sp, %0" : : "r" (SVC_STACK_ADDRESS));;
+  asm volatile("mov sp, %0" : : "r" (SVC_STACK_ADDRESS));;
 
   size_t count;
   size_t i;

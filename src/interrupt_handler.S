@@ -17,8 +17,8 @@ irq_handler:
   // for less latency save only registers that will change
   push  {r0-r12, lr}
 
-  //bl  save_current_task_state
-  //bl  schedule
+  bl  save_current_task_state
+  bl  schedule
 
 #ifdef QEMU
   // clear interrupt
@@ -30,7 +30,11 @@ irq_handler:
 #ifndef QEMU
   // clear interrupt
   ldr r0, =TIMER0_INTCTLSTAT_ASM
-  mov r1, PRDINTSTAT34_ASM
+  mov r1, CLEARTIMER34_ASM
+  str r1, [r0]
+  // clear interrupt in interrupt controller
+  ldr r0, =AINTC_SECR1_ASM
+  mov r1, T64P0_TINT34_ASM
   str r1, [r0]
 #endif
 
@@ -39,8 +43,7 @@ irq_handler:
 
   pop  {r0-r12, lr}
 
-  //b  load_current_task_state
-  subs pc, lr, #4
+  b  load_current_task_state
 
 
 save_current_task_state:

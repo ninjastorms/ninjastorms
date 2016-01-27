@@ -17,7 +17,7 @@
 #endif
 
 #ifndef QEMU
-#define TIMER_LOAD_VALUE 0xFFFFF
+#define TIMER_LOAD_VALUE 0xFFFFFF
 #endif
 
 task_t *current_task;
@@ -57,7 +57,7 @@ void init_timer(void) {
 
 #ifndef QEMU
   *TIMER0_TCR  &= ~ENAMODE34;          // disable timer
-  *TIMER0_TGCR |= ~TIM34RS_REMOVE;     // reset timer
+  *TIMER0_TGCR &= ~TIM34RS_REMOVE;     // reset timer
   *TIMER0_TGCR &= ~TIMMODE;            // reset mode bits
   *TIMER0_TGCR |= TIMMODE_UNCHAINED;   // set dual 32 bit unchained mode
   *TIMER0_TGCR |= TIM34RS_REMOVE;      // remove timer from reset
@@ -72,10 +72,22 @@ void init_timer(void) {
   return;
 }
 
+void stop_timer(void) {
+#ifdef QEMU
+  *TIMER1_CTRL &= ~(1 << 7);        // disable timer
+  *TIMER1_INTCLR = (char)0x1;       // clear interrupts
+#endif
+#ifndef QEMU
+  *TIMER0_TCR  &= ~ENAMODE34;          // disable timer
+  *TIMER0_INTCTLSTAT |= PRDINTSTAT34;  // clear interrupts
+#endif
+}
+
 void start_scheduler(task_t *tasks[]) {
   current_task = tasks[0];
   other_task = tasks[1];
 	
+  stop_timer();
   init_interrupt_handling();
   init_timer();
 

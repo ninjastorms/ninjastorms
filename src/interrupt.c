@@ -45,13 +45,6 @@ void init_interrupt_handling(void) {
     : : "r" (IRQ_STACK_ADDRESS)
   );
 
-  // Enable IRQs
-  asm(
-    "mrs  r1, cpsr\n"
-    "bic  r1, r1, #0x80\n"
-    "msr  cpsr_c, r1\n"
-  );
-
 #ifdef QEMU
   // Setting up primary interrupt controller
   *PIC_INTENABLE |= TIMER1_INTBIT;  // unmask interrupt bit for timer1
@@ -67,6 +60,7 @@ void init_interrupt_handling(void) {
   );
 
   // Setting up primary interrupt controller
+  *AINTC_SECR1 = 0xFFFFFFFF;   // clear current interrupts
   *AINTC_GER   = GER_ENABLE;   // enable global interrupts
   *AINTC_HIER |= HIER_IRQ;     // enable IRQ interrupt line
   *AINTC_ESR1 |= T64P0_TINT34; // enable timer interrupt
@@ -74,6 +68,15 @@ void init_interrupt_handling(void) {
                                // 0-1 are FIQ channels, 2-31 are IRQ channels
                                // lower channels have higher priority
 #endif
+
+  //printf("secr: %x\n", *AINTC_SECR1);
+
+  // Enable IRQs
+  asm(
+    "mrs  r1, cpsr\n"
+    "bic  r1, r1, #0x80\n"
+    "msr  cpsr_c, r1\n"
+  );
 
   return;
 }

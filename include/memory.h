@@ -49,7 +49,7 @@
 
 // Timer Adresses
 #define TIMER0_BASE 0x01C20000
-#define TIMER0_INTCTLSTAT_ASM 0x101E200C
+#define TIMER0_INTCTLSTAT_ASM 0x01C20044
 #define TIMER0_TIM12      (volatile unsigned int*)(TIMER0_BASE+0x10)
 #define TIMER0_TIM34      (volatile unsigned int*)(TIMER0_BASE+0x14)
 #define TIMER0_PRD12      (volatile unsigned int*)(TIMER0_BASE+0x18)
@@ -75,30 +75,33 @@
 #define TIM12RS_REMOVE (1 << 0)
 
 // INTCTLSTAT bits
-#define PRDINTSTAT34_ASM #0x20000
+#define CLEARTIMER34_ASM #0x30000
 #define PRDINTSTAT34 (1 << 17)
 #define PRDINTEN34   (1 << 16)
 #define PRDINTSTAT12 (1 <<  1)
 #define PRDINTEN12   (1 <<  0)
 
 // ARM interrupt controller (AINTC)
-#define AINTC_BASE 0xFFFEE000
-#define AINTC_GER   (volatile unsigned int*)(AINTC_BASE+0x0010)
-#define AINTC_SECR1 (volatile unsigned int*)(AINTC_BASE+0x0280)
-#define AINTC_SECR2 (volatile unsigned int*)(AINTC_BASE+0x0284)
-#define AINTC_SECR3 (volatile unsigned int*)(AINTC_BASE+0x0288)
-#define AINTC_SECR4 (volatile unsigned int*)(AINTC_BASE+0x038C)
-#define AINTC_ESR1  (volatile unsigned int*)(AINTC_BASE+0x0300)
-#define AINTC_ESR2  (volatile unsigned int*)(AINTC_BASE+0x0304)
-#define AINTC_ESR3  (volatile unsigned int*)(AINTC_BASE+0x0308)
-#define AINTC_ESR4  (volatile unsigned int*)(AINTC_BASE+0x030C)
-#define AINTC_CMR0  (volatile unsigned int*)(AINTC_BASE+0x0400)
-#define AINTC_CMR5  (volatile unsigned int*)(AINTC_BASE+0x0414)
-#define AINTC_HIER  (volatile unsigned int*)(AINTC_BASE+0x1500)
+#define AINTC_BASE      0xFFFEE000
+#define AINTC_SECR1_ASM 0xFFFEE280
+#define AINTC_GER    (volatile unsigned int*)(AINTC_BASE+0x0010)
+#define AINTC_SECR1  (volatile unsigned int*)(AINTC_BASE+0x0280)
+#define AINTC_SECR2  (volatile unsigned int*)(AINTC_BASE+0x0284)
+#define AINTC_SECR3  (volatile unsigned int*)(AINTC_BASE+0x0288)
+#define AINTC_SECR4  (volatile unsigned int*)(AINTC_BASE+0x038C)
+#define AINTC_ESR1   (volatile unsigned int*)(AINTC_BASE+0x0300)
+#define AINTC_ESR2   (volatile unsigned int*)(AINTC_BASE+0x0304)
+#define AINTC_ESR3   (volatile unsigned int*)(AINTC_BASE+0x0308)
+#define AINTC_ESR4   (volatile unsigned int*)(AINTC_BASE+0x030C)
+#define AINTC_CMR0   (volatile unsigned int*)(AINTC_BASE+0x0400)
+#define AINTC_CMR5   (volatile unsigned int*)(AINTC_BASE+0x0414)
+#define AINTC_HIPIR2 (volatile unsigned int*)(AINTC_BASE+0x0904)
+#define AINTC_HIER   (volatile unsigned int*)(AINTC_BASE+0x1500)
 
 // AINTEC bits
 #define GER_ENABLE 1
 #define T64P0_TINT34 (1 << 22)
+#define T64P0_TINT34_ASM #0x400000
 #define HIER_IRQ (1 << 1)
 
 
