@@ -1,12 +1,23 @@
 // ## Memory Layout
 
 // Stacks
+#define STACK_SIZE 0x10000
+
+#ifdef QEMU
 #define IRQ_STACK_ADDRESS 0x4000000
-#define SVC_STACK_ADDRESS 0x3ff8000
+#define SVC_STACK_ADDRESS 0x4FF8000
 
 #define TASK_A_STACK_ADDRESS 0x2000000
 #define TASK_B_STACK_ADDRESS 0x3000000
+#endif
 
+#ifndef QEMU
+#define IRQ_STACK_ADDRESS 0xC5000000
+#define SVC_STACK_ADDRESS (IRQ_STACK_ADDRESS - STACK_SIZE)
+
+#define TASK_A_STACK_ADDRESS (SVC_STACK_ADDRESS    - STACK_SIZE)
+#define TASK_B_STACK_ADDRESS (TASK_A_STACK_ADDRESS - STACK_SIZE)
+#endif
 
 // ## Hardware Memory Mappings
 
@@ -37,7 +48,7 @@
 #ifndef QEMU
 
 // Timer Adresses
-#define TIMER0_BASE 0x01c20000
+#define TIMER0_BASE 0x01C20000
 #define TIMER0_INTCTLSTAT_ASM 0x101E200C
 #define TIMER0_TIM12      (volatile unsigned int*)(TIMER0_BASE+0x10)
 #define TIMER0_TIM34      (volatile unsigned int*)(TIMER0_BASE+0x14)
