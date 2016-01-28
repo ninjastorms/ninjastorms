@@ -38,8 +38,8 @@ irq_handler:
   str r1, [r0]
 #endif
 
-  ldr  r0, =message
-  bl   puts
+  //ldr  r0, =message
+  //bl   puts
 
   pop  {r0-r12, lr}
 

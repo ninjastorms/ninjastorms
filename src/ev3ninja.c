@@ -1,37 +1,20 @@
 #include <stdio.h>
 #include <memory.h>
 
-#include "feedback.h"
+#include "demo_motor.h"
+#include "demo_led.h"
 #include "scheduler.h"
-#include "interrupt_handler.h"
-#include "interrupt.h"
-
-#include <libp/led.h>
-#include <libp/button.h>
-#include <libp/sensor.h>
-#include <libp/motor.h>
-
-#include <libp/gpio.h>
-#include <libp/spi.h>
-
-void wait(void) {
-  volatile unsigned long i;
-  for(i=0;i<6500000;i++);
-}
 
 void func_task_a(void) {
-  puts("Heyho! I am currently executing Task A\n");
   while(1) {
-    puts("Hi, I am task A");
-    wait();
+    control_motor();
   }
 }
  
 void func_task_b(void) {
-  puts("Heyho! I am currently executing Task B\n");
   while(1) {
-    puts("Hi, I am task B");
-    wait();
+    puts("beginning of lightshow");
+    lightshow();
   }
 }
 
@@ -50,10 +33,9 @@ int ev3ninja_main (void)
 
   start_scheduler(tasks);
 
-  feedback_flash_green();
+  while(1);
 
   puts("All done. ev3ninja out!");
-  feedback_flash_red();
 
   return 0;
 }

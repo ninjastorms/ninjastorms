@@ -17,7 +17,9 @@
 #endif
 
 #ifndef QEMU
-#define TIMER_LOAD_VALUE 0xFFFFFF
+// with the value 0x100000 you can feel the delay
+// TODO: calculate conversion to milliseconds
+#define TIMER_LOAD_VALUE 0x10000
 #endif
 
 task_t *current_task;

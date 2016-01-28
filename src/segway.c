@@ -1,3 +1,11 @@
+#include <libp/led.h>
+#include <libp/button.h>
+#include <libp/sensor.h>
+#include <libp/motor.h>
+
+#include <libp/gpio.h>
+#include <libp/spi.h>
+
 #define P (1.4)
 #define I (0.0002)
 #define D (-110)

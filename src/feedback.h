@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <libp/led.h>
+
 /* wait for a given number of ticks (1024 * 1024 ~ 1s)
  *
  * params:
@@ -8,10 +10,7 @@
  */
 void feedback_wait(unsigned long ticks);
 
-/* flash the leds green, this is done at the very end of the startup process
- */
-void feedback_flash_green(void);
+void blink(led_id led, led_color color);
 
-/* flash the leds red, this is done at the start of the shutdown process
- */
-void feedback_flash_red(void);
+void flash_LR(led_color color);
+void flash_RL(led_color color);
