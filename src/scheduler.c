@@ -2,7 +2,6 @@
 #include "interrupt.h"
 #include "interrupt_handler.h"
 
-#include <stdio.h>
 #include <memory.h>
 
 #define REG_SP 13
@@ -22,27 +21,62 @@
 #define TIMER_LOAD_VALUE 0x10000
 #endif
 
-task_t *current_task;
-task_t *other_task;
+#define MAX_TASK_NUMBER 16
 
-void init_task(task_t *task, unsigned int entrypoint, unsigned int stackbase) {
+// the SVC task's task object is tasks[0] and don't have to be initialised
+// this is done in save_current_task_state() during the first context switch
+
+int task_count = 0;
+int buffer_start = 0;
+int buffer_end = 0;
+task_t* ring_buffer[MAX_TASK_NUMBER];
+task_t tasks[MAX_TASK_NUMBER];
+task_t* current_task;
+int isRunning = 0;
+
+void ring_buffer_insert(task_t* task) {
+  int new_end = (buffer_end + 1) % MAX_TASK_NUMBER;
+  if (new_end != buffer_start) {
+    ring_buffer[buffer_end] = task;
+    buffer_end = new_end;
+  }
+}
+
+task_t* ring_buffer_remove(void) {
+  if (buffer_start == buffer_end) {
+    return 0;
+  }
+  task_t* task = ring_buffer[buffer_start];
+  buffer_start = (buffer_start + 1) % MAX_TASK_NUMBER;
+  return task;
+}
+
+void init_task(task_t* task, void* entrypoint, unsigned int stackbase) {
   int i;
   for(i = 0; i<16; i++) {
     task->reg[i] = 0;
   }
-				
+        
   task->reg[REG_SP] = stackbase;
-  task->reg[REG_PC] = entrypoint;
+  task->reg[REG_PC] = (unsigned int) entrypoint;
 
   task->cpsr = CPSR_MODE_USER;
 }
 
-void schedule(void) {
-  task_t *temp_task;
+// context switch while add_task may fuck up something
+void add_task(void* entrypoint) {
+  if (task_count >= MAX_TASK_NUMBER) {
+    return;
+  }
+  unsigned int stackbase = TASK_STACK_BASE_ADDRESS - STACK_SIZE*task_count;
+  init_task(&tasks[task_count], entrypoint, stackbase);
+  ring_buffer_insert(&tasks[task_count]);
+  task_count++;
+}
 
-  temp_task = current_task;
-  current_task = other_task;
-  other_task = temp_task;
+void schedule(void) {
+  ring_buffer_insert(current_task);
+  current_task = ring_buffer_remove();
 }
 
 void init_timer(void) {
@@ -85,13 +119,13 @@ void stop_timer(void) {
 #endif
 }
 
-void start_scheduler(task_t *tasks[]) {
-  current_task = tasks[0];
-  other_task = tasks[1];
-	
-  stop_timer();
-  init_interrupt_handling();
-  init_timer();
-
-  load_current_task_state();
+void start_scheduler() {
+  if (!isRunning) {
+    current_task = ring_buffer_remove();
+    isRunning = 1;
+    stop_timer();
+    init_interrupt_handling();
+    init_timer();
+    load_current_task_state();
+  }
 }

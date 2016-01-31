@@ -77,7 +77,7 @@ load_current_task_state:
   ldr  r5, [r0, #64]     // load cpsr from task_struct to r5 (i.e. task_struct+64)
   msr  spsr, r5          // copy r5 to spsr
   add  lr, r0, #60       // load address of saved pc into lr
-  ldm  r0, {r0-r14}^     // load saved registers into user mode registers ((don't) trust the carrot!)
+  ldm  r0, {r0-r14}^     // load saved registers into user mode registers ((do not) trust the caret!)
   ldm  lr, {pc}^         // return to loaded task and restore cpsr from spsr
   
 
