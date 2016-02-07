@@ -56,14 +56,14 @@ save_current_task_state:
   ldr  r1, [r0], #4     // load saved r2 from stack
   str  r1, [r2], #4     // save it to the struct
   // save r3-r12, sp, lr
-  stm  r2, {r3-r12, sp, lr}^   // uses sp and lr from user mode because of the carot
+  stm  r2!, {r3-r12, sp, lr}^   // uses sp and lr from user mode because of the carot
   // save pc
   ldr  r1, [r0]         // load saved lr from stack
   sub  r1, #4           // because lr is the old pc+4
-  str  r1, [r2, #48]    // save r1 to the pc field in the task_struct
+  str  r1, [r2, #4]    // save r1 to the pc field in the task_struct
   // save cpsr
   mrs  r1, spsr         // save cpsr of the current task (in spsr atm)
-  str  r1, [r2, #52]    // r0 still points to sp, so skip sp, lr, pc (i.e. 12)   
+  str  r1, [r2, #8]    // r0 still points to sp, so skip sp, lr, pc (i.e. 12)   
 
   bx   lr
 
