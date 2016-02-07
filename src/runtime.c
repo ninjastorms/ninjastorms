@@ -18,9 +18,6 @@ extern void (*__fini_array_end []) (void);
 static void
 ev3ninja_runtime_init (void)
 {
-  // Change stack location to our designated stack address
-  asm volatile("mov sp, %0" : : "r" (SVC_STACK_ADDRESS));;
-
   size_t count;
   size_t i;
 
@@ -53,6 +50,9 @@ ev3ninja_runtime_fini (void)
 int
 ev3ninja_runtime (void)
 {
+  // Change stack location to our designated stack address
+  asm volatile("mov sp, %0" : : "r" (SVC_STACK_ADDRESS));
+
   ev3ninja_runtime_init();
 
   int res = ev3ninja_main();

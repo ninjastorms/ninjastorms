@@ -16,7 +16,6 @@
 #endif
 
 #ifndef QEMU
-// with the value 0x100000 you can feel the delay
 #define TIMER_LOAD_VALUE 0x10000
 #endif
 
@@ -51,7 +50,7 @@ task_t* ring_buffer_remove(void) {
 void init_task(task_t* task, void* entrypoint, unsigned int stackbase) {
   int i;
   for(i = 0; i<16; i++) {
-    task->reg[i] = 0;
+    task->reg[i] = i;
   }
         
   task->reg[REG_SP] = stackbase;
