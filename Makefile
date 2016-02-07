@@ -25,7 +25,7 @@ override CFLAGS += -g -O2 -pipe -fno-common -msoft-float -I./include -I. -fno-bu
 OBJ = src/ev3ninja.o src/scheduler.o src/interrupt.o src/interrupt_handler.o src/runtime.o src/feedback.o src/demo_led.o src/demo_motor.o libc/libc.a libp/libp.a
 OBJ_LIBC = libc/stdio/putchar.o libc/stdio/puts.o libc/stdio/printf.o libc/stdio/vprintf.o libc/errno/errno.o \
   libc/string/memset.o libc/string/memcpy.o libc/string/memcmp.o
-OBJ_LIBP = libp/gpio.o libp/spi.o libp/adc.o libp/pininfo.o libp/led.o libp/button.o libp/sensor.o libp/motor.o
+OBJ_LIBP = libp/gpio.o libp/spi.o libp/adc.o libp/pininfo.o libp/led.o libp/button.o libp/sensor.o libp/motor.o libp/timer.o
 
 ELF  = ev3ninja
 BIN  = $(ELF).bin
