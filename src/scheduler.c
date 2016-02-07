@@ -17,23 +17,20 @@
 
 #ifndef QEMU
 // with the value 0x100000 you can feel the delay
-// TODO: calculate conversion to milliseconds
 #define TIMER_LOAD_VALUE 0x10000
 #endif
 
 #define MAX_TASK_NUMBER 16
 
-// the SVC task's task object is tasks[0] and don't have to be initialised
-// this is done in save_current_task_state() during the first context switch
-
-int task_count = 0;
+int task_count   = 0;
 int buffer_start = 0;
-int buffer_end = 0;
-task_t* ring_buffer[MAX_TASK_NUMBER];
+int buffer_end   = 0;
+int isRunning    = 0;
 task_t tasks[MAX_TASK_NUMBER];
+task_t* ring_buffer[MAX_TASK_NUMBER];
 task_t* current_task;
-int isRunning = 0;
 
+// TODO: disable interrupts during insertion
 void ring_buffer_insert(task_t* task) {
   int new_end = (buffer_end + 1) % MAX_TASK_NUMBER;
   if (new_end != buffer_start) {
@@ -63,7 +60,6 @@ void init_task(task_t* task, void* entrypoint, unsigned int stackbase) {
   task->cpsr = CPSR_MODE_USER;
 }
 
-// context switch while add_task may fuck up something
 void add_task(void* entrypoint) {
   if (task_count >= MAX_TASK_NUMBER) {
     return;
