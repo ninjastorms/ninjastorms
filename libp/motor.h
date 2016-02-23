@@ -20,7 +20,7 @@ typedef enum motor_state motor_state;
 
 /* set the state of an attached motor
  *
- * params: 
+ * params:
  *   port - the port to query
  *   state - one of MOTOR_FORWARD, MOTOR_BACKWARD, MOTOR_OFF
  *

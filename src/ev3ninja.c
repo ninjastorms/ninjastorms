@@ -12,7 +12,7 @@ void func_task_a(void) {
     control_motor();
   }
 }
- 
+
 void func_task_b(void) {
   while(1) {
     lightshow();

@@ -1,7 +1,7 @@
 
 #include <stddef.h>
 
-int 
+int
 memcmp (const void *s1, const void *s2, size_t n)
 {
   const char *c1 = s1;

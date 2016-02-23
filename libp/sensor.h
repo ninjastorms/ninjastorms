@@ -19,7 +19,7 @@ typedef enum sensor_touch_state sensor_touch_state;
 
 /* get the state of an attached touch sensor (nxt or ev3)
  *
- * params: 
+ * params:
  *   port - the port to query
  *
  * errors:

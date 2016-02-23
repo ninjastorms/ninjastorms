@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 /* this struct holds the information on the Button pins
- * 
+ *
  * each Button has only a single input pin
  */
 struct button_info
@@ -14,7 +14,7 @@ struct button_info
 };
 typedef struct button_info button_info;
 
-button_info buttons[] = 
+button_info buttons[] =
 {
   { GPIO_PIN(6,  6) },
   { GPIO_PIN(7, 12) },
@@ -35,7 +35,7 @@ button_get_state (button_id button)
 /* initialize the gpio pins necessary for Button functions
  * this is done automatically on startup
  */
-static void 
+static void
 __attribute((constructor))
 button_init (void)
 {

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# this script should be able to generate an arm-none-eabi toolchain on your 
+# this script should be able to generate an arm-none-eabi toolchain on your
 # system if not, try to fix it. :)
 # tested on Gentoo Linux, and Ubuntu 12.04 LTS (keep it cross-distro!)
 
 # you may need to run this as root, depending on your configuration.
-# basically, you just need full write permissions to the path specified in 
+# basically, you just need full write permissions to the path specified in
 # PREFIX.
 
 # third party dependencies (probably incomplete):
@@ -77,7 +77,7 @@ mkdir $BUILDROOT/build/binutils-2.19
 cd $BUILDROOT/build/binutils-2.19
 # -Wno-unused-but-set-variable us required by morerecent versions of gcc.
 ../../src/binutils-2.19/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib CFLAGS="-g -O2 -Wno-unused-but-set-variable -Wno-unused-but-set-parameter -Wno-format-security"
-make $MFLAGS all 
+make $MFLAGS all
 make install
 
 export PATH="$PATH:$PREFIX/bin"
@@ -87,26 +87,26 @@ mkdir $BUILDROOT/build/gcc-4.3.3
 cd $BUILDROOT/build/gcc-4.3.3
 # only enable C here
 ../../src/gcc-4.3.3/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib --enable-languages="c" --with-newlib --with-headers=../../src/newlib-1.17.0/newlib/libc/include
-make $MFLAGS all-gcc 
+make $MFLAGS all-gcc
 make install-gcc
 
 # build newlib
 mkdir $BUILDROOT/build/newlib-1.17.0
 cd $BUILDROOT/build/newlib-1.17.0
 ../../src/newlib-1.17.0/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib
-make $MFLAGS all 
+make $MFLAGS all
 make install
 
 # finish gcc build
 cd $BUILDROOT/build/gcc-4.3.3
-make $MFLAGS all 
+make $MFLAGS all
 make install
 
 # build gdb
 mkdir $BUILDROOT/build/gdb-6.8
 cd $BUILDROOT/build/gdb-6.8
 ../../src/gdb-6.8/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib CFLAGS="-g -O2 -Wno-unused-but-set-variable -Wno-unused-result -Wno-enum-compare"
-make $MFLAGS all 
+make $MFLAGS all
 make install
 
 # if you get here, you should have a working toolchain. congratulations!

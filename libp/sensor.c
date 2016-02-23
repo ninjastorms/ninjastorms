@@ -16,7 +16,7 @@ struct sensor_port_info
 };
 typedef struct sensor_port_info sensor_port_info;
 
-static sensor_port_info ports[] = 
+static sensor_port_info ports[] =
 {
   { GPIO_PIN(8, 10), GPIO_PIN(2,  2), GPIO_PIN(0,  2), GPIO_PIN(0, 15), GPIO_PIN(8, 11), 0x6, 0x5 },
   { GPIO_PIN(8, 12), GPIO_PIN(8, 15), GPIO_PIN(0, 14), GPIO_PIN(0, 13), GPIO_PIN(8, 14), 0x8, 0x7 },

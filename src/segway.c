@@ -31,14 +31,14 @@ void run_segway(void) {
       if (button_get_state(BUTTON_BACK) == BUTTON_DOWN)
         {
           d1 = sensor_light_get(SENSOR_PORT_2);
-          d2 = sensor_light_get(SENSOR_PORT_4);          
+          d2 = sensor_light_get(SENSOR_PORT_4);
           i = 0;
         }
 
       if (button_get_state(BUTTON_CENTER) == BUTTON_DOWN)
         {
           d1 = sensor_light_get(SENSOR_PORT_2);
-          d2 = sensor_light_get(SENSOR_PORT_4);          
+          d2 = sensor_light_get(SENSOR_PORT_4);
           i = 0;
 
           if (button_center_last_state == BUTTON_UP)
@@ -59,7 +59,7 @@ void run_segway(void) {
       i = i + p;
 
       int speed = (P * p + D * d + I * i);
-      if (speed < -5) 
+      if (speed < -5)
         speed -= 20;
       else if (speed > 5)
         speed += 20;
@@ -78,7 +78,7 @@ void run_segway(void) {
           continue;
         }
 
-        t += speed; 
+        t += speed;
         if (t > 100)
           {
             t -= 100;

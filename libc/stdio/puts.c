@@ -12,7 +12,7 @@ puts (const char *s)
         return EOF;
       ++c;
     }
-  
+
   int res = putchar('\n');
   if (__builtin_expect(res == EOF, 0))
     return EOF;

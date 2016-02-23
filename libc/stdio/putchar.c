@@ -19,7 +19,7 @@ putchar (int c)
   #ifndef QEMU
   while (!(*UART_LSR & (1 << 5)));
   #endif
-  
+
   *UART_THR = c;
   return c;
 }

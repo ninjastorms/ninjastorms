@@ -103,7 +103,7 @@ spi_init (void)
 /* restore initial spi registers
  * this is done automatically on shutdown
  */
-static void 
+static void
 __attribute__((destructor))
 spi_fini (void)
 {

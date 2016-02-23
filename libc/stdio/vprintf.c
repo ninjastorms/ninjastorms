@@ -9,7 +9,7 @@ int
 vprintf (const char *format, __attribute__((unused)) va_list ap)
 {
   const char *c = format;
- 
+
   unsigned int chars_written = 0;
 
   while (*c)
@@ -156,6 +156,6 @@ vprintf (const char *format, __attribute__((unused)) va_list ap)
           ++c;
         }
     }
-  
+
   return chars_written;
 }

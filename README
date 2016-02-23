@@ -2,12 +2,12 @@
 This is ev3ninja "NinjaStorms"
 ==============================
 
-NinjaStorms is an attempt to create a simple RealTime Operating System 
+NinjaStorms is an attempt to create a simple RealTime Operating System
 for the Mindstorms EV3 Platform.
 
 Current Project status:
 
-  ev3ninja should boot correctly and write a welcome message to the serial 
+  ev3ninja should boot correctly and write a welcome message to the serial
   console. After pressing the center button once, a simple light show
   facilitating the internal LEDs should start. After another press the
   external motor is reacting to the external button press (both connected
@@ -16,7 +16,7 @@ Current Project status:
 
 Getting Started:
 
-  Make sure the right toolchain is installed and in your path - 
+  Make sure the right toolchain is installed and in your path -
   we used Ubuntu's default arm-none-eabi toolchain from apt-get, see
   http://packages.ubuntu.com/trusty/devel/gcc-arm-none-eabi
 

@@ -28,7 +28,7 @@ gpio_init_pin (unsigned int pin)
 
   // setup pin multiplexing
   pin_info pi = pininfo[pin];
-  
+
   if (__builtin_expect(pin >= pininfo_size || pi.muxreg_mask == 0, 0))
     printf("gpio: can not initialize pin %x - need init information in pin_info\n", pin);
 
@@ -52,7 +52,7 @@ gpio_init_outpin (unsigned int pin)
   SYSCFG_LOCK;
 }
 
-void 
+void
 gpio_init_inpin (unsigned int pin)
 {
   SYSCFG_UNLOCK;

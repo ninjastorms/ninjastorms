@@ -12,7 +12,7 @@ extern void (*__fini_array_start []) (void);
 extern void (*__fini_array_end []) (void);
 
 /* call functions declared __attribute__((constructor))
- *   note that constructors of unused compilation units are 
+ *   note that constructors of unused compilation units are
  *   omitted by the linker
  */
 static void
@@ -42,7 +42,7 @@ ev3ninja_runtime_fini (void)
 
   count = __fini_array_end - __fini_array_start;
   for (i = 0; i < count; i++)
-    __fini_array_start[i] ();  
+    __fini_array_start[i] ();
 }
 
 /* this is the ev3ninja entry point.
@@ -58,7 +58,7 @@ ev3ninja_runtime (void)
   int res = ev3ninja_main();
 
   ev3ninja_runtime_fini();
- 
+
   return res;
 }
 

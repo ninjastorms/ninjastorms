@@ -2,7 +2,7 @@
 #pragma once
 
 #define SYSCFG0_BASE      ((volatile void*)0x01C14000)
-#define SYSCFG1_BASE      ((volatile void*)0x01E2C000) 
+#define SYSCFG1_BASE      ((volatile void*)0x01E2C000)
 
 #define GPIO_BASE         ((volatile void*)0x01E26000)
 

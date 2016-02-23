@@ -63,7 +63,7 @@ save_current_task_state:
   str  r1, [r2, #4]    // save r1 to the pc field in the task_struct
   // save cpsr
   mrs  r1, spsr         // save cpsr of the current task (in spsr atm)
-  str  r1, [r2, #8]    // r0 still points to sp, so skip sp, lr, pc (i.e. 12)   
+  str  r1, [r2, #8]    // r0 still points to sp, so skip sp, lr, pc (i.e. 12)
 
   bx   lr
 

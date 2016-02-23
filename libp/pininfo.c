@@ -1,7 +1,7 @@
 
 #include "pininfo.h"
 
-pin_info pininfo[] = 
+pin_info pininfo[] =
 {
   /* GPIO pins */
   {  0, 0x00000000, 0x00000000 }, // GP0_0 (unknown)

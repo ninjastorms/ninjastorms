@@ -53,7 +53,7 @@ void init_task(task_t* task, void* entrypoint, unsigned int stackbase) {
   for(i = 0; i<16; i++) {
     task->reg[i] = i;
   }
-        
+
   task->reg[REG_SP] = stackbase;
   task->reg[REG_PC] = (unsigned int) entrypoint;
 

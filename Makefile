@@ -15,7 +15,7 @@ ENTRY = ev3ninja_runtime
 
 LIBGCCDIR = $(shell dirname $(shell $(CC) \
 		-print-libgcc-file-name))
-LDFLAGS = -g -Ttext $(LOADADDR) -L$(LIBGCCDIR) -lgcc 
+LDFLAGS = -g -Ttext $(LOADADDR) -L$(LIBGCCDIR) -lgcc
 
 INCGCCDIR = $(LIBGCCDIR)/include
 # use 'make all CFLAGS+="-DQEMU" LOADADDR=0x100000' to build for qemu emulation on versatilepb
@@ -38,7 +38,7 @@ LIBP = libp/libp.a
 Q = @
 ifeq ("$(origin V)", "command line")
   ifeq ($(V),1)
-    Q = 
+    Q =
   endif
 endif
 

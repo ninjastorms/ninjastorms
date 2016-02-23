@@ -18,11 +18,11 @@ enum led_color
 };
 typedef enum led_color led_color;
 
- 
+
 /* set the state of the given LED(s)
  *
  * params:
- *   led - an identifier for the target LEDs, can be LED_LEFT, LED_RIGHT 
+ *   led - an identifier for the target LEDs, can be LED_LEFT, LED_RIGHT
  *   	or LED_BOTH
  *   color - the target color, LED_BLACK, LED_RED, LED_GREEN or LED_ORANGE
  */

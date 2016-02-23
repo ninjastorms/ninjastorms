@@ -16,7 +16,7 @@ struct motor_port_info
 };
 typedef struct motor_port_info motor_port_info;
 
-static motor_port_info ports[] = 
+static motor_port_info ports[] =
 {
   { GPIO_PIN(3, 15), GPIO_PIN(3,  6), GPIO_PIN(5,  4), GPIO_PIN(5, 11), GPIO_PIN(0,  4), 0x6, 0x5 },
   { GPIO_PIN(0,  3), GPIO_PIN(2,  1), GPIO_PIN(2,  5), GPIO_PIN(5,  8), GPIO_PIN(2,  9), 0x8, 0x7 },
@@ -25,7 +25,7 @@ static motor_port_info ports[] =
 };
 
 
-void 
+void
 motor_set_state (motor_port_id port, motor_state state)
 {
   if (state == MOTOR_FORWARD)
