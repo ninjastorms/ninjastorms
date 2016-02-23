@@ -16,9 +16,9 @@ Current Project status:
 
 Getting Started:
 
-  Make sure the right toolchain is installed and in your path -
-  we used Ubuntu's default arm-none-eabi toolchain from apt-get, see
-  http://packages.ubuntu.com/trusty/devel/gcc-arm-none-eabi
+  Building ev3ninja requires an arm-none-eabi- prefixed toolchain. This
+  toolchain can either be acquired from your distributions package manager, or
+  built using the build_toolchain.sh script provided in this repository.
 
   Option A: Using the EV3 connect via serial
 
@@ -47,7 +47,7 @@ Getting involved:
 Developer Documentation:
 
   An excessive amount of documentation can be found in our github wiki
-   https://github.com/ev3ninja/ninjastorms/wiki
+  https://github.com/ev3ninja/ninjastorms/wiki
 
 
 
