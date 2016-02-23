@@ -12,102 +12,99 @@
 #   - GNU make, gcc, ... (build-essential)
 #   - texinfo
 
-# this script was generated using this guide:
-#   http://www.kunen.org/uC/gnu_tool.html
-
 set -e
 set -u
-set -x
-
-BUILDROOT=${BUILDROOT:-/tmp}
-PREFIX=${PREFIX:-/usr/local}
 
 # set make flags in environment, e.g. -j2 for parallel builds
 MFLAGS=${MFLAGS:-}
+PREFIX=${PREFIX:-/usr/local}
+
+BUILDROOT=${BUILDROOT:-/tmp/$0}
+
+TARDIR=$BUILDROOT/tar
+SRCDIR=$BUILDROOT/src
+BUILDDIR=$BUILDROOT/build
 
 # clean up previous build, if any
-rm -rf $BUILDROOT/{src,build}
+rm -rf $SRCDIR $BUILDDIR
 
-# create build directories
-mkdir -p $BUILDROOT
-mkdir -p $BUILDROOT/{orig,src,build}
-
-# create install directory
+# create directories
+mkdir -p $TARDIR $SRCDIR $BUILDDIR
 mkdir -p $PREFIX
 
-# fetch required packages, if necessary
-cd $BUILDROOT/orig
-if [ ! -f gcc-4.3.3.tar.gz ]; then
-  wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.3/gcc-4.3.3.tar.gz
-fi
-if [ ! -f gcc-core-4.3.3.tar.gz ]; then
-  wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.3/gcc-core-4.3.3.tar.gz
-fi
-if [ ! -f gmp-4.1.tar.gz ]; then
-  wget http://mirror.anl.gov/pub/gnu/gmp/gmp-4.1.tar.gz
-fi
-if [ ! -f mpfr-2.3.0.tar.gz ]; then
-  wget http://www.mpfr.org/mpfr-2.3.0/mpfr-2.3.0.tar.gz
-fi
-if [ ! -f gdb-6.8.tar.gz ]; then
-  wget http://mirrors.usc.edu/pub/gnu/gdb/gdb-6.8.tar.gz
-fi
-if [ ! -f binutils-2.19.tar.gz ]; then
-  wget http://mirrors.usc.edu/pub/gnu/binutils/binutils-2.19.tar.gz
-fi
-if [ ! -f newlib-1.17.0.tar.gz ]; then
-  wget ftp://sources.redhat.com/pub/newlib/newlib-1.17.0.tar.gz
-fi
+# tweak versions as necessary
+GCC_VERSION=4.8.0
+GMP_VERSION=5.1.1
+MPC_VERSION=1.0.1
+MPFR_VERSION=3.1.2
+GDB_VERSION=7.6
+BINUTILS_VERSION=2.24
+NEWLIB_VERSION=1.20.0
 
-# unpack tarballs
-cd $BUILDROOT/src
-tar xzf ../orig/gcc-4.3.3.tar.gz
-tar xzf ../orig/gcc-core-4.3.3.tar.gz
-tar xzf ../orig/gmp-4.1.tar.gz
-tar xzf ../orig/mpfr-2.3.0.tar.gz
-tar xzf ../orig/gdb-6.8.tar.gz
-tar xzf ../orig/binutils-2.19.tar.gz
-tar xzf ../orig/newlib-1.17.0.tar.gz
+# fetch
+WGETARGS="-nc -P $TARDIR --progress=dot:giga"
+wget $WGETARGS ftp://ftp.gnu.org/gnu/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.bz2
+wget $WGETARGS ftp://ftp.gnu.org/gnu/gmp/gmp-$GMP_VERSION.tar.xz
+wget $WGETARGS ftp://ftp.gnu.org/gnu/mpc/mpc-$MPC_VERSION.tar.gz
+wget $WGETARGS http://www.mpfr.org/mpfr-$MPFR_VERSION/mpfr-$MPFR_VERSION.tar.gz
+wget $WGETARGS ftp://ftp.gnu.org/gnu/gdb/gdb-$GDB_VERSION.tar.bz2
+wget $WGETARGS http://ftp.gnu.org/gnu/binutils/binutils-$BINUTILS_VERSION.tar.bz2
+wget $WGETARGS ftp://sources.redhat.com/pub/newlib/newlib-$NEWLIB_VERSION.tar.gz
 
-mv gmp-4.1 gcc-4.3.3/gmp
-mv mpfr-2.3.0 gcc-4.3.3/mpfr
+# unpack
+cd $SRCDIR
+TARARGS="--checkpoint=.4096 --total"
+tar $TARARGS -xf $TARDIR/gcc-$GCC_VERSION.tar.bz2
+tar $TARARGS -xf $TARDIR/gmp-$GMP_VERSION.tar.xz
+tar $TARARGS -xf $TARDIR/mpc-$MPC_VERSION.tar.gz
+tar $TARARGS -xf $TARDIR/mpfr-$MPFR_VERSION.tar.gz
+tar $TARARGS -xf $TARDIR/gdb-$GDB_VERSION.tar.bz2
+tar $TARARGS -xf $TARDIR/binutils-$BINUTILS_VERSION.tar.bz2
+tar $TARARGS -xf $TARDIR/newlib-$NEWLIB_VERSION.tar.gz
+
+mv gmp-$GMP_VERSION gcc-$GCC_VERSION/gmp
+mv mpc-$MPC_VERSION gcc-$GCC_VERSION/mpc
+mv mpfr-$MPFR_VERSION gcc-$GCC_VERSION/mpfr
 
 # build binutils
-mkdir $BUILDROOT/build/binutils-2.19
-cd $BUILDROOT/build/binutils-2.19
-# -Wno-unused-but-set-variable us required by morerecent versions of gcc.
-../../src/binutils-2.19/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib CFLAGS="-g -O2 -Wno-unused-but-set-variable -Wno-unused-but-set-parameter -Wno-format-security"
+mkdir $BUILDDIR/binutils-$BINUTILS_VERSION
+cd $BUILDDIR/binutils-$BINUTILS_VERSION
+../../src/binutils-$BINUTILS_VERSION/configure \
+    --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib \
+    CFLAGS="-g -O2 -Wno-error=unused-value"
 make $MFLAGS all
 make install
 
 export PATH="$PATH:$PREFIX/bin"
 
-# build gcc compiler
-mkdir $BUILDROOT/build/gcc-4.3.3
-cd $BUILDROOT/build/gcc-4.3.3
-# only enable C here
-../../src/gcc-4.3.3/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib --enable-languages="c" --with-newlib --with-headers=../../src/newlib-1.17.0/newlib/libc/include
-make $MFLAGS all-gcc
-make install-gcc
+# configure gcc
+mkdir $BUILDDIR/gcc-$GCC_VERSION
+cd $BUILDDIR/gcc-$GCC_VERSION
+../../src/gcc-$GCC_VERSION/configure \
+    --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib \
+    --enable-languages="c" \
+    --with-newlib --with-headers=$SRCDIR/newlib-$NEWLIB_VERSION/newlib/libc/include
 
 # build newlib
-mkdir $BUILDROOT/build/newlib-1.17.0
-cd $BUILDROOT/build/newlib-1.17.0
-../../src/newlib-1.17.0/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib
+mkdir $BUILDDIR/newlib-$NEWLIB_VERSION
+cd $BUILDDIR/newlib-$NEWLIB_VERSION
+../../src/newlib-$NEWLIB_VERSION/configure \
+    --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib
 make $MFLAGS all
 make install
 
-# finish gcc build
-cd $BUILDROOT/build/gcc-4.3.3
+# build gcc
+cd $BUILDDIR/gcc-$GCC_VERSION
 make $MFLAGS all
 make install
 
 # build gdb
-mkdir $BUILDROOT/build/gdb-6.8
-cd $BUILDROOT/build/gdb-6.8
-../../src/gdb-6.8/configure --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib CFLAGS="-g -O2 -Wno-unused-but-set-variable -Wno-unused-result -Wno-enum-compare"
+mkdir $BUILDDIR/gdb-$GDB_VERSION
+cd $BUILDDIR/gdb-$GDB_VERSION
+../../src/gdb-$GDB_VERSION/configure \
+    --target=arm-none-eabi --prefix=$PREFIX --enable-interwork --enable-multilib \
+    CFLAGS="-g -O2 -Wno-error=unused-value"
 make $MFLAGS all
 make install
 
-# if you get here, you should have a working toolchain. congratulations!
-echo "all done."
+echo "all done. :)"
