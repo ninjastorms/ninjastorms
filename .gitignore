@@ -1,15 +1,24 @@
 
+# compiled objects
 *.o
-*.a
-*.bin
-*.srec
-*.swp
-
+*.lo
+*.la
 ev3ninja
-ev3ninja.asm
-boot.scr
-boot.cmd
-qemu.out
 
-!qemu/*.bin
-*~
+# autotools generated files
+Makefile.in
+Makefile
+aclocal.m4
+configure
+config.*
+libtool
+stamp-h1
+
+autom4te.cache/
+m4/l*
+scripts/
+
+.deps/
+.libs/
+
+.dirstamp
