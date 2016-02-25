@@ -14,17 +14,24 @@ AC_PROG_CC
 AM_PROG_AS
 AM_PROG_AR
 
-# old flags kept for reference for now
-# -fno-common -fno-builtin -nostdinc -isystem $(INCGCCDIR) -fno-stack-protector
+AC_CANONICAL_HOST
 
-# these flags are for the mindstorms EV3 - TODO: make configurable
-AX_APPEND_FLAG([-msoft-float -marm -mabi=aapcs-linux -march=armv5te -mno-thumb-interwork])
+case $host_cpu in
+  arm)
+    AX_APPEND_FLAG([-msoft-float -marm -mabi=aapcs-linux -march=armv5te -mno-thumb-interwork])
+    ;;
+  *)
+    AC_MSG_ERROR([build is not supported on $host_cpu])
+    ;;
+esac
+
+AC_ARG_ENABLE
 
 # make the binary freestanding
 AX_APPEND_FLAG([-nostdlib -nostartfiles -ffreestanding])
 
 # add -fno-delete-null-pointer-checks if the compiler accepts it
-# this is required to write the interrupt vector table to 0x0
+# this is required to write the interrupt vector table to 0x0 with gcc>4.9
 AX_CHECK_COMPILE_FLAG([-fno-delete-null-pointer-checks], [
   AX_APPEND_FLAG([-fno-delete-null-pointer-checks])
 ])
