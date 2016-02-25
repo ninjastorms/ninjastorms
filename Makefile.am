@@ -4,7 +4,7 @@
 ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = subdir-objects
 
-AM_CFLAGS = -I./include
+AM_CFLAGS = -I./libc/include
 AM_CCASFLAGS = $(AM_CFLAGS) $(CFLAGS)
 AM_LDFLAGS = --oformat=binary
 
@@ -18,7 +18,13 @@ libc_libc_la_SOURCES = \
     libc/stdio/vprintf.c \
     libc/string/memcmp.c \
     libc/string/memcpy.c \
-    libc/string/memset.c
+    libc/string/memset.c \
+    libc/include/errno.h \
+    libc/include/memory.h \
+    libc/include/stddef.h \
+    libc/include/stdio.h \
+    libc/include/string.h \
+    libc/include/sys/types.h
 
 noinst_PROGRAMS = ninjastorms
 

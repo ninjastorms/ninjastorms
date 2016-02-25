@@ -25,7 +25,7 @@ case $host_cpu in
     ;;
 esac
 
-AC_DEFINE_UNQUOTED([CONFIGURED_ARCH], [$host_cpu], [the architecture the kernel has been configured for])
+AC_DEFINE_UNQUOTED([ARCH], ["$host_cpu"], [The architecture the kernel has been configured for.])
 
 case $BOARD in
   ev3)
@@ -41,7 +41,7 @@ case $BOARD in
     ;;
 esac
 
-AC_DEFINE_UNQUOTED([CONFIGURED_BOARD], [$BOARD], [the board the kernel has been configured for])
+AC_DEFINE_UNQUOTED([BOARD], ["$BOARD"], [The board the kernel has been configured for.])
 
 # make the binary freestanding
 AX_APPEND_FLAG([-nostdlib -nostartfiles -ffreestanding])
