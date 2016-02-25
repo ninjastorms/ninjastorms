@@ -1,4 +1,4 @@
 
 #pragma once
 
-int ev3ninja_main (void);
+int kernel_main (void);
