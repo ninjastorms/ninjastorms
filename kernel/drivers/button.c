@@ -1,6 +1,6 @@
 
 #include "button.h"
-#include "gpio.h"
+#include "kernel/drivers/gpio.h"
 
 #include <stdio.h>
 

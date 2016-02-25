@@ -3,7 +3,7 @@
 *.o
 *.lo
 *.la
-ev3ninja
+ninjastorms
 
 # autotools generated files
 Makefile.in
@@ -22,9 +22,3 @@ scripts/
 .libs/
 
 .dirstamp
-
-# deployment generated files
-*.bin
-*.asm
-*.srec
-qemu.out

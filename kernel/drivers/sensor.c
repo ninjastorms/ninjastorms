@@ -1,8 +1,8 @@
 
 #include "sensor.h"
 
-#include "gpio.h"
-#include "adc.h"
+#include "kernel/drivers/gpio.h"
+#include "kernel/drivers/adc.h"
 
 struct sensor_port_info
 {

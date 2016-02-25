@@ -1,9 +1,9 @@
 #include <memory.h>
-#include <libp/timer.h>
 
-#include "scheduler.h"
-#include "interrupt.h"
-#include "interrupt_handler.h"
+#include "kernel/drivers/timer.h"
+#include "kernel/scheduler.h"
+#include "kernel/interrupt.h"
+#include "kernel/interrupt_handler.h"
 
 #define REG_SP 13
 #define REG_LR 14

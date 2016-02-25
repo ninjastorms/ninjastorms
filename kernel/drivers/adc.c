@@ -1,8 +1,8 @@
 
 #include "adc.h"
 
-#include "gpio.h"
-#include "spi.h"
+#include "kernel/drivers/gpio.h"
+#include "kernel/drivers/spi.h"
 
 
 unsigned short

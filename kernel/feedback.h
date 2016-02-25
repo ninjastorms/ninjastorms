@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <libp/led.h>
+#include "kernel/drivers/led.h"
 
 /* wait for a given number of ticks (1024 * 1024 ~ 1s)
  *

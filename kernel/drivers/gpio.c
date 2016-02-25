@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include "gpio.h"
-#include "pininfo.h"
+#include "kernel/drivers/pininfo.h"
 
 #define SYSCFG_KICK(N)    (*((volatile unsigned int*)(SYSCFG0_BASE + 0x38 + (N) * 0x4)))
 #define SYSCFG_PINMUX(N)  (*((volatile unsigned int*)(SYSCFG0_BASE + 0x120 + (N) * 0x4)))

@@ -4,7 +4,6 @@ ENTRY(Start)
 
 SECTIONS
 {
-  . = 0x00100000;
   .text :
   {
     KEEP (*(.text.boot))

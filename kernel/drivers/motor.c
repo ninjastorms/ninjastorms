@@ -1,8 +1,8 @@
 
 #include "motor.h"
 
-#include "gpio.h"
-#include "adc.h"
+#include "kernel/drivers/gpio.h"
+#include "kernel/drivers/adc.h"
 
 struct motor_port_info
 {

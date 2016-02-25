@@ -50,7 +50,7 @@ init_array_loop_end:
   pop   {r0-r2}
 
   // call kernel main
-  ldr   r3, =ev3ninja_main
+  ldr   r3, =kernel_main
   blx   r3
 
   // iterate over .fini_array

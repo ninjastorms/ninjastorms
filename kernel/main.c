@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <memory.h>
-#include <libp/button.h>
 
-#include "demo_motor.h"
-#include "demo_led.h"
-#include "scheduler.h"
-#include "feedback.h"
+#include "kernel/drivers/button.h"
+#include "kernel/demo/demo_motor.h"
+#include "kernel/demo/demo_led.h"
+#include "kernel/scheduler.h"
+#include "kernel/feedback.h"
 
 void func_task_a(void) {
   while(1) {
@@ -46,15 +46,15 @@ void controller_task(void) {
   }
 }
 
-int ev3ninja_main (void)
+int kernel_main (void)
 {
-  puts("This is EV3 NinjaStorms");
+  puts("This is ninjastorms OS");
   puts("  shuriken ready");
 
   add_task(&controller_task);
   start_scheduler();
 
-  puts("All done. ev3ninja out!");
+  puts("All done. ninjastorms out!");
 
   return 0;
 }

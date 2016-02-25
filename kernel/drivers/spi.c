@@ -1,8 +1,8 @@
 
 #include "spi.h"
 
-#include "gpio.h"
-#include "pininfo.h"
+#include "kernel/drivers/gpio.h"
+#include "kernel/drivers/pininfo.h"
 
 #define   SPI0_CLOCK  150000000UL
 #define   ADC_TIME    8UL // µS

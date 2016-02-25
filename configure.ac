@@ -3,7 +3,7 @@ dnl process this file with autoconf to produce configure script
 
 AC_PREREQ([2.69])
 AC_INIT([ev3ninja], [0.2], [andreas@grapentin.org])
-AC_CONFIG_SRCDIR([src/ev3ninja.c])
+AC_CONFIG_SRCDIR([kernel/main.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([scripts])
 AC_CONFIG_MACRO_DIR([m4])
@@ -18,14 +18,30 @@ AC_CANONICAL_HOST
 
 case $host_cpu in
   arm)
-    AX_APPEND_FLAG([-msoft-float -marm -mabi=aapcs-linux -march=armv5te -mno-thumb-interwork])
+    AX_APPEND_FLAG([-marm])
     ;;
   *)
-    AC_MSG_ERROR([build is not supported on $host_cpu])
+    AC_MSG_ERROR([build not supported on cpu '$host_cpu'])
     ;;
 esac
 
-AC_ARG_ENABLE
+AC_DEFINE_UNQUOTED([CONFIGURED_ARCH], [$host_cpu], [the architecture the kernel has been configured for])
+
+case $BOARD in
+  ev3)
+    AX_APPEND_FLAG([-msoft-float -march=armv5te])
+    AC_SUBST(LOADADDR, [0xC1000000])
+    ;;
+  qemu)
+    AX_APPEND_FLAG([-msoft-float -march=armv5te])
+    AC_SUBST(LOADADDR, [0x00100000])
+    ;;
+  *)
+    AC_MSG_ERROR([build not supported on board '$BOARD'])
+    ;;
+esac
+
+AC_DEFINE_UNQUOTED([CONFIGURED_BOARD], [$BOARD], [the board the kernel has been configured for])
 
 # make the binary freestanding
 AX_APPEND_FLAG([-nostdlib -nostartfiles -ffreestanding])

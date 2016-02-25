@@ -1,6 +1,6 @@
 
 #include "led.h"
-#include "gpio.h"
+#include "kernel/drivers/gpio.h"
 
 /* this struct holds the information on the led pins
  *

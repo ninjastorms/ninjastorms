@@ -1,5 +1,5 @@
 #include "demo_led.h"
-#include "feedback.h"
+#include "kernel/feedback.h"
 
 void lightshow(void) {
   led_set(LED_LEFT, LED_GREEN);
