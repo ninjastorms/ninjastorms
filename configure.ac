@@ -15,10 +15,10 @@ AM_PROG_AS
 AM_PROG_AR
 
 # old flags kept for reference for now
-# -fno-common -msoft-float -fno-builtin -nostdinc -isystem $(INCGCCDIR) -marm -mabi=aapcs-linux -mno-thumb-interwork -march=armv5te -fno-stack-protector
+# -fno-common -fno-builtin -nostdinc -isystem $(INCGCCDIR) -fno-stack-protector
 
 # these flags are for the mindstorms EV3 - TODO: make configurable
-# AX_APPEND_FLAG([-msoft-float -marm -mabi=aapcs-linux -march=armv5te])
+AX_APPEND_FLAG([-msoft-float -marm -mabi=aapcs-linux -march=armv5te -mno-thumb-interwork])
 
 # make the binary freestanding
 AX_APPEND_FLAG([-nostdlib -nostartfiles -ffreestanding])

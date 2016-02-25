@@ -70,7 +70,7 @@ fini_array_loop_end:
 
   // halt
 halt:
-  wfe
+//  wfe
   b     halt
 
 

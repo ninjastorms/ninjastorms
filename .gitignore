@@ -22,3 +22,9 @@ scripts/
 .libs/
 
 .dirstamp
+
+# deployment generated files
+*.bin
+*.asm
+*.srec
+qemu.out
