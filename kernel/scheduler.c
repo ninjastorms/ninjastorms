@@ -1,6 +1,27 @@
+
+/******************************************************************************
+ *       ninjastorms - shuriken operating system                              *
+ *                                                                            *
+ *    Copyright (C) 2013 - 2016  Andreas Grapentin et al.                     *
+ *                                                                            *
+ *    This program is free software: you can redistribute it and/or modify    *
+ *    it under the terms of the GNU General Public License as published by    *
+ *    the Free Software Foundation, either version 3 of the License, or       *
+ *    (at your option) any later version.                                     *
+ *                                                                            *
+ *    This program is distributed in the hope that it will be useful,         *
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *    GNU General Public License for more details.                            *
+ *                                                                            *
+ *    You should have received a copy of the GNU General Public License       *
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
+ ******************************************************************************/
+
+#include "scheduler.h"
+
 #include "kernel/memory.h"
 #include "kernel/drivers/timer.h"
-#include "kernel/scheduler.h"
 #include "kernel/interrupt.h"
 #include "kernel/interrupt_handler.h"
 
@@ -12,11 +33,11 @@
 #define CPSR_MODE_USER 0x10
 
 #if BOARD_QEMU
-#define TIMER_LOAD_VALUE 0x2000
+#  define TIMER_LOAD_VALUE 0x2000
 #endif
 
 #if BOARD_EV3
-#define TIMER_LOAD_VALUE 0x10000
+#  define TIMER_LOAD_VALUE 0x10000
 #endif
 
 #define MAX_TASK_NUMBER 16
@@ -30,28 +51,34 @@ task_t* ring_buffer[MAX_TASK_NUMBER];
 task_t* current_task;
 
 // TODO: disable interrupts during insertion
-void ring_buffer_insert(task_t* task) {
+void
+ring_buffer_insert (task_t *task)
+{
   int new_end = (buffer_end + 1) % MAX_TASK_NUMBER;
-  if (new_end != buffer_start) {
-    ring_buffer[buffer_end] = task;
-    buffer_end = new_end;
-  }
+  if (new_end != buffer_start)
+    {
+      ring_buffer[buffer_end] = task;
+      buffer_end = new_end;
+    }
 }
 
-task_t* ring_buffer_remove(void) {
-  if (buffer_start == buffer_end) {
+task_t*
+ring_buffer_remove (void)
+{
+  if (buffer_start == buffer_end)
     return 0;
-  }
+
   task_t* task = ring_buffer[buffer_start];
   buffer_start = (buffer_start + 1) % MAX_TASK_NUMBER;
   return task;
 }
 
-void init_task(task_t* task, void* entrypoint, unsigned int stackbase) {
+void
+init_task (task_t *task, void *entrypoint, unsigned int stackbase)
+{
   int i;
-  for(i = 0; i<16; i++) {
+  for(i = 0; i<16; i++)
     task->reg[i] = i;
-  }
 
   task->reg[REG_SP] = stackbase;
   task->reg[REG_PC] = (unsigned int) entrypoint;
@@ -59,28 +86,35 @@ void init_task(task_t* task, void* entrypoint, unsigned int stackbase) {
   task->cpsr = CPSR_MODE_USER;
 }
 
-void add_task(void* entrypoint) {
-  if (task_count >= MAX_TASK_NUMBER) {
+void
+add_task (void *entrypoint)
+{
+  if (task_count >= MAX_TASK_NUMBER)
     return;
-  }
+
   unsigned int stackbase = TASK_STACK_BASE_ADDRESS - STACK_SIZE*task_count;
   init_task(&tasks[task_count], entrypoint, stackbase);
   ring_buffer_insert(&tasks[task_count]);
   task_count++;
 }
 
-void schedule(void) {
+void
+schedule (void)
+{
   ring_buffer_insert(current_task);
   current_task = ring_buffer_remove();
 }
 
-void start_scheduler() {
-  if (!isRunning) {
-    current_task = ring_buffer_remove();
-    isRunning = 1;
-    timer_stop();
-    init_interrupt_handling();
-    timer_start(TIMER_LOAD_VALUE);
-    load_current_task_state();
-  }
+void
+start_scheduler (void)
+{
+  if (!isRunning)
+    {
+      current_task = ring_buffer_remove();
+      isRunning = 1;
+      timer_stop();
+      init_interrupt_handling();
+      timer_start(TIMER_LOAD_VALUE);
+      load_current_task_state();
+    }
 }

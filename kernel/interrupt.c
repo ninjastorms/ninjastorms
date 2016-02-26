@@ -1,18 +1,40 @@
-#include "kernel/memory.h"
+
+/******************************************************************************
+ *       ninjastorms - shuriken operating system                              *
+ *                                                                            *
+ *    Copyright (C) 2013 - 2016  Andreas Grapentin et al.                     *
+ *                                                                            *
+ *    This program is free software: you can redistribute it and/or modify    *
+ *    it under the terms of the GNU General Public License as published by    *
+ *    the Free Software Foundation, either version 3 of the License, or       *
+ *    (at your option) any later version.                                     *
+ *                                                                            *
+ *    This program is distributed in the hope that it will be useful,         *
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *    GNU General Public License for more details.                            *
+ *                                                                            *
+ *    You should have received a copy of the GNU General Public License       *
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
+ ******************************************************************************/
 
 #include "interrupt.h"
-#include "interrupt_handler.h"
+
+#include "kernel/memory.h"
+#include "kernel/interrupt_handler.h"
 
 #if BOARD_EV3
-#define IVT_OFFSET (unsigned int) 0xFFFF0000
+#  define IVT_OFFSET (unsigned int) 0xFFFF0000
 #endif
 
 #if BOARD_QEMU
-#define IVT_OFFSET (unsigned int) 0x0
+#  define IVT_OFFSET (unsigned int) 0x0
 #endif
 
 // builds the interrupt vector table
-void setup_ivt(void) {
+void
+setup_ivt (void)
+{
   *(unsigned int*) (IVT_OFFSET + 0x00) = 0;           //TODO: reset
   *(unsigned int*) (IVT_OFFSET + 0x04) = 0xe59ff014;  //ldr pc, [pc, #20] ; 0x20 undefined instruction
   *(unsigned int*) (IVT_OFFSET + 0x08) = 0xe59ff014;  //ldr pc, [pc, #20] ; 0x24 software interrupt
@@ -40,10 +62,11 @@ void setup_ivt(void) {
     "mcr  p15, 0, r0, c1, c0, 0\n"
   );
 #endif
-
 }
 
-void setup_irq_stack(void) {
+void
+setup_irq_stack (void)
+{
   asm volatile (
     "mrs  r0, cpsr\n"
     "bic  r0, #0x1f\n" // Clear mode bits
@@ -57,7 +80,9 @@ void setup_irq_stack(void) {
   );
 }
 
-void init_interrupt_controller(void) {
+void
+init_interrupt_controller (void)
+{
 #if BOARD_QEMU
   *PIC_INTENABLE |= TIMER1_INTBIT;  // unmask interrupt bit for timer1
 #endif
@@ -72,7 +97,9 @@ void init_interrupt_controller(void) {
 #endif
 }
 
-void enable_irq(void) {
+void
+enable_irq (void)
+{
   asm(
     "mrs  r1, cpsr\n"
     "bic  r1, r1, #0x80\n"
@@ -80,7 +107,9 @@ void enable_irq(void) {
   );
 }
 
-void init_interrupt_handling(void) {
+void
+init_interrupt_handling (void)
+{
   setup_ivt();
   setup_irq_stack();
   init_interrupt_controller();
