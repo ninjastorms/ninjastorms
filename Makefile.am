@@ -20,7 +20,6 @@ libc_libc_la_SOURCES = \
     libc/string/memcpy.c \
     libc/string/memset.c \
     libc/include/errno.h \
-    libc/include/memory.h \
     libc/include/stddef.h \
     libc/include/stdio.h \
     libc/include/string.h \
@@ -34,6 +33,7 @@ ninjastorms_SOURCES = \
     kernel/scheduler.c kernel/scheduler.h \
     kernel/interrupt.c kernel/interrupt.h \
     kernel/interrupt_handler.S kernel/interrupt_handler.h \
+    kernel/memory.h \
     kernel/demo/demo_led.c kernel/demo/demo_led.h \
     kernel/demo/demo_motor.c kernel/demo/demo_motor.h \
     kernel/drivers/adc.c kernel/drivers/adc.h \

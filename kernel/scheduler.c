@@ -1,5 +1,4 @@
-#include <memory.h>
-
+#include "kernel/memory.h"
 #include "kernel/drivers/timer.h"
 #include "kernel/scheduler.h"
 #include "kernel/interrupt.h"
@@ -12,11 +11,11 @@
 #define CPSR_MODE_SVC  0x13
 #define CPSR_MODE_USER 0x10
 
-#ifdef QEMU
+#if BOARD_QEMU
 #define TIMER_LOAD_VALUE 0x2000
 #endif
 
-#ifndef QEMU
+#if BOARD_EV3
 #define TIMER_LOAD_VALUE 0x10000
 #endif
 
@@ -79,9 +78,9 @@ void start_scheduler() {
   if (!isRunning) {
     current_task = ring_buffer_remove();
     isRunning = 1;
-    stop_timer();
+    timer_stop();
     init_interrupt_handling();
-    start_timer(TIMER_LOAD_VALUE);
+    timer_start(TIMER_LOAD_VALUE);
     load_current_task_state();
   }
 }

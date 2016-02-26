@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <memory.h>
 
 #include "kernel/drivers/button.h"
 #include "kernel/demo/demo_motor.h"
@@ -8,7 +7,7 @@
 
 void func_task_a(void) {
   while(1) {
-    control_motor();
+    demo_motor();
   }
 }
 

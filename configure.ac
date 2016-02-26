@@ -31,17 +31,19 @@ case $BOARD in
   ev3)
     AX_APPEND_FLAG([-msoft-float -march=armv5te])
     AC_SUBST(LOADADDR, [0xC1000000])
+    AC_DEFINE_UNQUOTED([BOARD_QEMU], [0], [a])
+    AC_DEFINE_UNQUOTED([BOARD_EV3], [1], [a])
     ;;
   qemu)
     AX_APPEND_FLAG([-msoft-float -march=armv5te])
     AC_SUBST(LOADADDR, [0x00100000])
+    AC_DEFINE_UNQUOTED([BOARD_QEMU], [1], [a])
+    AC_DEFINE_UNQUOTED([BOARD_EV3], [0], [a])
     ;;
   *)
     AC_MSG_ERROR([build not supported on board '$BOARD'])
     ;;
 esac
-
-AC_DEFINE_UNQUOTED([BOARD], ["$BOARD"], [The board the kernel has been configured for.])
 
 # make the binary freestanding
 AX_APPEND_FLAG([-nostdlib -nostartfiles -ffreestanding])

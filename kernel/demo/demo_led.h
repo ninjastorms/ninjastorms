@@ -18,11 +18,13 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
+#pragma once
+
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
 
-/* use the operating systems functionality to display a light show using the
+/* Use the operating systems functionality to display a light show using the
  * EV3 front leds indefinitely.
  */
 void demo_led (void);

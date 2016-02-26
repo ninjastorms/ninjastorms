@@ -1,4 +1,23 @@
 
+/******************************************************************************
+ *       ninjastorms - shuriken operating system                              *
+ *                                                                            *
+ *    Copyright (C) 2013 - 2016  Andreas Grapentin et al.                     *
+ *                                                                            *
+ *    This program is free software: you can redistribute it and/or modify    *
+ *    it under the terms of the GNU General Public License as published by    *
+ *    the Free Software Foundation, either version 3 of the License, or       *
+ *    (at your option) any later version.                                     *
+ *                                                                            *
+ *    This program is distributed in the hope that it will be useful,         *
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *    GNU General Public License for more details.                            *
+ *                                                                            *
+ *    You should have received a copy of the GNU General Public License       *
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
+ ******************************************************************************/
+
 #include "spi.h"
 
 #include "kernel/drivers/gpio.h"
@@ -47,7 +66,6 @@
 #define SPITxFULL     (SPIBUF & 0x20000000)
 #define SPIRxEMPTY    (SPIBUF & 0x80000000)
 
-
 unsigned short
 spi_update (unsigned short data)
 {
@@ -59,7 +77,6 @@ spi_update (unsigned short data)
 
   return ((unsigned short)(SPIBUF & 0x0000FFFF));
 }
-
 
 static unsigned int save_GCR0  = 0;
 static unsigned int save_GCR1  = 0;

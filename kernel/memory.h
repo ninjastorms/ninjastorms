@@ -1,13 +1,18 @@
+
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
 // ## Memory Layout
 
 // Stacks
 #define STACK_SIZE 0x10000
 
-#ifdef QEMU
+#if BOARD_QEMU
 #define IRQ_STACK_ADDRESS 0x4000000
 #endif
 
-#ifndef QEMU
+#if BOARD_EV3
 #define IRQ_STACK_ADDRESS 0xC5000000
 #endif
 
@@ -16,7 +21,7 @@
 
 // ## Hardware Memory Mappings
 
-#ifdef QEMU
+#if BOARD_QEMU
 
 // Timer Adresses
 #define TIMER1_BASE 0x101E2000
@@ -40,7 +45,7 @@
 
 #endif
 
-#ifndef QEMU
+#if BOARD_EV3
 
 // Timer Adresses
 #define TIMER0_BASE 0x01C20000

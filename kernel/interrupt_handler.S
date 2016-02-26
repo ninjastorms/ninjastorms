@@ -1,4 +1,4 @@
-#include <memory.h>
+#include "kernel/memory.h"
 
 .section .text
 
@@ -20,14 +20,14 @@ irq_handler:
   bl  save_current_task_state
   bl  schedule
 
-#ifdef QEMU
+#if BOARD_QEMU
   // clear interrupt
   ldr  r0, =TIMER1_INTCLR_ASM
   mov  r1, #0x1
   str  r1, [r0]
 #endif
 
-#ifndef QEMU
+#if BOARD_EV3
   // clear interrupt
   ldr r0, =TIMER0_INTCTLSTAT_ASM
   mov r1, CLEARTIMER34_ASM

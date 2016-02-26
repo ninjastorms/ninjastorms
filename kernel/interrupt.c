@@ -1,13 +1,13 @@
-#include <memory.h>
+#include "kernel/memory.h"
 
 #include "interrupt.h"
 #include "interrupt_handler.h"
 
-#ifndef QEMU
+#if BOARD_EV3
 #define IVT_OFFSET (unsigned int) 0xFFFF0000
 #endif
 
-#ifdef QEMU
+#if BOARD_QEMU
 #define IVT_OFFSET (unsigned int) 0x0
 #endif
 
@@ -31,7 +31,7 @@ void setup_ivt(void) {
   *(unsigned int*) (IVT_OFFSET + 0x34) = (unsigned int) &irq_handler;
   *(unsigned int*) (IVT_OFFSET + 0x38) = (unsigned int) 0;
 
-#ifndef QEMU
+#if BOARD_EV3
   // set V bit in c1 register in cp15 to
   // locate interrupt vector table to 0xFFFF0000
   asm (
@@ -58,11 +58,11 @@ void setup_irq_stack(void) {
 }
 
 void init_interrupt_controller(void) {
-#ifdef QEMU
+#if BOARD_QEMU
   *PIC_INTENABLE |= TIMER1_INTBIT;  // unmask interrupt bit for timer1
 #endif
 
-#ifndef QEMU
+#if BOARD_EV3
   *AINTC_SECR1 = 0xFFFFFFFF;   // clear current interrupts
   *AINTC_GER   = GER_ENABLE;   // enable global interrupts
   *AINTC_HIER |= HIER_IRQ;     // enable IRQ interrupt line
