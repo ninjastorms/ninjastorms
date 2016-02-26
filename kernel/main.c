@@ -5,7 +5,6 @@
 #include "kernel/demo/demo_motor.h"
 #include "kernel/demo/demo_led.h"
 #include "kernel/scheduler.h"
-#include "kernel/feedback.h"
 
 void func_task_a(void) {
   while(1) {
@@ -15,7 +14,7 @@ void func_task_a(void) {
 
 void func_task_b(void) {
   while(1) {
-    lightshow();
+    demo_led();
   }
 }
 

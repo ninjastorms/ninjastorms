@@ -34,7 +34,6 @@ ninjastorms_SOURCES = \
     kernel/scheduler.c kernel/scheduler.h \
     kernel/interrupt.c kernel/interrupt.h \
     kernel/interrupt_handler.S kernel/interrupt_handler.h \
-    kernel/feedback.c kernel/feedback.h \
     kernel/demo/demo_led.c kernel/demo/demo_led.h \
     kernel/demo/demo_motor.c kernel/demo/demo_motor.h \
     kernel/drivers/adc.c kernel/drivers/adc.h \
