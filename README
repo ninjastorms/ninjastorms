@@ -2,53 +2,82 @@
 This is ninjastorms "NinjaStorms"
 ==============================
 
-NinjaStorms is an attempt to create a simple RealTime Operating System
-for the Mindstorms EV3 Platform.
+NinjaStorms is an attempt to create a simple RealTime Operating System which
+is currently running on Lego Mindstorms EV3 and a virtualized environment.
 
-Current Project status:
+Building from Source:
 
-  ninjastorms should boot correctly and write a welcome message to the serial
-  console. After pressing the center button once, a simple light show
-  facilitating the internal LEDs should start. After another press the
-  external motor is reacting to the external button press (both connected
-  via the IO-Ports). Light show and motor control are running concurrently
-  using our own preemptive scheduler.
+  ninjastorms uses (mostly) standard autotools to manage the build process.
+  to configure the sources, you need to execute the configure script. If you
+  checked out the sources from the repository, or there is no configure script
+  present for any other reason, you can generate it by executing
 
-Getting Started:
+    $> ./autogen.sh
 
-  Building ninjastorms requires an arm-none-eabi- prefixed toolchain. This
-  toolchain can either be acquired from your distributions package manager, or
-  built using the build_toolchain.sh script provided in this repository.
+  To configure the project, execute
 
-  Option A: Using the EV3 connect via serial
+    $> ./configure --host=<host> BOARD=<board>
 
-    Compile the System by calling
-     $> make
+  where <host> is the appropriate host triplet for the target architecture,
+  for example arm-none-eabi for the EV3 or the qemu environments and <board>
+  is a supported board - see Supported Boards.
 
-    Deploy via serial
-     $> ./deploy.sh
-     Press C-a, C-s to choose a file to upload.
-     $> ninjastorms.bin
+  This step requires a <host> prefixed toolchain capable of generating
+  executables for your target architecture. To generate a <host> prefixed
+  toolchain, in case your distribution does not provide one, execute
 
-    Run the uploaded binary from U-Boot shell.
-    (For the load address, scroll up a bit to see the output of deploy.sh)
-     $> go 0xc1000XXX
+    $> TARGET=<host> ./tools/build_toolchain.sh
 
-  Option B: Emulating the EV3 with QEMU (for debugging purposes)
+  Correct host values for the several boards are listed in Supported Boards.
 
-    See qemu/readme.txt
+  Assuming a working toolchain for your architecture and a configured source
+  tree, the project is built by executing
 
+    $> make
+
+  When the build completes, the kernel binary can be found in the source tree
+  as a file named `ninjastorms`.
+
+Deployment:
+
+  A built kernel is deployed to the target architecture by executing
+
+    $> make deploy
+
+  Watch out for permission issues when deploying. See Supported Boards for
+  details on the deployment processes for different board configurations.
+
+Further Reading:
+
+  The kernel entry point is the kernel_main function in kernel/main.c - this
+  should be a good place to start reading into the sorce code.
+
+  We also collected information on the different supported boards in the docs/
+  directory of the source tree.
+
+  Additional documentation can be found in our github wiki:
+  https://github.com/ninjastorms/ninjastorms/wiki
 
 Getting involved:
 
   ninjastorms is open source and pull requests and new issues are always welcome!
   Find us on github: https://github.com/ninjastorms/ninjastorms/
 
-Developer Documentation:
+Supported Boards:
 
-  An excessive amount of documentation can be found in our github wiki
-  https://github.com/ninjastorms/ninjastorms/wiki
+  ninjastorms is currently supported on the following target boards. If your
+  favourite platform is missing, feel free to port the system and send us a
+  pull request!
 
+  `ev3` - Lego Mindstorms EV3
+    target platform: arm-none-eabi
+
+    deployment process: TODO
+
+  `qemu` - embedded arm virtualization using qemu
+    target platform: arm-none-eabi
+
+    deployment process: TODO
 
 
 
