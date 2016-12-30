@@ -24,9 +24,8 @@ Building from Source:
 
   This step requires a <host> prefixed toolchain capable of generating
   executables for your target architecture. To generate a <host> prefixed
-  toolchain, in case your distribution does not provide one, execute
-
-    $> TARGET=<host> ./tools/build_toolchain.sh
+  toolchain, in case your distribution does not provide one,
+  see our [generate-toolchain](https://github.com/ninjastorms/toolchain-generator) project.
 
   Correct host values for the several boards are listed in Supported Boards.
 
@@ -40,9 +39,8 @@ Building from Source:
 
 Deployment:
 
-  A built kernel is deployed to the target architecture by executing
-
-    $> make deploy
+  Our current build process does not include deploy targets.
+  Look at the old build system for information about deployment.
 
   Watch out for permission issues when deploying. See Supported Boards for
   details on the deployment processes for different board configurations.
@@ -52,8 +50,8 @@ Further Reading:
   The kernel entry point is the kernel_main function in kernel/main.c - this
   should be a good place to start reading into the sorce code.
 
-  We also collected information on the different supported boards in the docs/
-  directory of the source tree.
+  We also collected information on the different supported boards in the
+  [hardware-docs](https://github.com/ninjastorms/hardware-docs) project.
 
   Additional documentation can be found in our github wiki:
   https://github.com/ninjastorms/ninjastorms/wiki
