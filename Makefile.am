@@ -6,7 +6,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 AM_CFLAGS = -I./libc/include
 AM_CCASFLAGS = $(AM_CFLAGS) $(CFLAGS)
-AM_LDFLAGS = --oformat=binary
+AM_LDFLAGS = --oformat=binary -lgcc
 
 noinst_LTLIBRARIES = libc/libc.la
 

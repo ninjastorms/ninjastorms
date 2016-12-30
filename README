@@ -16,7 +16,8 @@ Building from Source:
 
   To configure the project, execute
 
-    $> ./configure --host=<host> BOARD=<board>
+    $> ./configure --host=<host> BOARD=<board> \
+           CFLAGS="-nostdlib -nostartfiles -ffreestanding"
 
   where <host> is the appropriate host triplet for the target architecture,
   for example arm-none-eabi for the EV3 or the qemu environments and <board>
@@ -29,6 +30,11 @@ Building from Source:
 
   Correct host values for the several boards are listed in Supported Boards.
 
+  For example, to configure ninjastorms for qemu virtual deployment, execute
+
+    $> ./configure --host=arm-none-eabi BOARD=qemu \
+           CFLAGS="-nostdlib -nostartfiles -ffreestanding"
+
   Assuming a working toolchain for your architecture and a configured source
   tree, the project is built by executing
 
@@ -39,11 +45,8 @@ Building from Source:
 
 Deployment:
 
-  Our current build process does not include deploy targets.
-  Look at the old build system for information about deployment.
-
-  Watch out for permission issues when deploying. See Supported Boards for
-  details on the deployment processes for different board configurations.
+  See Supported Boards for details on the deployment processes for different
+  board configurations.
 
 Further Reading:
 
@@ -75,7 +78,10 @@ Supported Boards:
   `qemu` - embedded arm virtualization using qemu
     target platform: arm-none-eabi
 
-    deployment process: TODO
+    deployment process:
+      the following qemu call executes the built kernel directly:
 
+      $> qemu-system-arm -M versatilepb -m 128M -nographic -kernel ninjastorms
 
-
+      the hardware access to the device periphery will fail silently, but the
+      kernel output will still be shown.

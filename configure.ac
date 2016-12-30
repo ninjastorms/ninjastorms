@@ -36,7 +36,7 @@ case $BOARD in
     ;;
   qemu)
     AX_APPEND_FLAG([-msoft-float -march=armv5te])
-    AC_SUBST(LOADADDR, [0x00100000])
+    AC_SUBST(LOADADDR, [0x00010000])
     AC_DEFINE_UNQUOTED([BOARD_QEMU], [1], [a])
     AC_DEFINE_UNQUOTED([BOARD_EV3], [0], [a])
     ;;
@@ -44,9 +44,6 @@ case $BOARD in
     AC_MSG_ERROR([build not supported on board '$BOARD'])
     ;;
 esac
-
-# make the binary freestanding
-AX_APPEND_FLAG([-nostdlib -nostartfiles -ffreestanding])
 
 # add -fno-delete-null-pointer-checks if the compiler accepts it
 # this is required to write the interrupt vector table to 0x0 with gcc>4.9
