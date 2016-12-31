@@ -27,7 +27,7 @@
 #  define IVT_OFFSET (unsigned int) 0xFFFF0000
 #endif
 
-#if BOARD_QEMU
+#if BOARD_VERSATILEPB
 #  define IVT_OFFSET (unsigned int) 0x0
 #endif
 
@@ -83,7 +83,7 @@ setup_irq_stack (void)
 void
 init_interrupt_controller (void)
 {
-#if BOARD_QEMU
+#if BOARD_VERSATILEPB
   *PIC_INTENABLE |= TIMER1_INTBIT;  // unmask interrupt bit for timer1
 #endif
 

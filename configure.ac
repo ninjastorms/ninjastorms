@@ -18,30 +18,23 @@ AC_CANONICAL_HOST
 
 case $host_cpu in
   arm)
-    AX_APPEND_FLAG([-marm])
     ;;
   *)
-    AC_MSG_ERROR([build not supported on cpu '$host_cpu'])
+    AC_MSG_ERROR([unsupported host '$host'])
     ;;
 esac
 
-AC_DEFINE_UNQUOTED([ARCH], ["$host_cpu"], [The architecture the kernel has been configured for.])
-
 case $BOARD in
   ev3)
-    AX_APPEND_FLAG([-msoft-float -march=armv5te])
     AC_SUBST(LOADADDR, [0xC1000000])
-    AC_DEFINE_UNQUOTED([BOARD_QEMU], [0], [a])
-    AC_DEFINE_UNQUOTED([BOARD_EV3], [1], [a])
+    AC_DEFINE_UNQUOTED(BOARD_EV3, 1, [Configured for EV3])
     ;;
-  qemu)
-    AX_APPEND_FLAG([-msoft-float -march=armv5te])
+  versatilepb)
     AC_SUBST(LOADADDR, [0x00010000])
-    AC_DEFINE_UNQUOTED([BOARD_QEMU], [1], [a])
-    AC_DEFINE_UNQUOTED([BOARD_EV3], [0], [a])
+    AC_DEFINE_UNQUOTED(BOARD_VERSATILEPB, 1, [Configured for qemu VersatilePB])
     ;;
   *)
-    AC_MSG_ERROR([build not supported on board '$BOARD'])
+    AC_MSG_ERROR([unsupported board '$BOARD'])
     ;;
 esac
 

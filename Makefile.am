@@ -6,7 +6,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 AM_CFLAGS = -I./libc/include
 AM_CCASFLAGS = $(AM_CFLAGS) $(CFLAGS)
-AM_LDFLAGS = --oformat=binary -lgcc
+AM_LDFLAGS = --oformat=binary
 
 noinst_LTLIBRARIES = libc/libc.la
 
@@ -46,7 +46,7 @@ ninjastorms_SOURCES = \
     kernel/drivers/spi.c kernel/drivers/spi.h \
     kernel/drivers/timer.c kernel/drivers/timer.h
 
-ninjastorms_LDADD = libc/libc.la
+ninjastorms_LDADD = libc/libc.la -lgcc
 ninjastorms_LDFLAGS = -T kernel/link-arm-eabi.ld -Ttext $(LOADADDR)
 
 # workaround for generating plain binaries for arm targets

@@ -24,7 +24,7 @@
 
 #include <stdio.h>
 
-#if BOARD_QEMU
+#if BOARD_VERSATILEPB
 #  define UART_THR (volatile char*)(0x101f1000)
 #endif
 

@@ -29,7 +29,7 @@
 // Stacks
 #define STACK_SIZE 0x10000
 
-#if BOARD_QEMU
+#if BOARD_VERSATILEPB
 #  define IRQ_STACK_ADDRESS 0x4000000
 #endif
 
@@ -42,7 +42,7 @@
 
 // ## Hardware Memory Mappings
 
-#if BOARD_QEMU
+#if BOARD_VERSATILEPB
 
 // Timer Adresses
 #  define TIMER1_BASE 0x101E2000

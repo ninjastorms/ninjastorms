@@ -40,7 +40,7 @@ irq_handler:
   bl  save_current_task_state
   bl  schedule
 
-#if BOARD_QEMU
+#if BOARD_VERSATILEPB
   // clear interrupt
   ldr  r0, =TIMER1_INTCLR_ASM
   mov  r1, #0x1

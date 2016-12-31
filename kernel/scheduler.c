@@ -32,7 +32,7 @@
 #define CPSR_MODE_SVC  0x13
 #define CPSR_MODE_USER 0x10
 
-#if BOARD_QEMU
+#if BOARD_VERSATILEPB
 #  define TIMER_LOAD_VALUE 0x2000
 #endif
 

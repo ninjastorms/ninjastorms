@@ -25,7 +25,7 @@
 void
 timer_start (unsigned int period)
 {
-#if BOARD_QEMU
+#if BOARD_VERSATILEPB
   *TIMER1_CTRL &= ~(1 << 7);   // disable timer
   *TIMER1_CTRL |= 1 << 6;      // set periodic-mode
   *TIMER1_INTCLR = (char)0x1;  // clear interrupts
@@ -54,7 +54,7 @@ timer_start (unsigned int period)
 void
 timer_stop(void)
 {
-#if BOARD_QEMU
+#if BOARD_VERSATILEPB
   *TIMER1_CTRL &= ~(1 << 7);        // disable timer
   *TIMER1_INTCLR = (char)0x1;       // clear interrupts
 #endif
