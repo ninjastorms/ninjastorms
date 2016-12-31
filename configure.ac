@@ -16,6 +16,7 @@ AM_PROG_AR
 
 AC_CANONICAL_HOST
 
+dnl make sure we configure a cross build for an arm target
 case $host_cpu in
   arm)
     ;;
@@ -24,6 +25,7 @@ case $host_cpu in
     ;;
 esac
 
+dnl figure out which board we configure for and set the according variables
 case $BOARD in
   ev3)
     AC_SUBST(LOADADDR, [0xC1000000])
