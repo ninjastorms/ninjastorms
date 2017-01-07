@@ -57,8 +57,6 @@ init_array_loop:
   add   r0, r0, #4
   b     init_array_loop
 init_array_loop_end:
-  ldr   r2, [r0]
-  blx   r2
 
   // restore r0-r2
   pop   {r0-r2}
