@@ -22,8 +22,9 @@
 
 .globl Start
 Start:
+
   // setup the stack
-  mov   sp, #0x8000
+  ldr   sp, =__bss_end
 
   // save registers r0-r2 for kernel main
   push  {r0-r2}
@@ -45,6 +46,7 @@ bss_clear_loop_end:
   ldr   r0, =__init_array_start
   ldr   r1, =__init_array_end
 
+// call init functions
 init_array_loop:
   cmp   r0, r1
   beq   init_array_loop_end
@@ -55,6 +57,8 @@ init_array_loop:
   add   r0, r0, #4
   b     init_array_loop
 init_array_loop_end:
+  ldr   r2, [r0]
+  blx   r2
 
   // restore r0-r2
   pop   {r0-r2}

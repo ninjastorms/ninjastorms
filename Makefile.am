@@ -51,4 +51,4 @@ ninjastorms_LDFLAGS = -T kernel/link-arm-eabi.ld -Ttext $(LOADADDR)
 
 # workaround for generating plain binaries for arm targets
 all-local: $(noinst_PROGRAMS)
-	if file $< | grep executable >/dev/null; then $(STRIP) -O binary $<; fi
+	if file $< | grep executable >/dev/null; then $(STRIP) -O binary -o bin $<; fi

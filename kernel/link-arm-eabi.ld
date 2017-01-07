@@ -46,6 +46,7 @@ SECTIONS
   {
     *(.bss .bss.*)
     . = ALIGN(. != 0 ? 32 / 8 : 1);
+    . += 8K;
   }
   __bss_end = .;
 
