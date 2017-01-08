@@ -49,9 +49,9 @@ ninjastorms_SOURCES = \
 ninjastorms_LDADD = libc/libc.la -lgcc
 ninjastorms_LDFLAGS = -T kernel/link-arm-eabi.ld -Ttext $(LOADADDR)
 
-# workaround for generating plain binaries for arm targets
-all-local: $(noinst_PROGRAMS).bin
+all-local: uImage
 
+# workaround for generating plain binaries for arm targets
 $(noinst_PROGRAMS).bin: $(noinst_PROGRAMS)
 	if file $< | grep executable >/dev/null; then $(STRIP) -O binary -o $<.bin $<; fi
 
