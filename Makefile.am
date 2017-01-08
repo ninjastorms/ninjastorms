@@ -50,5 +50,17 @@ ninjastorms_LDADD = libc/libc.la -lgcc
 ninjastorms_LDFLAGS = -T kernel/link-arm-eabi.ld -Ttext $(LOADADDR)
 
 # workaround for generating plain binaries for arm targets
-all-local: $(noinst_PROGRAMS)
-	if file $< | grep executable >/dev/null; then $(STRIP) -O binary -o bin $<; fi
+all-local: $(noinst_PROGRAMS).bin
+
+$(noinst_PROGRAMS).bin: $(noinst_PROGRAMS)
+	if file $< | grep executable >/dev/null; then $(STRIP) -O binary -o $<.bin $<; fi
+
+# generate a boot.scr for booting via ymodem download
+boot.scr: boot.cmd
+	@echo "  MKIMAGE  boot.scr"
+	$(Q)mkimage -C none -A arm -T script -d boot.cmd boot.scr
+
+# generate uImage for downloading or booting directly from SD
+uImage: $(noinst_PROGRAMS).bin
+	@echo "  MKIMAGE  ninjastorms"
+	$(Q)mkimage -C none -A arm -T kernel -O linux -a $(LOADADDR) -e $(LOADADDR)  -d $< uImage
