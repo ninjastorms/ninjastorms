@@ -92,7 +92,6 @@ kernel_main (void)
   puts("  shuriken ready");
   puts(shuriken);
 
-
   add_task(&task_a);
   add_task(&task_b);
   add_task(&task_c);
