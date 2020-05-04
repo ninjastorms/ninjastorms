@@ -1,7 +1,13 @@
-Authors of ninjastorms
-See also the file THANKS
+
+ninjastorms has been created at the Operating Systems and Middleware Group at
+Hasso Plattner Institute for Digital Engineering in Potsdam, Germany.
+
+This file lists all People from the Group that have actively contributed to the
+development of the project.
 
   Andreas Grapentin: Original Author
   Dimitri Korsch: Original Author
   Christian Werling: Scheduling and Virtualization
   Carsten Walther: Scheduling and Virtualization
+
+See also the file THANKS.

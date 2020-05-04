@@ -1,16 +1,27 @@
 
-This is ninjastorms "NinjaStorms"
-==============================
+               _        _           _
+         _ __ (_)_ __  (_) __ _ ___| |_ ___  _ __ _ __ ___  ___
+        | '_ \| | '_ \ | |/ _` / __| __/ _ \| '__| '_ ` _ \/ __|
+        | | | | | | | || | (_| \__ \ || (_) | |  | | | | | \__ \
+        |_| |_|_|_| |_|/ |\__,_|___/\__\___/|_|  |_| |_| |_|___/
+                     |__/
+
+
+     Created by the Operating Systems and Middleware Group at Hasso
+                 Plattner Institute Potsdam, Germany.
+
+Introduction
+============
 
 NinjaStorms is an attempt to create a simple RealTime Operating System which
-is currently running on Lego Mindstorms EV3 and a virtualized environment.
+is currently running on Lego Mindstorms EV3 and a virtual environment.
 
 Building from Source:
 
-  ninjastorms uses (mostly) standard autotools to manage the build process.
-  to configure the sources, you need to execute the configure script. If you
-  checked out the sources from the repository, or there is no configure script
-  present for any other reason, you can generate it by executing
+  ninjastorms uses standard autotools to manage the build process. to configure
+  the sources, you need to execute the configure script. If you checked out the
+  sources from the repository, or there is no configure script present for any
+  other reason, you can generate it by executing
 
     $> ./autogen.sh
 
@@ -25,8 +36,9 @@ Building from Source:
 
   This step requires a <host> prefixed toolchain capable of generating
   executables for your target architecture. To generate a <host> prefixed
-  toolchain, in case your distribution does not provide one,
-  see our [generate-toolchain](https://github.com/ninjastorms/toolchain-generator) project.
+  toolchain, in case your distribution does not provide one, see our
+  [generate-toolchain](https://github.com/ninjastorms/toolchain-generator)
+  project.
 
   Correct host values for the several boards are listed in Supported Boards.
 
@@ -61,7 +73,7 @@ Further Reading:
 
 Getting involved:
 
-  ninjastorms is open source and pull requests and new issues are always welcome!
+  ninjastorms is open source and pull requests and bug reports are welcome!
   Find us on github: https://github.com/ninjastorms/ninjastorms/
 
 Supported Boards:

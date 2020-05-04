@@ -1,16 +1,22 @@
-ninjastorms THANKS file
 
-ninjastorms has originally been written by Andreas Grapentin and Dimitri Korsch.
+ninjastorms has originally been written by Andreas Grapentin and Dimitri Korsch
+at the Operating Systems and Middleware Group of Hasso Plattner Institute for
+Digital Engineering in Potsdam, Germany.
+
 This file aims at listing all people who positively supported the development
 of ninjastorms, for example by suggesting features, pointing out problems, or
 contributing in any other way, ordered by the time they first added to the
-projects. If you feel that your name is missing here, contact
-<andreas@grapentin.org>.
+project.
 
-  Andreas Grapentin <andreas@grapentin.org>
+If you feel that your name is missing here, contact
+<andreas.grapentin@hpi.uni-potsdam.de>.
+
+  Prof. Dr. Andreas Polze
+  Andreas Grapentin
   Dimitri Korsch
   Kirstin Heidler
   Rakesh Kumar Sah
   Nicco Kunzmann
+  Sven Köhler
   Christian Werling
   Carsten Walther
