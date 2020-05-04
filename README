@@ -32,8 +32,8 @@ Building from Source:
 
   For example, to configure ninjastorms for qemu virtual deployment, execute
 
-    $> ./configure --host=arm-none-eabi BOARD=qemu \
-           CFLAGS="-nostdlib -nostartfiles -ffreestanding"
+    $> ./configure --host=arm-none-eabi BOARD=versatilepb \
+           CFLAGS="-nostdlib -nostartfiles -ffreestanding -mcpu=ARM926EJ-s"
 
   Assuming a working toolchain for your architecture and a configured source
   tree, the project is built by executing
