@@ -22,29 +22,27 @@ the sources, you need to execute the configure script. If you checked out the
 sources from the repository, or there is no configure script present for any
 other reason, you can generate it by executing
 
-    $> ./autogen.sh
+    ./autogen.sh
 
 To configure the project, execute
 
-    $> ./configure --host=<host> BOARD=<board> \
-          CFLAGS="-nostdlib -nostartfiles -ffreestanding"
+    ./configure --host=<host> BOARD=<board> CFLAGS="-nostdlib -nostartfiles -ffreestanding"
 
 where `host` is the appropriate host triplet for the target architecture,
 for example `arm-none-eabi` for the EV3 or the qemu environments and `board`
-is a supported board. See `Supported Boards` for the board specific configure
-command.
+is a supported board. See [Supported Boards](#supported-boards) for the board specific configure command.
 
 Building the project requires a `host` prefixed toolchain capable of generating
 executables for your target architecture. To generate a `host` prefixed
-toolchain, in case your distribution does not provide one, see our
+toolchain, in case your distribution does not provide one, see the
 [generate-toolchain](https://github.com/ninjastorms/toolchain-generator)
 project. Assuming a working toolchain for your architecture and a configured
 source tree, the project is built by executing
 
-    $> make
+    make
 
 When the build completes, the kernel binary can be found in the source tree
-as a file named `ninjastorms`. See `Supported Boards` for the deployment
+as a file named `ninjastorms`. See [Supported Boards](#supported-boards) for the deployment
 process of the built kernel.
 
 ## Supported Boards
@@ -66,28 +64,22 @@ pull request!
   - feel free to add the requirements for other operating systems here
 - configuration: configure ninjastorms for qemu virtual deployment with
 
-      $> ./configure --host=arm-none-eabi BOARD=versatilepb \
-            CFLAGS="-nostdlib -nostartfiles -ffreestanding -mcpu=ARM926EJ-s"
+        ./configure --host=arm-none-eabi BOARD=versatilepb CFLAGS="-nostdlib -nostartfiles -ffreestanding -mcpu=ARM926EJ-s"
 
 - deployment process: execute the built kerenel directly with
 
-      $> qemu-system-arm -M versatilepb -m 128M -nographic -kernel ninjastorms
+        qemu-system-arm -M versatilepb -m 128M -nographic -kernel ninjastorms
 
   The hardware access to the device periphery will fail silently, but the
   kernel output will still be shown.
 
 ## Further Reading
 
-The kernel entry point is the kernel_main function in kernel/main.c - this
+The kernel entry point is the `kernel_main` function in `kernel/main.c` - this
 should be a good place to start reading into the source code.
 
 We also collected information on the different supported boards in the
 [hardware-docs](https://github.com/ninjastorms/hardware-docs) project.
 
-Additional documentation can be found in our
-[github wiki](https://github.com/ninjastorms/ninjastorms/wiki).
-
-## Getting involved
-
-ninjastorms is open source and pull requests and bug reports are welcome!
-Find us on github: https://github.com/ninjastorms/ninjastorms/
+Additional documentation can be found here:
+[ninjastorms github wiki](https://github.com/ninjastorms/ninjastorms/wiki).
