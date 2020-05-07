@@ -4,6 +4,8 @@
 *.lo
 *.la
 ninjastorms
+ninjastorms.bin
+uImage
 
 # autotools generated files
 Makefile.in
