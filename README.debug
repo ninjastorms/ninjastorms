@@ -1,0 +1,31 @@
+
+Debugging Instructions
+======================
+
+To build for debugging, append " -g" to CFLAGS when running configure.
+
+After building, start the kernel and append the '-S' and '-s' flags to the qemu
+call, to instruct the emulator to pause execution at the first instruction and
+wait for a debugger to attach at localhost port 1234:
+
+  $> qemu-system-arm -M versatilepb -m 128M -nographic -kernel ninjastorms -S -s
+
+Next, in another terminal, start arm-none-eabi-gdb
+
+  $> arm-none-eabi-gdb
+  (gdb)
+
+on the gdb command line, choose the kernel binary containing the debug info:
+
+  (gdb) file ninjastorms
+  Reading symbols from ninjastorms...
+  ...
+
+and attach the debugger to the virtual machine:
+
+  (gdb) target remote localhost:1234
+  Remote debugging using localhost:1234
+  Start () at kernel/boot/start.S:27
+  27	  ldr   sp, =__bss_end
+
+the kernel can now be debugged using gdb like a regular C program.
