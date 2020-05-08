@@ -21,58 +21,59 @@
 #include "main.h"
 
 #include "kernel/drivers/button.h"
-#include "kernel/demo/demo_motor.h"
-#include "kernel/demo/demo_led.h"
 #include "kernel/scheduler.h"
 
 #include <stdio.h>
 
 static void
-func_task_a (void)
+task_a (void)
 {
-  while(1)
-    demo_motor();
-}
+  unsigned int n = 0;
 
-static void
-func_task_b (void)
-{
-  while(1)
-    demo_led();
-}
-
-static void
-controller_task (void)
-{
-  unsigned int button_last_state = BUTTON_UP;
-  unsigned int mode = 0;
-  while(1)
+  while (1)
     {
-      if (button_get_state(BUTTON_CENTER) == BUTTON_DOWN)
-        {
-          if (button_last_state == BUTTON_UP)
-            {
-              switch(mode)
-                {
-                case 0:
-                  add_task(func_task_b);
-                  mode++;
-                  break;
-                case 1:
-                  add_task(func_task_a);
-                  mode++;
-                  break;
-                default:
-                  mode++;
-                  //TODO: shutdown
-                }
-            }
-          button_last_state = BUTTON_DOWN;
-        }
-      else
-        {
-          button_last_state = BUTTON_UP;
-        }
+      printf("  task a: %i\n", n++);
+      volatile int i;
+      for (i = 0; i < 10000000; ++i);
+    }
+}
+
+static void
+task_b (void)
+{
+  unsigned int n = 0;
+
+  while (1)
+    {
+      printf("  task b: %i\n", n++);
+      volatile int i;
+      for (i = 0; i < 10000000; ++i);
+    }
+}
+
+static void
+task_c (void)
+{
+  unsigned int n = 0;
+
+  while (1)
+    {
+      printf("  task c: %i\n", n++);
+      volatile int i;
+      for (i = 0; i < 10000000; ++i);
+    }
+}
+
+static void
+task_d (void)
+{
+  unsigned int n = 0;
+
+  while (1)
+    {
+      printf("  task d: %i\n", n++);
+      volatile int i;
+      for (i = 0; i < 10000000; ++i);
     }
 }
 
@@ -82,7 +83,11 @@ kernel_main (void)
   puts("This is ninjastorms OS");
   puts("  shuriken ready");
 
-  add_task(&controller_task);
+  add_task(&task_a);
+  add_task(&task_b);
+  add_task(&task_c);
+  add_task(&task_d);
+
   start_scheduler();
 
   puts("All done. ninjastorms out!");

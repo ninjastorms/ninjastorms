@@ -25,10 +25,6 @@
 #include "kernel/interrupt.h"
 #include "kernel/interrupt_handler.h"
 
-#define REG_SP 13
-#define REG_LR 14
-#define REG_PC 15
-
 #define CPSR_MODE_SVC  0x13
 #define CPSR_MODE_USER 0x10
 
@@ -46,9 +42,9 @@ int task_count   = 0;
 int buffer_start = 0;
 int buffer_end   = 0;
 int isRunning    = 0;
-task_t tasks[MAX_TASK_NUMBER];
-task_t* ring_buffer[MAX_TASK_NUMBER];
-task_t* current_task;
+task_t tasks[MAX_TASK_NUMBER] = { 0 };
+task_t* ring_buffer[MAX_TASK_NUMBER] = { 0 };
+task_t* current_task = (void*)0;
 
 // TODO: disable interrupts during insertion
 void
@@ -77,11 +73,13 @@ void
 init_task (task_t *task, void *entrypoint, unsigned int stackbase)
 {
   int i;
-  for(i = 0; i<16; i++)
+  for(i = 0; i<13; i++)
     task->reg[i] = i;
 
-  task->reg[REG_SP] = stackbase;
-  task->reg[REG_PC] = (unsigned int) entrypoint;
+  task->sp = stackbase;
+  task->lr = 0;
+  task->lr = 0;
+  task->pc = (unsigned int) entrypoint;
 
   task->cpsr = CPSR_MODE_USER;
 }

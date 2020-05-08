@@ -26,7 +26,11 @@
 
 struct task_t
 {
-	unsigned int reg[16];
+  // r01..r12, sp, lr, pc
+	unsigned int reg[13];
+	unsigned int sp;
+	unsigned int lr;
+	unsigned int pc;
 	unsigned int cpsr;
 };
 typedef struct task_t task_t;
