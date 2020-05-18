@@ -5,6 +5,7 @@
 *.la
 ninjastorms
 ninjastorms.bin
+boot.scr
 uImage
 
 # autotools generated files
