@@ -24,6 +24,7 @@
 #include "kernel/scheduler.h"
 #include "memory.h"
 #include "kernel/utilities.h"
+#include "kernel/pci/pci.c"
 
 #include "syscall.h"
 
