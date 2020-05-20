@@ -61,8 +61,8 @@ pull request!
 - target platform: arm-none-eabi
 - requirements:
   - Arch: `qemu qemu-arch-extra arm-none-eabi-newlib arm-none-eabi-gcc arm-none-eabi-binutils`
-  - Ubuntu: `gcc-arm-none-eabi binutils-arm-none-eabi gdb-multiarch openocd autoconf automate libtool u-boot-tools qemu`
-  - Debian: `gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd autoconf automate libtool u-boot-tools qemu`
+  - Ubuntu: `gcc-arm-none-eabi binutils-arm-none-eabi gdb-multiarch openocd autoconf libtool u-boot-tools qemu`
+  - Debian: `gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd autoconf libtool u-boot-tools qemu`
   - feel free to add the requirements for other operating systems here
 - configuration: configure ninjastorms for qemu virtual deployment with
 
