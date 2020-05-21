@@ -46,7 +46,9 @@ ninjastorms_SOURCES = \
     kernel/drivers/pininfo.c kernel/drivers/pininfo.h \
     kernel/drivers/sensor.c kernel/drivers/sensor.h \
     kernel/drivers/spi.c kernel/drivers/spi.h \
-    kernel/drivers/timer.c kernel/drivers/timer.h
+    kernel/drivers/timer.c kernel/drivers/timer.h \
+    kernel/pci/pci.c kernel/pci/pci.h \
+    kernel/network/e1000.c kernel/network/e1000.h
 
 ninjastorms_LDADD = libc/libc.la -lgcc
 ninjastorms_LDFLAGS = -T kernel/link-arm-eabi.ld -Ttext $(LOADADDR)

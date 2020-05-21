@@ -24,7 +24,8 @@
 #include "kernel/scheduler.h"
 #include "memory.h"
 #include "kernel/utilities.h"
-#include "kernel/pci/pci.c"
+#include "kernel/pci/pci.h"
+#include "kernel/network/e1000.h"
 
 #include "syscall.h"
 
@@ -113,6 +114,8 @@ kernel_main (void)
   puts("This is ninjastorms OS");
   puts("  shuriken ready");
   puts(shuriken);
+
+  pci_init();
 
   //add_task(&task_a);
   //add_task(&task_b);
