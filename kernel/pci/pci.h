@@ -13,7 +13,7 @@ struct pci_device_t {
 typedef struct pci_device_t pci_device_t;
 
 
-void printMemory(unsigned int* addr);
+void print_memory(unsigned int* addr);
 
 void enumerate_pci_devices(void);
 

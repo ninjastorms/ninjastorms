@@ -5,7 +5,9 @@
 
 pci_device_t* e1000_pci_device = (void*)0;
 
-void e1000_init(void){
+void
+e1000_init(void)
+{
 	printf("[E1000] Initializing driver.\n");
 	e1000_pci_device = get_pci_device(INTEL_VEND, E1000_DEV);
 	if(e1000_pci_device == (void*)0){

@@ -61,14 +61,14 @@ pull request!
 - target platform: arm-none-eabi
 - requirements:
   - Arch: `qemu qemu-arch-extra arm-none-eabi-newlib arm-none-eabi-gcc arm-none-eabi-binutils`
-  - Ubuntu: `gcc-arm-none-eabi binutils-arm-none-eabi gdb-multiarch openocd autoconf libtool u-boot-tools qemu`
-  - Debian: `gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd autoconf libtool u-boot-tools qemu`
+  - Ubuntu: `gcc-arm-none-eabi binutils-arm-none-eabi gdb-multiarch openocd autoconf libtool u-boot-tools qemu qemu-system-arm`
+  - Debian: `gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd autoconf libtool u-boot-tools qemu qemu-system-arm`
   - feel free to add the requirements for other operating systems here
 - configuration: configure ninjastorms for qemu virtual deployment with
 
         ./configure --host=arm-none-eabi BOARD=versatilepb CFLAGS="-nostdlib -nostartfiles -ffreestanding -mcpu=ARM926EJ-s"
 
-- deployment process: execute the built kerenel directly with
+- deployment process: execute the built kernel directly with
 
         qemu-system-arm -M versatilepb -m 128M -nographic -kernel ninjastorms
 

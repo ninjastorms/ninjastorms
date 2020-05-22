@@ -5,14 +5,15 @@
 pci_device_t pci_devices[MAX_PCI_DEVICES] = { 0 };
 
 void
-printMemory(unsigned int* addr)
+print_memory(unsigned int* addr)
 {
 	printf("0x%x: 0x%x\n",
 		addr, *addr);
 }
 
 unsigned int
-memory_start_address(unsigned int device_start){
+memory_start_address(unsigned int device_start)
+{
 	unsigned int memory_1 = *((unsigned int*)(device_start+0x14));
 	unsigned int memory_2 = *((unsigned int*)(device_start+0x18));
 	unsigned int mem_base = (memory_1 << 16) + memory_2;
@@ -21,8 +22,9 @@ memory_start_address(unsigned int device_start){
 
 // TODO
 void
-read_mac(unsigned int mem_base){
-	unsigned char * mem_base_mac_8 = (unsigned char *) (mem_base+0x5400);
+read_mac(unsigned int mem_base)
+{ 
+  unsigned char * mem_base_mac_8 = (unsigned char *) (mem_base+0x5400);
   unsigned int * mem_base_mac_32 = (unsigned int *) (mem_base+0x5400);
 	if ( mem_base_mac_32[0] != 0 )
   {
@@ -61,7 +63,9 @@ enumerate_pci_devices(void)
 	}
 }
 
-pci_device_t* get_pci_device(unsigned short vendor_id, unsigned short device_id){
+pci_device_t* 
+get_pci_device(unsigned short vendor_id, unsigned short device_id)
+{
 	for (int i = 0; i < MAX_PCI_DEVICES; ++i)
 	{
 		pci_device_t* device = &pci_devices[i];
