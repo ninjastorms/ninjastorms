@@ -25,3 +25,5 @@
 #endif
 
 void init_interrupt_handling(void);
+
+void software_interrupt_handler(void);

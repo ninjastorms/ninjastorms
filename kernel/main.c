@@ -22,6 +22,7 @@
 
 #include "kernel/drivers/button.h"
 #include "kernel/scheduler.h"
+#include "memory.h"
 
 #include <stdio.h>
 
@@ -77,6 +78,30 @@ task_d (void)
     }
 }
 
+
+static void
+call_software_interrupt_test(void)
+{
+    puts("Testing swi");
+    //Change mode
+    //unsigned int* cpsr = (unsigned int*) 0x10;
+    //printf("cpsr content is %x before", *cpsr);
+    //*cpsr &= 0x37777777760; //mask 
+    //*cpsr |= 0x10;
+    //printf("and %x after", *cpsr);
+    /*asm(
+        "mov r0, #0x10\n"
+        "bfm cpsr, r0, #26, #31 \n"
+        //"bfxil cpsr, r0, #26, #5\n" //switch to user mode
+        "svc 42\n"
+    );*/
+    asm(
+        "mov r11, #10000\n"
+        "msr cpsr, r11\n"
+        "svc 42"
+    );
+}
+
 char shuriken[] =
 "                 /\\\n"
 "                /  \\\n"
@@ -92,12 +117,14 @@ kernel_main (void)
   puts("  shuriken ready");
   puts(shuriken);
 
-  add_task(&task_a);
-  add_task(&task_b);
-  add_task(&task_c);
-  add_task(&task_d);
+  //add_task(&task_a);
+  //add_task(&task_b);
+  //add_task(&task_c);
+  //add_task(&task_d);
+  add_task(&call_software_interrupt_test);
 
   start_scheduler();
+
 
   puts("All done. ninjastorms out!");
 
