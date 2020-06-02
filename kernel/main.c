@@ -79,16 +79,29 @@ task_d (void)
 }
 
 
+//This will be moved into usermode library
+void create_process(void * task_fun){
+        //TODO create struct with additional information
+        
+        //TODO load struct, so that it can be accessed
+        
+        puts("Creating process!");
+        asm(
+            "svc #42\n"
+        );
+}
+
+
 
 static void
 call_software_interrupt_test(void)
 {
     puts("Testing swi");    
     // svc will save processor state and create a software interrupt
-    asm(
-        "svc 42\n"
-    );
-    puts("Returned from syscall");
+    create_process((void*) 0);
+    puts("Returned from syscall\n");
+    puts("And another one!");
+    create_process((void*) 0);
 }
 
 char shuriken[] =

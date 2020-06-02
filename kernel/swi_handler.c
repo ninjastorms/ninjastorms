@@ -18,11 +18,36 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#pragma once
+#include "swi_handler.h"
+#include <stdio.h>
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-void init_interrupt_handling(void);
-
+void software_interrupt_handler(unsigned int *svc_args){
+    
+    unsigned int syscallno;
+    //get syscall number
+    asm(
+        "ldr r12, [r14, #-4]\n"
+        "bic r12, #0xff000000\n"
+    );
+    syscallno = (( char *) svc_args[6])[-2];
+    printf("syscallno %i",syscallno);
+    
+    puts("Handling software interrupt: Not implemented");
+    switch (syscallno){
+        case 1:
+            puts("called syscall create_process");
+            //create process
+            //add_task(create_process_task)
+            break;
+        case 2:
+            //kill process
+            //add_task
+            break;
+        default:
+            puts("Unknown syscall attempted! Returning to program");
+            //TODO give error
+            break;
+    }
+    
+    
+}

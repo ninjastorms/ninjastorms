@@ -24,5 +24,4 @@
 #  include <config.h>
 #endif
 
-void init_interrupt_handling(void);
-
+void software_interrupt_handler(unsigned int *svc_args);

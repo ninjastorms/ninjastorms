@@ -19,7 +19,7 @@
  ******************************************************************************/
 
 #include "interrupt.h"
-#include "stdio.h"
+#include "swi_handler.h"
 
 #include "kernel/memory.h"
 #include "kernel/interrupt_handler.h"
@@ -51,7 +51,7 @@ setup_ivt (void)
   *(unsigned int*) (IVT_OFFSET + 0x28) = (unsigned int) 0;
   *(unsigned int*) (IVT_OFFSET + 0x2c) = (unsigned int) 0;
   *(unsigned int*) (IVT_OFFSET + 0x30) = (unsigned int) 0;
-  *(unsigned int*) (IVT_OFFSET + 0x34) = (unsigned int) &irq_handler;
+  *(unsigned int*) (IVT_OFFSET + 0x34) = (unsigned int) &irq_handler_timer;
   *(unsigned int*) (IVT_OFFSET + 0x38) = (unsigned int) 0;
 
 #if BOARD_EV3
@@ -63,10 +63,6 @@ setup_ivt (void)
     "mcr  p15, 0, r0, c1, c0, 0\n"
   );
 #endif
-}
-
-void software_interrupt_handler(void){
-    puts("Interrupted!");
 }
     
 void
