@@ -27,11 +27,16 @@ void software_interrupt_handler(unsigned int *svc_args){
     
     //get syscall number
     asm(
+        "push {r8,r9,r14}\n" //save registers that will be edited
         "ldr r8, [r14, #-4]\n"  //argument for svc is found in svc command
         "bic r8, #0xff000000\n" //get argument
         "mov r9, %0 \n"         //write adress to syscallno in r9
-        "str r8, [r9]"          //write syscallno
+        "str r8, [r9]\n"          //write syscallno
         : :  "r" (syscallno)
+    );
+    
+    asm(
+        "pop {r8,r9,r14}\n" // restore registers
     );
     
     printf("syscallno %i \n",*syscallno);
@@ -52,7 +57,7 @@ void software_interrupt_handler(unsigned int *svc_args){
             break;
     }
     
-    //TODO Restore processor state
+    //TODO Restore processor state is done by svc
     return;
     
 }

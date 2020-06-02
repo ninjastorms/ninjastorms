@@ -87,7 +87,7 @@ void create_process(void * task_fun){
         
         puts("Creating process!");
         asm(
-            "svc #42\n"
+            "svc #1\n"
         );
 }
 // End of user mode library
