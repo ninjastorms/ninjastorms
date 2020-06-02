@@ -90,14 +90,13 @@ void create_process(void * task_fun){
             "svc #42\n"
         );
 }
-
+// End of user mode library
 
 
 static void
 call_software_interrupt_test(void)
 {
     puts("Testing swi");    
-    // svc will save processor state and create a software interrupt
     create_process((void*) 0);
     puts("Returned from syscall\n");
     puts("And another one!");

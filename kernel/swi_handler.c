@@ -23,17 +23,20 @@
 
 void software_interrupt_handler(unsigned int *svc_args){
     
-    unsigned int syscallno;
+    unsigned int  *syscallno = 0;
+    
     //get syscall number
     asm(
-        "ldr r12, [r14, #-4]\n"
-        "bic r12, #0xff000000\n"
+        "ldr r8, [r14, #-4]\n"  //argument for svc is found in svc command
+        "bic r8, #0xff000000\n" //get argument
+        "mov r9, %0 \n"         //write adress to syscallno in r9
+        "str r8, [r9]"          //write syscallno
+        : :  "r" (syscallno)
     );
-    syscallno = (( char *) svc_args[6])[-2];
-    printf("syscallno %i",syscallno);
     
-    puts("Handling software interrupt: Not implemented");
-    switch (syscallno){
+    printf("syscallno %i \n",*syscallno);
+    
+    switch (*syscallno){
         case 1:
             puts("called syscall create_process");
             //create process
@@ -49,5 +52,7 @@ void software_interrupt_handler(unsigned int *svc_args){
             break;
     }
     
+    //TODO Restore processor state
+    return;
     
 }
