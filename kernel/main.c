@@ -79,15 +79,16 @@ task_d (void)
 }
 
 
+
 static void
 call_software_interrupt_test(void)
 {
-    puts("Testing swi");
-    // Already in user mode
+    puts("Testing swi");    
+    // svc will save processor state and create a software interrupt
     asm(
         "svc 42\n"
     );
-
+    puts("Returned from syscall");
 }
 
 char shuriken[] =
