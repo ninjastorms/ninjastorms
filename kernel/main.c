@@ -83,23 +83,11 @@ static void
 call_software_interrupt_test(void)
 {
     puts("Testing swi");
-    //Change mode
-    //unsigned int* cpsr = (unsigned int*) 0x10;
-    //printf("cpsr content is %x before", *cpsr);
-    //*cpsr &= 0x37777777760; //mask 
-    //*cpsr |= 0x10;
-    //printf("and %x after", *cpsr);
-    /*asm(
-        "mov r0, #0x10\n"
-        "bfm cpsr, r0, #26, #31 \n"
-        //"bfxil cpsr, r0, #26, #5\n" //switch to user mode
-        "svc 42\n"
-    );*/
+    // Already in user mode
     asm(
-        "mov r11, #10000\n"
-        "msr cpsr, r11\n"
-        "svc 42"
+        "svc 42\n"
     );
+
 }
 
 char shuriken[] =
