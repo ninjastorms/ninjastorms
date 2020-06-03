@@ -53,14 +53,14 @@ unsigned int syscall_handler(){
 }
 
 unsigned int syscall_zero_dispatch(void* data){
-        puts("Not implemented");
-        return 0;
+    puts("This is not a real syscall!\n");
+    return 0;
 }
 
 unsigned int create_process_dispatch(void* data){
-        create_process_spec spec = *((create_process_spec*) data);
-        add_task(spec.function);
-        return 0;
+    create_process_spec spec = *((create_process_spec*) data);
+    add_task(spec.function);
+    return 0;
 }
 
 void* dispatch_routines[2] = {
@@ -70,9 +70,13 @@ void* dispatch_routines[2] = {
 unsigned int syscall_dispatcher(unsigned int syscallno, void *data) {
     printf("Handling syscall %i with data at address %x.\n", syscallno, data);
     //unsigned int (*dispatch_routines[syscallno])(data); OPTION1
-    switch(syscallno){ //OPTION2 (better with enums)
-        case 0:
-            create_process_dispatch(data);
+    switch(syscallno){ //OPTION2
+        case ZERO_SYSCALL:
+            return syscall_zero_dispatch(data);
+        case CREATE_PROCESS:
+            return create_process_dispatch(data);
+        default:
+            return -1;
     }
     
     return 0xbeef;

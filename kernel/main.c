@@ -85,11 +85,7 @@ static void
 syscall_test(void)
 {
     create_process(&task_a);
-    /*while(1) {
-        syscall(0,(void *) 0);
-        volatile int i = 0;
-        for(i = 0; i < 10000000; i++);
-    }*/
+    create_process(&task_b);
 }
 
 char shuriken[] =
