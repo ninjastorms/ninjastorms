@@ -31,19 +31,12 @@ unsigned int syscall_handler(){
     void *data = 0;
     
     asm(
-        // save relevant registers
-        "push {r7} \n"
+        "mov %[syscallno], r0 \n"    // retrieve syscall number
 
-        // retrieve syscall number
-        "mov r7, %[syscallno] \n"
-        "str r0, [r7] \n"
-       
-        // retrieve data
-        "mov r7, %[data] \n"
-        "str r1, [r7] \n" 
-        :
-        : [syscallno] "r" (&syscallno),
-          [data] "r" (&data)
+        "mov %[data], r1 \n"    // retrieve data
+        
+        : [syscallno] "=r" (syscallno),
+          [data] "=r" (data)
     );
 
     // stores return value in r0
@@ -51,7 +44,6 @@ unsigned int syscall_handler(){
 
     // return from software interrupt and restore cpsr
     asm(
-        "pop {r7} \n"        // restore used registers
         "add sp, sp, #8 \n"  // discard two values from stack (local vars)
         "pop {r11, lr} \n"   // restore link register and (frame pointer)?
         "movs pc, lr \n"     // return from svc (return and restore cpsr)
