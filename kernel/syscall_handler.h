@@ -18,46 +18,10 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "swi_handler.h"
-#include <stdio.h>
+#pragma once
 
-void software_interrupt_handler(unsigned int *svc_args){
-    
-    unsigned int  *syscallno = 0;
-    
-    //get syscall number
-    asm(
-        "push {r8,r9,r14}\n" //save registers that will be edited
-        "ldr r8, [r14, #-4]\n"  //argument for svc is found in svc command
-        "bic r8, #0xff000000\n" //get argument
-        "mov r9, %0 \n"         //write adress to syscallno in r9
-        "str r8, [r9]\n"          //write syscallno
-        : :  "r" (syscallno)
-    );
-    
-    asm(
-        "pop {r8,r9,r14}\n" // restore registers
-    );
-    
-    printf("syscallno %i \n",*syscallno);
-    
-    switch (*syscallno){
-        case 1:
-            puts("called syscall create_process");
-            //create process
-            //add_task(create_process_task)
-            break;
-        case 2:
-            //kill process
-            //add_task
-            break;
-        default:
-            puts("Unknown syscall attempted! Returning to program");
-            //TODO give error
-            break;
-    }
-    
-    //TODO Restore processor state is done by svc
-    return;
-    
-}
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
+unsigned int syscall_handler();

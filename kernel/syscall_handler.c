@@ -18,10 +18,47 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#pragma once
+#include "syscall_handler.h"
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+#include <stdio.h>
 
-void software_interrupt_handler(unsigned int *svc_args);
+
+unsigned int syscall_dispatcher(unsigned int, void*);
+
+unsigned int syscall_handler(){
+    
+    unsigned int syscallno = 0;
+    void *data = 0;
+    
+    asm(
+        // save relevant registers
+        "push {r7} \n"
+
+        // retrieve syscall number
+        "mov r7, %[syscallno] \n"
+        "str r0, [r7] \n"
+       
+        // retrieve data
+        "mov r7, %[data] \n"
+        "str r1, [r7] \n" 
+        :
+        : [syscallno] "r" (&syscallno),
+          [data] "r" (&data)
+    );
+
+    // stores return value in r0
+    syscall_dispatcher(syscallno, data);
+
+    // return from software interrupt and restore cpsr
+    asm(
+        "pop {r7} \n"        // restore used registers
+        "pop {r2, r3} \n"    // TODO: improve remove local variables from stack
+        "pop {r11, lr} \n"   // restore link register and (frame pointer)?
+        "movs pc, lr \n"     // return from svc (return and restore cpsr)
+    );
+}
+
+unsigned int syscall_dispatcher(unsigned int syscallno, void *data) {
+    printf("Handling syscall %i with data at address %x.\n", syscallno, data);
+    return 0xbeef;
+}

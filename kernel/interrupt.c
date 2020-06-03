@@ -19,7 +19,7 @@
  ******************************************************************************/
 
 #include "interrupt.h"
-#include "swi_handler.h"
+#include "syscall_handler.h"
 
 #include "kernel/memory.h"
 #include "kernel/interrupt_handler.h"
@@ -47,7 +47,7 @@ setup_ivt (void)
 
   *(unsigned int*) (IVT_OFFSET + 0x20) = (unsigned int) 0;
   //ATTENTION: don't use software interrupts in supervisor mode
-  *(unsigned int*) (IVT_OFFSET + 0x24) = (unsigned int) &software_interrupt_handler;
+  *(unsigned int*) (IVT_OFFSET + 0x24) = (unsigned int) &syscall_handler;
   *(unsigned int*) (IVT_OFFSET + 0x28) = (unsigned int) 0;
   *(unsigned int*) (IVT_OFFSET + 0x2c) = (unsigned int) 0;
   *(unsigned int*) (IVT_OFFSET + 0x30) = (unsigned int) 0;

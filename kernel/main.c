@@ -24,6 +24,8 @@
 #include "kernel/scheduler.h"
 #include "memory.h"
 
+#include "syscall.h"
+
 #include <stdio.h>
 
 static void
@@ -79,28 +81,14 @@ task_d (void)
 }
 
 
-//This will be moved into usermode library
-void create_process(void * task_fun){
-        //TODO create struct with additional information
-        
-        //TODO load struct, so that it can be accessed
-        
-        puts("Creating process!");
-        asm(
-            "svc #1\n"
-        );
-}
-// End of user mode library
-
-
 static void
-call_software_interrupt_test(void)
+syscall_test(void)
 {
-    puts("Testing swi");    
-    create_process((void*) 0);
-    puts("Returned from syscall\n");
-    puts("And another one!");
-    create_process((void*) 0);
+    while(1) {
+        syscall(42, (void*) 0);
+        volatile int i = 0;
+        for(i = 0; i < 10000000; i++);
+    }
 }
 
 char shuriken[] =
@@ -122,10 +110,9 @@ kernel_main (void)
   //add_task(&task_b);
   //add_task(&task_c);
   //add_task(&task_d);
-  add_task(&call_software_interrupt_test);
+  add_task(&syscall_test);
 
   start_scheduler();
-
 
   puts("All done. ninjastorms out!");
 
