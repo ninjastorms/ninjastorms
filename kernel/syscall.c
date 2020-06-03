@@ -17,101 +17,31 @@
  *    You should have received a copy of the GNU General Public License       *
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
-
-#include "main.h"
-
-#include "kernel/drivers/button.h"
-#include "kernel/scheduler.h"
-#include "memory.h"
-
 #include "syscall.h"
 
-#include <stdio.h>
+unsigned int syscall(unsigned int number, void* data) {
+   
+    unsigned int ret;
 
-static void
-task_a (void)
-{
-  unsigned int n = 0;
+    asm(
+        // store arguments in registers
+        "mov r0, %[number] \n"  // store number in r0
+        "mov r1, %[data] \n"    //   and data in r1
 
-  while (1)
-    {
-      printf("  task a: %i\n", n++);
-      volatile int i;
-      for (i = 0; i < 10000000; ++i);
-    }
+        "svc #0 \n"    // make supervisor call
+
+        "mov %[ret], r0 \n"    // save return value
+
+        : [ret] "=r" (ret)
+        : [number] "r" (number),
+          [data] "r" (data)
+    );
+
+    return ret;
 }
 
-static void
-task_b (void)
-{
-  unsigned int n = 0;
-
-  while (1)
-    {
-      printf("  task b: %i\n", n++);
-      volatile int i;
-      for (i = 0; i < 10000000; ++i);
-    }
-}
-
-static void
-task_c (void)
-{
-  unsigned int n = 0;
-
-  while (1)
-    {
-      printf("  task c: %i\n", n++);
-      volatile int i;
-      for (i = 0; i < 10000000; ++i);
-    }
-}
-
-static void
-task_d (void)
-{
-  unsigned int n = 0;
-
-  while (1)
-    {
-      printf("  task d: %i\n", n++);
-      volatile int i;
-      for (i = 0; i < 10000000; ++i);
-    }
-}
-
-
-static void
-syscall_test(void)
-{
-    create_process(&task_a);
-    create_process(&task_b);
-}
-
-char shuriken[] =
-"                 /\\\n"
-"                /  \\\n"
-"                |  |\n"
-"              __/()\\__\n"
-"             /   /\\   \\\n"
-"            /___/  \\___\\\n";
-
-int
-kernel_main (void)
-{
-  puts("This is ninjastorms OS");
-  puts("  shuriken ready");
-  puts(shuriken);
-
-  //add_task(&task_a);
-  //add_task(&task_b);
-  //add_task(&task_c);
-  add_task(&task_d);
-  add_task(&syscall_test);
-
-  start_scheduler();
-
-  puts("All done. ninjastorms out!");
-
-  return 0;
+unsigned int create_process(void * function) {
+    struct create_process_specification new_process;
+    new_process.function = function;
+    return syscall(1,&new_process);
 }

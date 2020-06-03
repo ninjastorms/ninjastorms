@@ -26,13 +26,14 @@
 .globl schedule
 
 // export
-.globl irq_handler
+.globl irq_handler_swi
+.globl irq_handler_timer
 .type irq_handler STT_FUNC
 .globl load_current_task_state
 .type load_current_task_state STT_FUNC
 
 
-irq_handler:
+irq_handler_timer:
   // save registers
   push  {r0-r2, lr}
 
@@ -61,7 +62,7 @@ irq_handler:
   pop  {r0-r2, lr}
 
   b  load_current_task_state
-
+  
 
 // the first parameter (r0) of save_current_task_state
 // contains the address to the saved registers

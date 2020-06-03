@@ -24,6 +24,6 @@
 #  include <config.h>
 #endif
 
-void irq_handler (void);
+void irq_handler_timer (void);
 
 void load_current_task_state (void);
