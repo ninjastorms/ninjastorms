@@ -52,7 +52,7 @@ unsigned int syscall_handler(){
     // return from software interrupt and restore cpsr
     asm(
         "pop {r7} \n"        // restore used registers
-        "pop {r2, r3} \n"    // TODO: improve remove local variables from stack
+        "add sp, sp, #8 \n"  // discard two values from stack (local vars)
         "pop {r11, lr} \n"   // restore link register and (frame pointer)?
         "movs pc, lr \n"     // return from svc (return and restore cpsr)
     );
