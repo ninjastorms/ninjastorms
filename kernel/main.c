@@ -84,11 +84,12 @@ task_d (void)
 static void
 syscall_test(void)
 {
-    while(1) {
-        syscall(42, (void*) 0);
+    create_process(&task_a);
+    /*while(1) {
+        syscall(0,(void *) 0);
         volatile int i = 0;
         for(i = 0; i < 10000000; i++);
-    }
+    }*/
 }
 
 char shuriken[] =
@@ -109,7 +110,7 @@ kernel_main (void)
   //add_task(&task_a);
   //add_task(&task_b);
   //add_task(&task_c);
-  //add_task(&task_d);
+  add_task(&task_d);
   add_task(&syscall_test);
 
   start_scheduler();

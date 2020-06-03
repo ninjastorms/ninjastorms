@@ -105,7 +105,7 @@ init_interrupt_controller (void)
   *AINTC_HIER |= HIER_IRQ;     // enable IRQ interrupt line
   // 0-1 are FIQ channels, 2-31 are IRQ channels, lower channels have higher priority
 #endif
-//init_timer();
+ init_timer();
 }
 
 void

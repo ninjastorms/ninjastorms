@@ -25,6 +25,5 @@
 #endif
 
 void irq_handler_timer (void);
-//void irq_handler_swi (void);
 
 void load_current_task_state (void);
