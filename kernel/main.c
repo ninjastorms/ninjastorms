@@ -116,6 +116,7 @@ kernel_main (void)
   puts(shuriken);
 
   pci_init();
+  e1000_init();
 
   //add_task(&task_a);
   //add_task(&task_b);
