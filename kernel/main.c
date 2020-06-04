@@ -71,7 +71,7 @@ static void
 task_d (void)
 {
   unsigned int n = 0;
-
+  add_task(&task_c);
   while (1)
     {
       printf("  task d: %i\n", n++);
@@ -87,6 +87,7 @@ syscall_test(void)
     create_process(&task_a);
     create_process(&task_b);
 }
+
 
 char shuriken[] =
 "                 /\\\n"

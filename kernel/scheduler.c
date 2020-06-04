@@ -19,11 +19,13 @@
  ******************************************************************************/
 
 #include "scheduler.h"
-
+#include "kernel/utilities.h"
 #include "kernel/memory.h"
 #include "kernel/drivers/timer.h"
 #include "kernel/interrupt.h"
 #include "kernel/interrupt_handler.h"
+
+#include <stdio.h>
 
 #define CPSR_MODE_SVC  0x13
 #define CPSR_MODE_USER 0x10
@@ -87,6 +89,10 @@ init_task (task_t *task, void *entrypoint, unsigned int stackbase)
 void
 add_task (void *entrypoint)
 {
+  if (!is_privileged()){
+      puts("Adding task is not allowed in non-privileged mode");
+      return;
+  }
   if (task_count >= MAX_TASK_NUMBER)
     return;
 

@@ -81,7 +81,7 @@ setup_irq_stack (void)
   );
 }
 
-void init_timer(void){
+void init_timer_interrupt(void){
     #if BOARD_VERSATILEPB
     *PIC_INTENABLE |= TIMER1_INTBIT;  // unmask interrupt bit for timer1  
     #endif
@@ -105,7 +105,7 @@ init_interrupt_controller (void)
   *AINTC_HIER |= HIER_IRQ;     // enable IRQ interrupt line
   // 0-1 are FIQ channels, 2-31 are IRQ channels, lower channels have higher priority
 #endif
- init_timer();
+ init_timer_interrupt();
 }
 
 void
