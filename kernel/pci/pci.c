@@ -2,6 +2,8 @@
 #include "pci.h"
 #include <stdio.h>
 
+// https://github.com/autoas/as/blob/master/com/as.infrastructure/arch/versatilepb/bsp/pci.c
+
 pci_device_t pci_devices[MAX_PCI_DEVICES] = { 0 };
 
 unsigned short
@@ -72,22 +74,22 @@ read_pci_header(unsigned int start_address){
 void set_command_reg(pci_device_t* device)
 {
 	// set control reg to allow I/O space, memory space access and allow bus master
-	unsigned int val = read_memory32(device->pci_mem_start + PCI_COMMAND, 1);
+	unsigned int val = read_memory32(device->config_base + PCI_COMMAND, 1);
 	val |= PCI_COMMAND_MEMORY | PCI_COMMAND_MASTER | PCI_COMMAND_INVALIDATE;
-	write_memory32(device->pci_mem_start + PCI_COMMAND, val);
+	write_memory32(device->config_base + PCI_COMMAND, val);
 }
 
 
 unsigned int read_bar(pci_device_t* device, unsigned int offset)
 {
 	// read value before to restore later
-	unsigned int before = read_memory32(device->pci_mem_start + offset, 0);
+	unsigned int before = read_memory32(device->config_base + offset, 0);
 	// write all 1s to get encoded size information
-	write_memory32(device->pci_mem_start + offset, 0xFFFFFFFF);
+	write_memory32(device->config_base + offset, 0xFFFFFFFF);
 	// read encoded size information
-	unsigned int encoded_size = read_memory32(device->pci_mem_start + offset, 0);
+	unsigned int encoded_size = read_memory32(device->config_base + offset, 0);
 	// restore old value
-	write_memory32(device->pci_mem_start + offset, before);
+	write_memory32(device->config_base + offset, before);
 
 	// I/O space base address register | memory space base address register
 	unsigned int bit_mask = (before & 1) ? 0xFFFFFFFC : 0xFFFFFFF0;
@@ -131,6 +133,8 @@ configure_e1000(pci_device_t* device)
 	unsigned int device_addr = (PCI_CONFIG + ((device->pci_slot_id) << PCI_DEVICE_BIT_OFFSET));
 	write_memory32(device_addr + 0x10, 0x50000000);
 	write_memory32(device_addr + 0x14, 0x43000000);
+	device->mem_base = 0x50000000;
+	device->io_base = 0x43000000;
 
 	// write 1 to REG_EEPROM
 	write_memory32(0x50000000 + 0x14, 0x1);
@@ -163,11 +167,10 @@ enumerate_pci_devices(void)
 		if(vendor_id == 0xFFFF) continue;
 
 		pci_device_t* device = &pci_devices[i - PCI_DEVICE_BIT_OFFSET];
-		device->pci_mem_start = device_addr;
+		device->config_base = device_addr;
 		device->pci_slot_id = i;
 		device->vendor_id = vendor_id;
 		device->device_id = device_id;
-		device->status_command = *(device_ptr + PCI_DEVICE_STATUS_COMMAND_OFFSET);
 
 		// read_pci_header(device_addr);
 		printf("[PCI] Device slot: %i at: 0x%x DeviceID: 0x%x VendorID: 0x%x\n", i, device_ptr, vendor_id, device_id);

@@ -61,14 +61,15 @@
 #define VP_PCI_DEV_ID 0x030010ee
 #define VP_PCI_CLASS_ID 0x0b400000
 
-struct pci_device_t {
-	unsigned int pci_mem_start;
+struct __pci_device_t {
+	unsigned int config_base;
+	unsigned int mem_base;
+	unsigned int io_base;
 	unsigned short pci_slot_id;
 	unsigned short vendor_id;
 	unsigned short device_id;
-	unsigned int status_command;
 };
-typedef struct pci_device_t pci_device_t;
+typedef struct __pci_device_t pci_device_t;
 
 
 void print_memory(unsigned int* addr);
