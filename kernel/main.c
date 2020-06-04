@@ -27,6 +27,7 @@
 #include "syscall.h"
 
 #include <stdio.h>
+#include <errno.h>
 
 static void
 task_a (void)
@@ -71,7 +72,11 @@ static void
 task_d (void)
 {
   unsigned int n = 0;
-  add_task(&task_c);
+  int direct_call_result = add_task(&task_c);
+  if(direct_call_result<0){
+    printf("add task failed with errno %i \n",errno);
+      
+  }
   while (1)
     {
       printf("  task d: %i\n", n++);

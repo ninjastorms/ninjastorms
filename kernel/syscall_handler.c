@@ -23,6 +23,7 @@
 #include "scheduler.h"
 
 #include <stdio.h>
+#include <errno.h>
 
 
 unsigned int syscall_dispatcher(unsigned int, void*);
@@ -76,6 +77,7 @@ unsigned int syscall_dispatcher(unsigned int syscallno, void *data) {
         case CREATE_PROCESS:
             return create_process_dispatch(data);
         default:
+            errno = EINVALIDSYSCALLNO;
             return -1;
     }
     

@@ -37,7 +37,7 @@ typedef struct task_t task_t;
 
 extern task_t *current_task;
 
-void add_task (void *entrypoint);
+int add_task (void *entrypoint);
 
 void start_scheduler (void);
 
