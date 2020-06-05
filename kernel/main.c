@@ -23,6 +23,7 @@
 #include "kernel/drivers/button.h"
 #include "kernel/scheduler.h"
 #include "memory.h"
+#include "kernel/utilities.h"
 
 #include "syscall.h"
 
@@ -75,13 +76,16 @@ task_d (void)
   int direct_call_result = add_task(&task_c);
   if(direct_call_result<0){
     printf("add task failed with errno %i \n",errno);
-      
   }
   while (1)
     {
       printf("  task d: %i\n", n++);
       volatile int i;
       for (i = 0; i < 10000000; ++i);
+      if(n>5){
+          //That's enough!
+          shutdown();
+      }
     }
 }
 

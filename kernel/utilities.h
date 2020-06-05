@@ -21,3 +21,5 @@
 #pragma once
 
 unsigned int is_privileged(void);
+
+void halt_execution(void);

@@ -20,7 +20,17 @@
 
 #include "utilities.h"
 
-unsigned int get_operating_mode(void){
+unsigned int get_operating_mode(void)
+{
+    // Processing modes on ARM
+    // usr 0b10000
+    // fiq 0b10001 fast interrupt
+    // irq 0b10010
+    // svc 0b10011 supervisor
+    // abt 0b10111 
+    // und 0b11011 undefined
+    // sys 0b11111
+    
     unsigned int current_pcsr = 0;
     asm(
         "mrs r3, cpsr\n"
@@ -31,6 +41,14 @@ unsigned int get_operating_mode(void){
     return operating_mode;
 }
 
-unsigned int is_privileged(void){
-    return get_operating_mode() != 16;
+unsigned int is_privileged(void)
+{
+    return get_operating_mode() != 0b10000;
+}
+
+void halt_execution(void)
+{
+    if (is_privileged){
+        asm("hlt");
+    }
 }

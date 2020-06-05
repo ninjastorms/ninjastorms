@@ -19,7 +19,8 @@
  ******************************************************************************/
 #include "syscall.h"
 
-unsigned int syscall(unsigned int number, void* data) {
+unsigned int syscall(unsigned int number, void* data) 
+{
    
     unsigned int ret;
 
@@ -40,8 +41,14 @@ unsigned int syscall(unsigned int number, void* data) {
     return ret;
 }
 
-unsigned int create_process(void * function) {
+unsigned int create_process(void * function) 
+{
     struct create_process_specification new_process;
     new_process.function = function;
     return syscall(1,&new_process);
+}
+
+unsigned int shutdown(void)
+{
+    return syscall(99,(void *)0);
 }

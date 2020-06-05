@@ -81,7 +81,8 @@ setup_irq_stack (void)
   );
 }
 
-void init_timer_interrupt(void){
+void init_timer_interrupt(void)
+{
     #if BOARD_VERSATILEPB
     *PIC_INTENABLE |= TIMER1_INTBIT;  // unmask interrupt bit for timer1  
     #endif

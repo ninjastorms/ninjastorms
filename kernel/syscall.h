@@ -23,6 +23,8 @@ unsigned int syscall(unsigned int number, void* data);
 
 unsigned int create_process(void * function); 
 
+unsigned int shutdown();
+
 typedef struct create_process_specification{
     void * function;
     //int parent_pid;
