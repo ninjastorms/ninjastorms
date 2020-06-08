@@ -19,11 +19,12 @@
  ******************************************************************************/
 
 #include "mmio.h"
+#include <stdio.h>
 
 uint8_t
 read8(uint32_t address)
 {
-	return *((volatile uint8_t*)(address));
+	return (uint8_t) (read32(address-(address % 4)) >> ((address % 4) * 8));
 }
 
 uint16_t

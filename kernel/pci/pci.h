@@ -1,5 +1,9 @@
 #pragma once
 
+#include <sys/types.h>
+
+#define PCI_DEBUG
+
 #define PCI_SELF_CONFIG 0x41000000
 #define PCI_CONFIG 0x42000000
 #define PCI_DEVICE_BIT_OFFSET 11
@@ -31,11 +35,9 @@
  * 1 bits are decoded.
  */
 #define PCI_BASE_ADDRESS_0	0x10	/* 32 bits */
-#define PCI_BASE_ADDRESS_1	0x14	/* 32 bits [htype 0,1 only] */
-#define PCI_BASE_ADDRESS_2	0x18	/* 32 bits [htype 0 only] */
-#define PCI_BASE_ADDRESS_3	0x1c	/* 32 bits */
-#define PCI_BASE_ADDRESS_4	0x20	/* 32 bits */
-#define PCI_BASE_ADDRESS_5	0x24	/* 32 bits */
+#define PCI_BAR_OFFSET 0x04
+
+#define PCI_BAR(x) (PCI_BASE_ADDRESS_0 + (x)*(4)) // 0 <= x <= 5
 
 /* 0x35-0x3b are reserved */
 #define PCI_INTERRUPT_LINE	0x3c	/* 8 bits */
@@ -61,26 +63,24 @@
 #define VP_PCI_DEV_ID 0x030010ee
 #define VP_PCI_CLASS_ID 0x0b400000
 
+#define PCI_INVALID_VENDOR 0xFFFF
+
 struct __pci_device_t {
-	unsigned int config_base;
-	unsigned int mem_base;
-	unsigned int io_base;
-	unsigned short pci_slot_id;
-	unsigned short vendor_id;
-	unsigned short device_id;
+	uint32_t config_base;
+	uint32_t mem_base;
+	uint32_t io_base;
+	uint8_t pci_slot_id;
+	uint16_t vendor_id;
+	uint16_t device_id;
 };
 typedef struct __pci_device_t pci_device_t;
 
 
-void print_memory(unsigned int* addr);
-
+void enable_bus_mastering(uint32_t address);
+uint8_t get_bar_type(uint32_t base, uint8_t number);
+uint32_t get_bar_size(uint32_t base, uint8_t number);
+uint32_t alloc_pci_memory(pci_device_t* device, uint8_t bar);
 void enumerate_pci_devices(void);
-
-pci_device_t* get_pci_device(unsigned short vendor_id, unsigned short device_id);
-
+int32_t board_configuration(void);
+pci_device_t* get_pci_device(uint16_t vendor_id, uint16_t device_id);
 void pci_init(void);
-
-void configure_pci_device(pci_device_t* device);
-
-void write_memory32(unsigned int addr, unsigned int value);
-unsigned int read_memory32(unsigned int addr, int debug);
