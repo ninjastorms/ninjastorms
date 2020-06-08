@@ -19,11 +19,13 @@
  ******************************************************************************/
 
 #include "scheduler.h"
-
+#include "kernel/utilities.h"
 #include "kernel/memory.h"
 #include "kernel/drivers/timer.h"
 #include "kernel/interrupt.h"
 #include "kernel/interrupt_handler.h"
+
+#include <errno.h>
 
 #define CPSR_MODE_SVC  0x13
 #define CPSR_MODE_USER 0x10
@@ -84,16 +86,23 @@ init_task (task_t *task, void *entrypoint, unsigned int stackbase)
   task->cpsr = CPSR_MODE_USER;
 }
 
-void
+int
 add_task (void *entrypoint)
 {
-  if (task_count >= MAX_TASK_NUMBER)
-    return;
+  if (!is_privileged()){
+      errno = EPERMISSION;
+      return -1;
+  }
+  if (task_count >= MAX_TASK_NUMBER){
+    errno = ETOOMANYTASKS;
+    return -1;
+  }
 
   unsigned int stackbase = TASK_STACK_BASE_ADDRESS - STACK_SIZE*task_count;
   init_task(&tasks[task_count], entrypoint, stackbase);
   ring_buffer_insert(&tasks[task_count]);
   task_count++;
+  return 0;
 }
 
 void

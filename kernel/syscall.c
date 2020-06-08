@@ -17,28 +17,38 @@
  *    You should have received a copy of the GNU General Public License       *
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
+#include "syscall.h"
 
-#pragma once
-
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-struct task_t
+unsigned int syscall(unsigned int number, void* data) 
 {
-  // r01..r12, sp, lr, pc
-	unsigned int reg[13];
-	unsigned int sp;
-	unsigned int lr;
-	unsigned int pc;
-	unsigned int cpsr;
-};
-typedef struct task_t task_t;
+   
+    unsigned int ret;
 
-extern task_t *current_task;
+    asm(
+        // store arguments in registers
+        "mov r0, %[number] \n"  // store number in r0
+        "mov r1, %[data] \n"    //   and data in r1
 
-int add_task (void *entrypoint);
+        "svc #0 \n"    // make supervisor call
 
-void start_scheduler (void);
+        "mov %[ret], r0 \n"    // save return value
 
-void schedule (void);
+        : [ret] "=r" (ret)
+        : [number] "r" (number),
+          [data] "r" (data)
+    );
+
+    return ret;
+}
+
+unsigned int create_process(void * function) 
+{
+    struct create_process_specification new_process;
+    new_process.function = function;
+    return syscall(1,&new_process);
+}
+
+unsigned int shutdown(void)
+{
+    return syscall(99,(void *)0);
+}

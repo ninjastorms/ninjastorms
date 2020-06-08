@@ -24,21 +24,12 @@
 #  include <config.h>
 #endif
 
-struct task_t
-{
-  // r01..r12, sp, lr, pc
-	unsigned int reg[13];
-	unsigned int sp;
-	unsigned int lr;
-	unsigned int pc;
-	unsigned int cpsr;
-};
-typedef struct task_t task_t;
+unsigned int syscall_handler();
 
-extern task_t *current_task;
-
-int add_task (void *entrypoint);
-
-void start_scheduler (void);
-
-void schedule (void);
+enum SYSCALL_NUMBER {
+    ZERO_SYSCALL = 0,
+    CREATE_PROCESS = 1,
+    EXIT = 2, //Not implemented, requires process data structure
+    GET_PID = 3, //Not implemented, requires process data structure
+    SHUTDOWN = 99
+}; 

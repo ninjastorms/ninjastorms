@@ -17,28 +17,15 @@
  *    You should have received a copy of the GNU General Public License       *
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
-
 #pragma once
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+unsigned int syscall(unsigned int number, void* data);
 
-struct task_t
-{
-  // r01..r12, sp, lr, pc
-	unsigned int reg[13];
-	unsigned int sp;
-	unsigned int lr;
-	unsigned int pc;
-	unsigned int cpsr;
-};
-typedef struct task_t task_t;
+unsigned int create_process(void * function); 
 
-extern task_t *current_task;
+unsigned int shutdown();
 
-int add_task (void *entrypoint);
-
-void start_scheduler (void);
-
-void schedule (void);
+typedef struct create_process_specification{
+    void * function;
+    //int parent_pid;
+} create_process_spec;
