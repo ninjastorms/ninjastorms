@@ -1,4 +1,4 @@
-
+ 
 /******************************************************************************
  *       ninjastorms - shuriken operating system                              *
  *                                                                            *
@@ -20,25 +20,6 @@
 
 #pragma once
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+unsigned int is_privileged(void);
 
-struct task_t
-{
-  // r01..r12, sp, lr, pc
-	unsigned int reg[13];
-	unsigned int sp;
-	unsigned int lr;
-	unsigned int pc;
-	unsigned int cpsr;
-};
-typedef struct task_t task_t;
-
-extern task_t *current_task;
-
-int add_task (void *entrypoint);
-
-void start_scheduler (void);
-
-void schedule (void);
+void halt_execution(void);

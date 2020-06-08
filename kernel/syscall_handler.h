@@ -29,7 +29,7 @@ unsigned int syscall_handler();
 enum SYSCALL_NUMBER {
     ZERO_SYSCALL = 0,
     CREATE_PROCESS = 1,
-    EXIT_PROCESS = 2, //Not implemented, requires process data structure
+    EXIT = 2, //Not implemented, requires process data structure
     GET_PID = 3, //Not implemented, requires process data structure
-    SHUTDOWN = 99 //Not implemented
+    SHUTDOWN = 99
 }; 

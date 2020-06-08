@@ -16,29 +16,39 @@
  *                                                                            *
  *    You should have received a copy of the GNU General Public License       *
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
- ******************************************************************************/
+ ******************************************************************************/ 
 
-#pragma once
+#include "utilities.h"
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-struct task_t
+unsigned int get_operating_mode(void)
 {
-  // r01..r12, sp, lr, pc
-	unsigned int reg[13];
-	unsigned int sp;
-	unsigned int lr;
-	unsigned int pc;
-	unsigned int cpsr;
-};
-typedef struct task_t task_t;
+    // Processing modes on ARM
+    // usr 0b10000
+    // fiq 0b10001 fast interrupt
+    // irq 0b10010
+    // svc 0b10011 supervisor
+    // abt 0b10111 
+    // und 0b11011 undefined
+    // sys 0b11111
+    
+    unsigned int current_pcsr = 0;
+    asm(
+        "mrs r3, cpsr\n"
+        "mov %[current_pcsr], r3\n"
+        : [current_pcsr] "=r" (current_pcsr)
+    );
+    unsigned int operating_mode = current_pcsr & 0x1f;
+    return operating_mode;
+}
 
-extern task_t *current_task;
+unsigned int is_privileged(void)
+{
+    return get_operating_mode() != 0b10000;
+}
 
-int add_task (void *entrypoint);
-
-void start_scheduler (void);
-
-void schedule (void);
+void halt_execution(void)
+{
+    if (is_privileged()){
+        asm("hlt");
+    }
+}

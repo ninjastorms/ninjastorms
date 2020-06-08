@@ -21,13 +21,16 @@
 #include "syscall_handler.h"
 #include "syscall.h"
 #include "scheduler.h"
+#include "utilities.h"
 
 #include <stdio.h>
+#include <errno.h>
 
 
 unsigned int syscall_dispatcher(unsigned int, void*);
 
-unsigned int syscall_handler(){
+unsigned int syscall_handler()
+{
     
     unsigned int syscallno = 0;
     void *data = 0;
@@ -52,22 +55,32 @@ unsigned int syscall_handler(){
     );
 }
 
-unsigned int syscall_zero_dispatch(void* data){
+unsigned int syscall_zero_dispatch(void* data)
+{
     puts("This is not a real syscall!\n");
     return 0;
 }
 
-unsigned int create_process_dispatch(void* data){
+unsigned int create_process_dispatch(void* data)
+{
     create_process_spec spec = *((create_process_spec*) data);
     add_task(spec.function);
     return 0;
+}
+
+unsigned int shutdown_dispatch(void* data)
+{
+    // close all processes attached with hooks
+    // ...
+    halt_execution();
 }
 
 void* dispatch_routines[2] = {
     &syscall_zero_dispatch,
     &create_process_dispatch};
 
-unsigned int syscall_dispatcher(unsigned int syscallno, void *data) {
+unsigned int syscall_dispatcher(unsigned int syscallno, void *data) 
+{
     printf("Handling syscall %i with data at address %x.\n", syscallno, data);
     //unsigned int (*dispatch_routines[syscallno])(data); OPTION1
     switch(syscallno){ //OPTION2
@@ -75,7 +88,10 @@ unsigned int syscall_dispatcher(unsigned int syscallno, void *data) {
             return syscall_zero_dispatch(data);
         case CREATE_PROCESS:
             return create_process_dispatch(data);
+        case SHUTDOWN:
+            return shutdown_dispatch(data);
         default:
+            errno = EINVALIDSYSCALLNO;
             return -1;
     }
     
