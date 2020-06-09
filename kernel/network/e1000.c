@@ -13,7 +13,7 @@ writeCommand(uint16_t address, uint32_t value)
 }
 
 uint32_t
-readCommand(uint16_t address, uint32_t value)
+readCommand(uint16_t address)
 {
 	return read32(e1000.mem_base+address);
 }
