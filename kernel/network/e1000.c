@@ -7,15 +7,27 @@
 e1000_device_t e1000 = {0};
 
 void
+writeCommand(uint16_t address, uint32_t value)
+{
+	write32(e1000.mem_base+address, value);
+}
+
+uint32_t
+readCommand(uint16_t address, uint32_t value)
+{
+	return read32(e1000.mem_base+address);
+}
+
+void
 detect_eeprom()
 {
 	// write 1 to REG_EEPROM
-	write32(e1000.mem_base + REG_EEPROM, 0x1);
+	writeCommand(REG_EEPROM, 0x1);
 
 	uint32_t val = 0;
 	for(uint16_t i = 0; i < 1000 && ! e1000.eeprom_exists; i++)
 		{
-	    val = read32(e1000.mem_base + REG_EEPROM);
+	    val = readCommand(REG_EEPROM);
 	    if(val & 0x10)
 	      e1000.eeprom_exists = 1;
 	    else
@@ -45,6 +57,23 @@ read_mac()
   else
   	return 0;
   return 1;
+}
+
+void
+rxinit()
+{
+
+  writeCommand(REG_RXDESCLO, (uint32_t)e1000.rx_descs );
+  writeCommand(REG_RXDESCHI, 0);
+
+  // set len to number of descriptors * sizeof one in byte
+  writeCommand(REG_RXDESCLEN, E1000_NUM_RX_DESC * 16);
+
+  writeCommand(REG_RXDESCHEAD, 0);
+  writeCommand(REG_RXDESCTAIL, E1000_NUM_RX_DESC-1);
+  e1000.rx_cur = 0;
+  writeCommand(REG_RCTRL, RCTL_EN | RCTL_SBP| RCTL_UPE | RCTL_MPE | RCTL_LBM_NONE | RTCL_RDMTS_HALF | RCTL_BAM | RCTL_SECRC  | RCTL_BSIZE_8192);
+
 }
 
 void
