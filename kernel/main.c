@@ -117,6 +117,9 @@ kernel_main (void)
   puts(shuriken);
 
   log_debug("Logger initialized.")
+  log_info("Logger initialized.")
+  log_warn("Logger initialized.")
+  log_fatal("Logger initialized.")
 
   pci_init();
   e1000_init();
