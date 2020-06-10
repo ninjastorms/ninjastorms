@@ -20,6 +20,7 @@
 
 #include "main.h"
 
+#include "kernel/logger/logger.h"
 #include "kernel/drivers/button.h"
 #include "kernel/scheduler.h"
 #include "memory.h"
@@ -114,6 +115,8 @@ kernel_main (void)
   puts("This is ninjastorms OS");
   puts("  shuriken ready");
   puts(shuriken);
+
+  log_debug("Logger initialized.")
 
   pci_init();
   e1000_init();
