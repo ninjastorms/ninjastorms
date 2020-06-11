@@ -2,14 +2,13 @@
 
 #include <sys/types.h>
 
-#define log_debug(log_line) general_log(0, log_line, __FILE__);
-#define log_info(log_line) general_log(1, log_line, __FILE__);
-#define log_warn(log_line) general_log(2, log_line, __FILE__);
-#define log_error(log_line) general_log(3, log_line, __FILE__);
-#define log_fatal(log_line) general_log_full_colorized(4, log_line, __FILE__);
+#define log_debug(...) general_log(0, __FILE__, __VA_ARGS__);
+#define log_info(...) general_log(1, __FILE__, __VA_ARGS__);
+#define log_warn(...) general_log(2, __FILE__, __VA_ARGS__);
+#define log_error(...) general_log(3, __FILE__, __VA_ARGS__);
+#define log_fatal(...) general_log(4, __FILE__, __VA_ARGS__);
 
-void general_log(uint32_t severity, char log_line[], const char* file);
-void general_log_alt(uint32_t severity, char log_line[], const char* file);
+void general_log(uint32_t severity, const char* file, const char* format, ...);
 
 static const char* log_severities[] =
   {

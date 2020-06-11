@@ -1,17 +1,21 @@
 #include <stdio.h>
+#include <stdarg.h>
 #include "logger.h"
 
-void general_log(uint32_t severity, char log_line[], const char* file)
+void general_log(uint32_t severity, const char* file, const char* format, ...)
   {
+    va_list args;
+
     // Align shorter severities on the same level
     if(severity == 1 || severity == 2) {
-      printf("%s[%s] \x1b[0m [%s]: %s\n", log_colors[severity], log_severities[severity], file, log_line);
+      printf("%s[%s] \x1b[0m [%s]: ", log_colors[severity], log_severities[severity], file);
     } else {
-      printf("%s[%s]\x1b[0m [%s]: %s\n", log_colors[severity], log_severities[severity], file, log_line);
+      printf("%s[%s]\x1b[0m [%s]: ", log_colors[severity], log_severities[severity], file);
     }
-  }
 
-void general_log_full_colorized(uint32_t severity, char log_line[], const char* file)
-  {
-    printf("%s[%s] [%s]: %s \x1b[0m\n", log_colors[severity], log_severities[severity], file, log_line);
+    va_start(args, format);
+    vprintf(format, args);
+    va_end(args);
+
+    putchar('\n');
   }
