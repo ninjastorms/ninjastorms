@@ -20,7 +20,7 @@
 #define REG_RXDESCLEN   0x2808
 #define REG_RXDESCHEAD  0x2810
 #define REG_RXDESCTAIL  0x2818
- 
+
 #define REG_TCTRL       0x0400
 #define REG_TXDESCLO    0x3800
 #define REG_TXDESCHI    0x3804
@@ -33,7 +33,7 @@
 #define REG_RXDCTL       0x3828 // RX Descriptor Control
 #define REG_RADV         0x282C // RX Int. Absolute Delay Timer
 #define REG_RSRPD        0x2C00 // RX Small Packet Detect Interrupt
- 
+
 #define REG_TIPG         0x0410      // Transmit Inter Packet Gap
 #define ECTRL_SLU        0x40        //set link up
 
@@ -95,24 +95,24 @@
 
 #define E1000_NUM_RX_DESC 32
 #define E1000_NUM_TX_DESC 8
- 
+
 struct e1000_rx_desc {
-    volatile uint64_t addr;
-    volatile uint16_t length;
-    volatile uint16_t checksum;
-    volatile uint8_t status;
-    volatile uint8_t errors;
-    volatile uint16_t special;
+  volatile uint64_t addr;
+  volatile uint16_t length;
+  volatile uint16_t checksum;
+  volatile uint8_t status;
+  volatile uint8_t errors;
+  volatile uint16_t special;
 } __attribute__((packed));
 
 struct e1000_tx_desc {
-    volatile uint64_t addr;
-    volatile uint16_t length;
-    volatile uint8_t cso;
-    volatile uint8_t cmd;
-    volatile uint8_t status;
-	volatile uint8_t css;
-    volatile uint16_t special;
+  volatile uint64_t addr;
+  volatile uint16_t length;
+  volatile uint8_t cso;
+  volatile uint8_t cmd;
+  volatile uint8_t status;
+  volatile uint8_t css;
+  volatile uint16_t special;
 } __attribute__((packed));
 
 struct __e1000_device {
@@ -124,7 +124,7 @@ struct __e1000_device {
     struct e1000_tx_desc tx_descs[E1000_NUM_TX_DESC]; // Transmit Descriptor Buffers
     uint16_t rx_cur;      // Current Receive Descriptor Buffer
     uint16_t tx_cur;      // Current Transmit Descriptor Buffer
-};
+  };
 typedef struct __e1000_device e1000_device_t;
 
 extern pci_device_t* e1000_pci_device;
