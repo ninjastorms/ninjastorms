@@ -124,10 +124,10 @@ kernel_main (void)
   //add_task(&task_a);
   //add_task(&task_b);
   //add_task(&task_c);
-  add_task(&task_d);
-  add_task(&syscall_test);
+  //add_task(&task_d);
+  //add_task(&syscall_test);
 
-  start_scheduler();
+  //start_scheduler();
 
   puts("All done. ninjastorms out!");
 

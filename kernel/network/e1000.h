@@ -13,6 +13,7 @@
 #define REG_STATUS      0x0008
 #define REG_EEPROM      0x0014
 #define REG_CTRL_EXT    0x0018
+#define REG_INT_CAUSE   0x00C0
 #define REG_IMASK       0x00D0
 #define REG_RCTRL       0x0100
 #define REG_RXDESCLO    0x2800
@@ -28,6 +29,21 @@
 #define REG_TXDESCHEAD  0x3810
 #define REG_TXDESCTAIL  0x3818
 
+// diagnostics
+#define REG_RDFH        0x2410 // Receice Data FIFO Head
+#define REG_RDFT        0x2418 // Receice Data FIFO Tail
+#define REG_RDFHS       0x2420 // Receice Data FIFO Head Saved
+#define REG_RDFTS       0x2428 // Receice Data FIFO Tail Saved
+#define REG_RDFPC       0x2430 // Receice Data FIFO Packet Count
+#define REG_TDFH        0x3410 // Transmit Data FIFO Head
+#define REG_TDFT        0x3418 // Transmit Data FIFO Tail
+#define REG_TDFHS       0x3420 // Transmit Data FIFO Head Saved
+#define REG_TDFTS       0x3428 // Transmit Data FIFO Tail Saved
+#define REG_TDFPC       0x3430 // Transmit Data FIFO Packet Count
+
+// Packet Buffer Memory
+#define PBM_BASE        0x10000
+#define PBM_END         0x1FFFC
 
 #define REG_RDTR         0x2820 // RX Delay Timer Register
 #define REG_RXDCTL       0x3828 // RX Descriptor Control
@@ -104,6 +120,7 @@ struct e1000_rx_desc {
   volatile uint8_t errors;
   volatile uint16_t special;
 } __attribute__((packed));
+typedef struct e1000_rx_desc e1000_rx_desc_t;
 
 struct e1000_tx_desc {
   volatile uint64_t addr;
@@ -114,19 +131,22 @@ struct e1000_tx_desc {
   volatile uint8_t css;
   volatile uint16_t special;
 } __attribute__((packed));
+typedef struct e1000_tx_desc e1000_tx_desc_t;
 
 struct __e1000_device {
-    uint32_t io_base;     // IO Base Address
-    uint32_t mem_base;   // MMIO Base Address
-    uint8_t eeprom_exists;  // A flag indicating if eeprom exists
-    uint8_t mac [6];      // A buffer for storing the mac address
-    struct e1000_rx_desc rx_descs[E1000_NUM_RX_DESC]; // Receive Descriptor Buffers
-    struct e1000_tx_desc tx_descs[E1000_NUM_TX_DESC]; // Transmit Descriptor Buffers
-    uint16_t rx_cur;      // Current Receive Descriptor Buffer
-    uint16_t tx_cur;      // Current Transmit Descriptor Buffer
+  e1000_rx_desc_t rx_descs[E1000_NUM_RX_DESC]; // Receive Descriptor Buffers
+  e1000_tx_desc_t tx_descs[E1000_NUM_TX_DESC]; // Transmit Descriptor Buffers
+  uint32_t io_base;     // IO Base Address
+  uint32_t mem_base;   // MMIO Base Address
+  uint8_t eeprom_exists;  // A flag indicating if eeprom exists
+  uint8_t mac [6];      // A buffer for storing the mac address
+  uint16_t rx_cur;      // Current Receive Descriptor Buffer
+  uint16_t tx_cur;      // Current Transmit Descriptor Buffer
   };
 typedef struct __e1000_device e1000_device_t;
 
 extern pci_device_t* e1000_pci_device;
 
 void e1000_init(void);
+
+int sendPacket(const void * p_data, uint16_t p_len);
