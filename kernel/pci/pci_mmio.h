@@ -18,52 +18,16 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "mmio.h"
+#pragma once
 
-uint8_t
-read8(uint32_t address)
-{
-	return *((volatile uint8_t*)(address));
-}
+#include <sys/types.h>
 
-uint16_t
-read16(uint32_t address)
-{
-	return *((volatile uint16_t*)(address));
-}
+uint8_t  pci_read8(uint32_t address);
+uint16_t pci_read16(uint32_t address);
+uint32_t pci_read32(uint32_t address);
+uint64_t pci_read64(uint32_t address);
 
-uint32_t
-read32(uint32_t address)
-{
-	return *((volatile uint32_t*)(address));
-}
-
-uint64_t
-read64(uint32_t address)
-{
-	return *((volatile uint64_t*)(address));
-}
-
-void
-write8(uint32_t address, uint8_t value)
-{
-	(*((volatile uint8_t*)(address)))=(value);
-}
-
-void
-write16(uint32_t address, uint16_t value)
-{
-	(*((volatile uint16_t*)(address)))=(value);
-}
-
-void
-write32(uint32_t address, uint32_t value)
-{
-	(*((volatile uint32_t*)(address)))=(value);
-}
-
-void
-write64(uint32_t address, uint64_t value)
-{
-	(*((volatile uint64_t*)(address)))=(value);
-}
+void pci_write8(uint32_t address, uint8_t value);
+void pci_write16(uint32_t address, uint16_t value);
+void pci_write32(uint32_t address, uint32_t value);
+void pci_write64(uint32_t address, uint64_t value);
