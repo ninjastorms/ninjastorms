@@ -2,20 +2,20 @@
 
 #include <stdio.h>
 #include "kernel/pci/pci.h"
-#include "kernel/mmio.h"
+#include "kernel/pci/pci_mmio.h"
 
 e1000_device_t e1000 = {0};
 
 void
 writeCommand(uint16_t address, uint32_t value)
 {
-	write32(e1000.mem_base+address, value);
+	pci_write32(e1000.mem_base+address, value);
 }
 
 uint32_t
 readCommand(uint16_t address)
 {
-	return read32(e1000.mem_base+address);
+	return pci_read32(e1000.mem_base+address);
 }
 
 void
@@ -42,14 +42,14 @@ uint8_t
 read_mac()
 { 
   uint32_t mem_base_mac = e1000.mem_base + MAC_OFFSET;
-  if(read32(mem_base_mac) != 0)
+  if(pci_read32(mem_base_mac) != 0)
   	{
   		printf("[E1000] MAC ");
-      e1000.mac[0] = read8(mem_base_mac);
+      e1000.mac[0] = pci_read8(mem_base_mac);
       printf("%x", e1000.mac[0]);
 	    for(uint16_t i = 1; i < 6; i++)
 	    	{
-	        e1000.mac[i] = read8(mem_base_mac + i);
+	        e1000.mac[i] = pci_read8(mem_base_mac + i);
 	        printf(":%x", e1000.mac[i]);
 	    	}
     	printf("\n");
