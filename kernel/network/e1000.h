@@ -145,8 +145,8 @@ struct __e1000_device {
   };
 typedef struct __e1000_device e1000_device_t;
 
-extern pci_device_t* e1000_pci_device;
+extern e1000_device_t* e1000;
 
 void e1000_init(void);
 
-int sendPacket(const void * p_data, uint16_t p_len);
+int send_packet(const void * p_data, uint16_t p_len);

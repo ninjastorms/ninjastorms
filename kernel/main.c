@@ -100,6 +100,21 @@ syscall_test(void)
     create_process(&task_b);
 }
 
+static void
+network_test(void)
+{
+  // ARP request: Who has 10.0.2.15? Tell 10.0.2.10
+  const char * data = "\xff\xff\xff\xff\xff\xff\x52\x54\x00\x12\x34\x56\x08\x06\x00\x01" \
+                      "\x08\x00\x06\x04\x00\x01\x52\x54\x00\x12\x34\x56\x0a\x00\x02\x00" \
+                      "\x00\x00\x00\x00\x00\x00\x0a\x00\x02\x0f";
+  for(int i = 0; i < 50; i++)
+    {
+      send_packet(data, 42);
+      // wait some time before next packet
+      for (int j = 0; j < 100000000; ++j);
+    }
+}
+
 
 char shuriken[] =
 "                 /\\\n"
@@ -121,13 +136,14 @@ kernel_main (void)
   pci_init();
   e1000_init();
 
+  add_task(&network_test);
   //add_task(&task_a);
   //add_task(&task_b);
   //add_task(&task_c);
   //add_task(&task_d);
   //add_task(&syscall_test);
 
-  //start_scheduler();
+  start_scheduler();
 
   puts("All done. ninjastorms out!");
 

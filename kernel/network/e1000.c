@@ -113,12 +113,10 @@ e1000_start(void)
   enableInterrupt();
   rxinit();
   txinit();
-  const char * data = "Hello Ninja!";
-  sendPacket(data, 12);
 }
 
 int
-sendPacket(const void * p_data, uint16_t p_len)
+send_packet(const void * p_data, uint16_t p_len)
 {
   printf("[E1000] Sending packet data <%s> with len %i\n", p_data, p_len);
   e1000_tx_desc_t *curr = &e1000->tx_descs[e1000->tx_cur];
