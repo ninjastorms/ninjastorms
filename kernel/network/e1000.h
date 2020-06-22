@@ -150,3 +150,4 @@ extern e1000_device_t* e1000;
 void e1000_init(void);
 
 int send_packet(const void * p_data, uint16_t p_len);
+void receive_packet();

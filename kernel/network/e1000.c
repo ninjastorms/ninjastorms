@@ -134,6 +134,15 @@ send_packet(const void * p_data, uint16_t p_len)
   return 0;
 }
 
+void receive_packet()
+{
+  printf("[E1000] REG_RDFPC: %x\n", readCommand(REG_RDFPC));
+  printf("[E1000] REG_RDFH: %x\n", readCommand(REG_RDFH));
+  printf("[E1000] REG_RDFT: %x\n", readCommand(REG_RDFT));
+  printf("[E1000] REG_RDFHS: %x\n", readCommand(REG_RDFHS));
+  printf("[E1000] REG_RDFTS: %x\n", readCommand(REG_RDFTS));
+}
+
 void
 e1000_init(void)
 {
@@ -146,6 +155,7 @@ e1000_init(void)
       return;
     }
   printf("[E1000] Network card found!\n");
+  *((uint32_t*) (e1000_pci_device->config_base + PCI_INTERRUPT_LINE)) = 0;
 
   e1000->mem_base = alloc_pci_memory(e1000_pci_device, 0);
   e1000->io_base = alloc_pci_memory(e1000_pci_device, 1);

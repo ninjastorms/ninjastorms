@@ -109,7 +109,8 @@ network_test(void)
                       "\x00\x00\x00\x00\x00\x00\x0a\x00\x02\x0f";
   for(int i = 0; i < 50; i++)
     {
-      send_packet(data, 42);
+      // send_packet(data, 42);
+      receive_packet();
       // wait some time before next packet
       for (int j = 0; j < 100000000; ++j);
     }
