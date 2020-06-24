@@ -70,7 +70,7 @@ save_current_task_state:
   ldr  r2, =current_task // load current_task
   ldr  r2, [r2]          // dereference current_task, to get the task_struct
   // save r0-r2
-  ldr  r1, [r0], #4     // load saved r0 from stack
+  ldr  r1, [r0], #4     // load saved r0 from stack   
   str  r1, [r2], #4     // save it to the struct
   ldr  r1, [r0], #4     // load saved r1 from stack
   str  r1, [r2], #4     // save it to the struct

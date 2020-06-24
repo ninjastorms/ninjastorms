@@ -27,7 +27,7 @@ scripts/
 .dirstamp
 .gdbinit
 
-# ignore statements from from https://github.com/github/gitignore/blob/master/Global/VisualStudioCode.gitignore
+# ignore statements from https://github.com/github/gitignore/blob/master/Global/VisualStudioCode.gitignore
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
