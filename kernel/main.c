@@ -105,10 +105,10 @@ network_test(void)
 {
   // ARP request: Who has 10.0.2.15? Tell 10.0.2.10
   const char * data = "\xff\xff\xff\xff\xff\xff\x52\x54\x00\x12\x34\x56\x08\x06\x00\x01" \
-                      "\x08\x00\x06\x04\x00\x01\x52\x54\x00\x12\x34\x56\x0a\x00\x02\x00" \
+                      "\x08\x00\x06\x04\x00\x01\x52\x54\x00\x12\x34\x56\x0a\x00\x02\x0a" \
                       "\x00\x00\x00\x00\x00\x00\x0a\x00\x02\x0f";
-  for(int i = 0; i < 50; i++)
-    {
+  for(;;) 
+   {
       // send_packet(data, 42);
       receive_packet();
       // wait some time before next packet

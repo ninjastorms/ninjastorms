@@ -5,8 +5,9 @@
 #include "kernel/pci/pci_mmio.h"
 
 // e1000_device_t e1000 = {0};
+// get some memory for our e1000
 e1000_device_t* e1000 = (e1000_device_t*) 0x5000000;
-
+uint32_t RX_DESC_BASE = 0x6000000;
 
 void
 writeCommand(uint16_t address, uint32_t value)
@@ -64,8 +65,13 @@ read_mac()
 void
 rxinit()
 {
+  for(int i = 0; i < E1000_NUM_RX_DESC; i++) 
+    {
+      e1000->rx_descs[i].addr = RX_DESC_BASE + i * (8192 + 16);
+      e1000->rx_descs[i].status = 0;
+    }
 
-  writeCommand(REG_RXDESCLO, (uint32_t)e1000->rx_descs );
+  writeCommand(REG_RXDESCLO, (uint32_t)e1000->rx_descs);
   writeCommand(REG_RXDESCHI, 0);
 
   // set len to number of descriptors * sizeof one in byte
@@ -119,7 +125,7 @@ int
 send_packet(const void * p_data, uint16_t p_len)
 {
   printf("[E1000] Sending packet data <%s> with len %i\n", p_data, p_len);
-  e1000_tx_desc_t *curr = &e1000->tx_descs[e1000->tx_cur];
+  e1000_tx_desc_t *curr = &(e1000->tx_descs[e1000->tx_cur]);
   curr->addr = (uint64_t)p_data;
   curr->length = p_len;
   curr->cmd = CMD_EOP | CMD_IFCS | CMD_RS;
@@ -134,13 +140,26 @@ send_packet(const void * p_data, uint16_t p_len)
   return 0;
 }
 
-void receive_packet()
+void 
+receive_packet()
 {
-  printf("[E1000] REG_RDFPC: %x\n", readCommand(REG_RDFPC));
-  printf("[E1000] REG_RDFH: %x\n", readCommand(REG_RDFH));
-  printf("[E1000] REG_RDFT: %x\n", readCommand(REG_RDFT));
-  printf("[E1000] REG_RDFHS: %x\n", readCommand(REG_RDFHS));
-  printf("[E1000] REG_RDFTS: %x\n", readCommand(REG_RDFTS));
+  uint16_t old_cur;
+  uint8_t got_packet = 0;
+
+  while(e1000->rx_descs[e1000->rx_cur].status & 0x1)
+    {
+      got_packet = 1;
+      uint8_t* buf = (uint8_t *) (e1000->rx_descs[e1000->rx_cur].addr);
+      uint16_t len = e1000->rx_descs[e1000->rx_cur].length;
+
+      // please do something with me
+      printf("[E1000] received packet with length: %i\n", len);
+
+      e1000->rx_descs[e1000->rx_cur].status = 0;
+      old_cur = e1000->rx_cur;
+      e1000->rx_cur = (e1000->rx_cur + 1) % E1000_NUM_RX_DESC;
+      writeCommand(REG_RXDESCTAIL, old_cur);
+    }
 }
 
 void
