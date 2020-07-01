@@ -3,20 +3,22 @@
 #include <stdio.h>
 #include "kernel/pci/pci.h"
 #include "kernel/pci/pci_mmio.h"
+#include "kernel/mmio.h"
+#include "kernel/logger/logger.h"
+#include "kernel/memory.h"
 
-// e1000_device_t e1000 = {0};
 // get some memory for our e1000
 e1000_device_t* e1000 = (e1000_device_t*) 0x5000000;
 uint32_t RX_DESC_BASE = 0x6000000;
 
 void
-writeCommand(uint16_t address, uint32_t value)
+write_command(uint16_t address, uint32_t value)
 {
   pci_write32(e1000->mem_base+address, value);
 }
 
 uint32_t
-readCommand(uint32_t address)
+read_command(uint32_t address)
 {
   return pci_read32(e1000->mem_base+address);
 }
@@ -24,13 +26,12 @@ readCommand(uint32_t address)
 void
 detect_eeprom()
 {
-  // write 1 to REG_EEPROM
-  writeCommand(REG_EEPROM, 0x1);
+  write_command(REG_EEPROM, 0x1);
 
   uint32_t val = 0;
   for(uint16_t i = 0; i < 1000 && ! e1000->eeprom_exists; i++)
     {
-      val = readCommand(REG_EEPROM);
+      val = read_command(REG_EEPROM);
       if(val & 0x10)
         e1000->eeprom_exists = 1;
       else
@@ -63,7 +64,7 @@ read_mac()
 }
 
 void
-rxinit()
+init_receive_descriptors()
 {
   for(int i = 0; i < E1000_NUM_RX_DESC; i++) 
     {
@@ -71,76 +72,75 @@ rxinit()
       e1000->rx_descs[i].status = 0;
     }
 
-  writeCommand(REG_RXDESCLO, (uint32_t)e1000->rx_descs);
-  writeCommand(REG_RXDESCHI, 0);
+  write_command(REG_RXDESCLO, (uint32_t)e1000->rx_descs);
+  write_command(REG_RXDESCHI, 0);
 
-  // set len to number of descriptors * sizeof one in byte
-  writeCommand(REG_RXDESCLEN, E1000_NUM_RX_DESC * 16);
+  // set len to number of descriptors * sizeof one in bytes
+  write_command(REG_RXDESCLEN, E1000_NUM_RX_DESC * 16);
 
-  writeCommand(REG_RXDESCHEAD, 0);
-  writeCommand(REG_RXDESCTAIL, E1000_NUM_RX_DESC-1);
+  write_command(REG_RXDESCHEAD, 0);
+  write_command(REG_RXDESCTAIL, E1000_NUM_RX_DESC-1);
   e1000->rx_cur = 0;
-  writeCommand(REG_RCTRL, RCTL_EN | RCTL_SBP| RCTL_UPE | RCTL_MPE | RCTL_LBM_NONE | RTCL_RDMTS_HALF | RCTL_BAM | RCTL_SECRC  | RCTL_BSIZE_8192);
+  write_command(REG_RCTRL, RCTL_EN | RCTL_SBP| RCTL_UPE | RCTL_MPE | RCTL_LBM_NONE | RTCL_RDMTS_HALF | RCTL_BAM | RCTL_SECRC  | RCTL_BSIZE_8192);
 
 }
 
 void
-txinit()
+init_transmit_descriptors()
 {
-  writeCommand(REG_TXDESCLO, (uint32_t)e1000->tx_descs );
-  writeCommand(REG_TXDESCHI, 0);
+  write_command(REG_TXDESCLO, (uint32_t) e1000->tx_descs);
+  write_command(REG_TXDESCHI, 0);
 
   //now setup total length of descriptors
 
-  writeCommand(REG_TXDESCLEN, E1000_NUM_TX_DESC * sizeof(e1000_tx_desc_t));
+  write_command(REG_TXDESCLEN, E1000_NUM_TX_DESC * sizeof(e1000_tx_desc_t));
 
   //setup numbers
-  writeCommand(REG_TXDESCHEAD, 0);
-  writeCommand(REG_TXDESCTAIL, 0);
+  write_command(REG_TXDESCHEAD, 0);
+  write_command(REG_TXDESCTAIL, 0);
   e1000->tx_cur = 0;
   // works with e1000 only
-  writeCommand(REG_TCTRL, readCommand(REG_TCTRL) | TCTL_EN | TCTL_PSP);
-  writeCommand(REG_TIPG,  0x0060200A);
-}
-
-void enableInterrupt()
-{
-  writeCommand(REG_IMASK ,0x1F6DC);
-  writeCommand(REG_IMASK ,0xff & ~4);
-  readCommand(REG_INT_CAUSE);
-  printf("[E1000] Interrupt cause: 0x%x\n", readCommand(REG_INT_CAUSE));
+  write_command(REG_TCTRL, read_command(REG_TCTRL) | TCTL_EN | TCTL_PSP);
+  write_command(REG_TIPG,  0x0060200A);
 }
 
 void
-e1000_start(void)
+enable_interrupt()
+{
+  // according to E1000 documentation p. 297
+  write_command(REG_IMASK, 0x1F2D4);
+}
+
+void
+start_e1000(void)
 {
   detect_eeprom();
   read_mac();
-  enableInterrupt();
-  rxinit();
-  txinit();
+  enable_interrupt();
+  init_receive_descriptors();
+  init_transmit_descriptors();
 }
 
 int
-send_packet(const void * p_data, uint16_t p_len)
+send_packet(const void *p_data, uint16_t p_len)
 {
   printf("[E1000] Sending packet data <%s> with len %i\n", p_data, p_len);
   e1000_tx_desc_t *curr = &(e1000->tx_descs[e1000->tx_cur]);
-  curr->addr = (uint64_t)p_data;
+  curr->addr = (uint32_t) p_data;
   curr->length = p_len;
   curr->cmd = CMD_EOP | CMD_IFCS | CMD_RS;
   curr->status = 0;
   uint8_t old_cur = e1000->tx_cur;
   e1000->tx_cur = (e1000->tx_cur + 1) % E1000_NUM_TX_DESC;
 
-  writeCommand(REG_TXDESCTAIL, e1000->tx_cur);
+  write_command(REG_TXDESCTAIL, e1000->tx_cur);
 
   while(!(curr->status));
   printf("[E1000] Packet send!\n"); 
   return 0;
 }
 
-void 
+void
 receive_packet()
 {
   uint16_t old_cur;
@@ -149,21 +149,20 @@ receive_packet()
   while(e1000->rx_descs[e1000->rx_cur].status & 0x1)
     {
       got_packet = 1;
-      uint8_t* buf = (uint8_t *) (e1000->rx_descs[e1000->rx_cur].addr);
+      uint8_t* buf = (uint8_t *) ((uint32_t) e1000->rx_descs[e1000->rx_cur].addr);
       uint16_t len = e1000->rx_descs[e1000->rx_cur].length;
 
-      // please do something with me
-      printf("[E1000] received packet with length: %i\n", len);
+      log_debug("received packet with length: %i", len)
 
       e1000->rx_descs[e1000->rx_cur].status = 0;
       old_cur = e1000->rx_cur;
       e1000->rx_cur = (e1000->rx_cur + 1) % E1000_NUM_RX_DESC;
-      writeCommand(REG_RXDESCTAIL, old_cur);
+      write_command(REG_RXDESCTAIL, old_cur);
     }
 }
 
 void
-e1000_init(void)
+init_e1000(void)
 {
   printf("[E1000] Initializing driver.\n");
   pci_device_t* e1000_pci_device = get_pci_device(INTEL_VEND, E1000_DEV);
@@ -174,11 +173,10 @@ e1000_init(void)
       return;
     }
   printf("[E1000] Network card found!\n");
-  *((uint32_t*) (e1000_pci_device->config_base + PCI_INTERRUPT_LINE)) = 0;
 
   e1000->mem_base = alloc_pci_memory(e1000_pci_device, 0);
   e1000->io_base = alloc_pci_memory(e1000_pci_device, 1);
   enable_bus_mastering(e1000_pci_device->config_base);
   printf("[E1000] membase: 0x%x iobase: 0x%x\n", e1000->mem_base, e1000->io_base);
-  e1000_start();
+  start_e1000();
 }

@@ -81,10 +81,11 @@ setup_irq_stack (void)
   );
 }
 
-void init_timer_interrupt(void)
+void
+init_timer_interrupt (void)
 {
     #if BOARD_VERSATILEPB
-    *PIC_INTENABLE |= TIMER1_INTBIT;  // unmask interrupt bit for timer1  
+    *PIC_INT_ENABLE |= TIMER1_INTBIT;  // unmask interrupt bit for timer1  
     #endif
     
     #if BOARD_EV3
@@ -92,12 +93,22 @@ void init_timer_interrupt(void)
     *AINTC_CMR5 |= 2 << (2*8);   // set channel of timer interrupt to 2
     #endif
 }
-    
+
+void
+init_pci_interrupt (void)
+{
+  // enable PCI[0..3] interrupts for primary and secondary interrupt controllers
+  *PIC_INT_ENABLE |= PCI0_INTBIT | PCI1_INTBIT | PCI2_INTBIT | PCI3_INTBIT;
+  *SIC_ENABLE |= PCI0_INTBIT | PCI1_INTBIT | PCI2_INTBIT | PCI3_INTBIT;
+  // forward interrupts from secondary to primary interrupt controller
+  *SIC_PIC_EN_SET |= PCI0_INTBIT | PCI1_INTBIT | PCI2_INTBIT | PCI3_INTBIT;
+}
+
 void
 init_interrupt_controller (void)
 {
 #if BOARD_VERSATILEPB
-  *PIC_INTENABLE |= 2; // unmask interrupt bit for software interrupt
+  *PIC_INT_ENABLE |= 2; // unmask interrupt bit for software interrupt
 #endif
 
 #if BOARD_EV3
@@ -107,6 +118,7 @@ init_interrupt_controller (void)
   // 0-1 are FIQ channels, 2-31 are IRQ channels, lower channels have higher priority
 #endif
  init_timer_interrupt();
+ init_pci_interrupt();
 }
 
 void

@@ -135,7 +135,7 @@ kernel_main (void)
   log_debug("Logger initialized!");
 
   pci_init();
-  e1000_init();
+  init_e1000();
 
   add_task(&network_test);
   //add_task(&task_a);
