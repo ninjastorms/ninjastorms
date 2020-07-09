@@ -111,11 +111,32 @@ enable_interrupt()
   write_command(REG_IMASK, 0x1F2D4);
 }
 
+void start_link(void)
+{
+  uint32_t flags = read_command(REG_CTRL);
+  write_command(REG_CTRL, flags | ECTRL_SLU);
+}
+
+void
+irq_handler_e1000(void)
+{
+  // clear interrupt on device
+  write_command(REG_IMASK, 0x1);
+  uint32_t cause = read_command(REG_INT_CAUSE);
+  if (cause & LSC)
+    start_link();
+  if (cause & RXDMT0)
+    ; // good threshold
+  if (cause & RXT0)
+    receive_packet();
+}
+
 void
 start_e1000(void)
 {
   detect_eeprom();
   read_mac();
+  start_link();
   enable_interrupt();
   init_receive_descriptors();
   init_transmit_descriptors();

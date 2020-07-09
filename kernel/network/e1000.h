@@ -107,6 +107,12 @@
 #define TSTA_LC                         (1 << 2)    // Late Collision
 #define LSTA_TU                         (1 << 3)    // Transmit Underrun
 
+// Interrupt Causes
+// p. 293 https://www.intel.com/content/dam/doc/manual/pci-pci-x-family-gbe-controllers-software-dev-manual.pdf
+#define LSC       (1 << 2)  // Link Status Changed
+#define RXDMT0    (1 << 4)  // Receive Descriptor Minimum Threshold Reached
+#define RXT0      (1 << 7)  // Receiver Timer Interrupt
+
 #define MAC_OFFSET 0x5400
 
 #define E1000_NUM_RX_DESC 32
@@ -147,7 +153,8 @@ typedef struct __e1000_device e1000_device_t;
 
 extern e1000_device_t* e1000;
 
-void e1000_init(void);
+void init_e1000(void);
+void irq_handler_e1000(void);
 
 int send_packet(const void * p_data, uint16_t p_len);
 void receive_packet();

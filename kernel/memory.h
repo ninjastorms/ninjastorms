@@ -54,7 +54,7 @@
 #  define TIMER1_MIS    (volatile char*)(TIMER1_BASE+0x14)
 
 // Primary Interrupt Controller (PL190)
-// https://developer.arm.com/documentation/dui0224/i/programmer-s-reference/interrupt-controllers/primary-interrupt-controller?lang=en
+// https://developer.arm.com/documentation/dui0224/i/programmer-s-reference/interrupt-controllers/primary-interrupt-controller
 #  define PIC_BASE 0x10140000
 #  define PIC_IRQ_STATUS        (volatile unsigned int*)(PIC_BASE+0x00)
 #  define PIC_FIQ_STATUS        (volatile unsigned int*)(PIC_BASE+0x04)

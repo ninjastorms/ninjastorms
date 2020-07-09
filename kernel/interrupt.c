@@ -24,6 +24,9 @@
 #include "kernel/memory.h"
 #include "kernel/interrupt_handler.h"
 
+#include "kernel/mmio.h"
+#include "kernel/network/e1000.h"
+
 #if BOARD_EV3
 #  define IVT_OFFSET (unsigned int) 0xFFFF0000
 #endif
@@ -51,7 +54,7 @@ setup_ivt (void)
   *(unsigned int*) (IVT_OFFSET + 0x28) = (unsigned int) 0;
   *(unsigned int*) (IVT_OFFSET + 0x2c) = (unsigned int) 0;
   *(unsigned int*) (IVT_OFFSET + 0x30) = (unsigned int) 0;
-  *(unsigned int*) (IVT_OFFSET + 0x34) = (unsigned int) &irq_handler_timer;
+  *(unsigned int*) (IVT_OFFSET + 0x34) = (unsigned int) &irq_handler;
   *(unsigned int*) (IVT_OFFSET + 0x38) = (unsigned int) 0;
 
 #if BOARD_EV3
@@ -64,7 +67,17 @@ setup_ivt (void)
   );
 #endif
 }
-    
+
+void
+handle_interrupt (void)
+{
+  uint32_t status = read32((uint32_t) PIC_IRQ_STATUS);
+  if(status & PCI3_INTBIT)
+    irq_handler_e1000();
+  if(status & TIMER1_INTBIT)
+    irq_handler_timer();
+}
+
 void
 setup_irq_stack (void)
 {

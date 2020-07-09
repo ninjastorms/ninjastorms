@@ -110,7 +110,6 @@ network_test(void)
   for(;;) 
    {
       // send_packet(data, 42);
-      receive_packet();
       // wait some time before next packet
       for (int j = 0; j < 100000000; ++j);
     }
@@ -137,7 +136,7 @@ kernel_main (void)
   pci_init();
   init_e1000();
 
-  add_task(&network_test);
+  // add_task(&network_test);
   //add_task(&task_a);
   //add_task(&task_b);
   //add_task(&task_c);
