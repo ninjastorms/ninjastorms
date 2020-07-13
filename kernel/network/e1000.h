@@ -136,7 +136,7 @@
 #define MAC_OFFSET 0x5400
 
 #define E1000_NUM_RX_DESC 32
-#define E1000_SIZE_RX_DESC 8192
+#define MAX_PACKET_SIZE 8192
 #define E1000_NUM_TX_DESC 8
 
 struct e1000_rx_desc {

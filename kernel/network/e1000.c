@@ -88,15 +88,14 @@ init_receive_descriptors()
 {
   for(int i = 0; i < E1000_NUM_RX_DESC; i++) 
     {
-      e1000->rx_descs[i].addr = RX_DESC_BASE + i * (E1000_SIZE_RX_DESC + 16);
+      e1000->rx_descs[i].addr = RX_DESC_BASE + i * (MAX_PACKET_SIZE + sizeof(e1000_rx_desc_t));
       e1000->rx_descs[i].status = 0;
     }
 
   write_command(REG_RXDESCLO, (uint32_t)e1000->rx_descs);
   write_command(REG_RXDESCHI, 0);
 
-  // set len to number of descriptors * sizeof one in bytes
-  write_command(REG_RXDESCLEN, E1000_NUM_RX_DESC * 16);
+  write_command(REG_RXDESCLEN, E1000_NUM_RX_DESC * sizeof(e1000_rx_desc_t));
 
   write_command(REG_RXDESCHEAD, 0);
   write_command(REG_RXDESCTAIL, E1000_NUM_RX_DESC-1);
