@@ -31,3 +31,6 @@ scripts/
 
 # Local History for Visual Studio Code
 .history/
+
+# network traffic
+net_dump.dat
