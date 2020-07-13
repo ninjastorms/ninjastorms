@@ -161,9 +161,11 @@ start_e1000(void)
   init_transmit_descriptors();
 }
 
-int
+uint32_t
 send_packet(const void *p_data, uint16_t p_len)
 {
+  if(!is_e1000_available()) return -1;
+
   printf("[E1000] Sending packet data <%s> with len %i\n", p_data, p_len);
   e1000_tx_desc_t *curr = &(e1000->tx_descs[e1000->tx_cur]);
   curr->addr = (uint32_t) p_data;
@@ -183,6 +185,8 @@ send_packet(const void *p_data, uint16_t p_len)
 void
 receive_packet()
 {
+  if(!is_e1000_available()) return;
+  
   uint16_t old_cur;
 
   while(e1000->rx_descs[e1000->rx_cur].status & 0x1)
@@ -199,22 +203,28 @@ receive_packet()
     }
 }
 
+uint8_t
+is_e1000_available(void)
+{
+  return e1000->pci_device != (void*) 0;
+}
+
 void
 init_e1000(void)
 {
   printf("[E1000] Initializing driver.\n");
-  pci_device_t* e1000_pci_device = get_pci_device(INTEL_VEND, E1000_DEV);
+  e1000->pci_device = get_pci_device(INTEL_VEND, E1000_DEV);
   
-  if(e1000_pci_device == (void*)0)
+  if(!is_e1000_available())
     {
       printf("[E1000] Network card not found!\n");
       return;
     }
   printf("[E1000] Network card found!\n");
 
-  e1000->mem_base = alloc_pci_memory(e1000_pci_device, 0);
-  e1000->io_base = alloc_pci_memory(e1000_pci_device, 1);
-  enable_bus_mastering(e1000_pci_device->config_base);
+  e1000->mem_base = alloc_pci_memory(e1000->pci_device, 0);
+  e1000->io_base = alloc_pci_memory(e1000->pci_device, 1);
+  enable_bus_mastering(e1000->pci_device->config_base);
   printf("[E1000] membase: 0x%x iobase: 0x%x\n", e1000->mem_base, e1000->io_base);
   start_e1000();
 }

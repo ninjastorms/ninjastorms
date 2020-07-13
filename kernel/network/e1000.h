@@ -169,6 +169,7 @@ struct __e1000_device {
   uint8_t mac [6];      // A buffer for storing the mac address
   uint16_t rx_cur;      // Current Receive Descriptor Buffer
   uint16_t tx_cur;      // Current Transmit Descriptor Buffer
+  pci_device_t *pci_device; // Corresponding PCI Device
   };
 typedef struct __e1000_device e1000_device_t;
 
@@ -177,5 +178,6 @@ extern e1000_device_t* e1000;
 void init_e1000(void);
 void irq_handler_e1000(void);
 
-int send_packet(const void * p_data, uint16_t p_len);
+uint32_t send_packet(const void * p_data, uint16_t p_len);
 void receive_packet();
+uint8_t is_e1000_available();
